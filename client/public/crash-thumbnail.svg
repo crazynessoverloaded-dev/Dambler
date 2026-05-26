@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0a0f1a"/>
+      <stop offset="100%" stop-color="#040609"/>
+    </radialGradient>
+    <linearGradient id="line-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="70%" stop-color="#00ffcc"/>
+      <stop offset="100%" stop-color="#ff4400"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-strong">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-red">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- Grid lines -->
+  <line x1="40" y1="40" x2="40" y2="240" stroke="#ffffff15" stroke-width="1"/>
+  <line x1="40" y1="240" x2="370" y2="240" stroke="#ffffff15" stroke-width="1"/>
+  <line x1="40" y1="190" x2="370" y2="190" stroke="#ffffff08" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="40" y1="140" x2="370" y2="140" stroke="#ffffff08" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="40" y1="90" x2="370" y2="90" stroke="#ffffff08" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- Y labels -->
+  <text x="32" y="244" text-anchor="end" font-family="Arial, sans-serif" font-size="9" fill="#ffffff40">1x</text>
+  <text x="32" y="193" text-anchor="end" font-family="Arial, sans-serif" font-size="9" fill="#ffffff40">2x</text>
+  <text x="32" y="143" text-anchor="end" font-family="Arial, sans-serif" font-size="9" fill="#ffffff40">4x</text>
+  <text x="32" y="93" text-anchor="end" font-family="Arial, sans-serif" font-size="9" fill="#ffffff40">8x</text>
+
+  <!-- Graph line - rising then crashing -->
+  <!-- Rising portion (green) -->
+  <polyline points="40,240 80,235 120,225 160,210 200,190 240,162 270,140 290,120 310,100 320,88" fill="none" stroke="#00ff88" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <!-- Glow under line -->
+  <polyline points="40,240 80,235 120,225 160,210 200,190 240,162 270,140 290,120 310,100 320,88" fill="none" stroke="#00ff88" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.15"/>
+
+  <!-- Crash point drop (red) -->
+  <polyline points="320,88 340,130 360,200 370,240" fill="none" stroke="#ff3300" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow-red)"/>
+  <polyline points="320,88 340,130 360,200 370,240" fill="none" stroke="#ff3300" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.15"/>
+
+  <!-- Crash explosion -->
+  <circle cx="320" cy="88" r="18" fill="#ff330020" filter="url(#glow-red)"/>
+  <circle cx="320" cy="88" r="8" fill="#ff5500" filter="url(#glow-red)"/>
+  <!-- Spark lines -->
+  <line x1="320" y1="70" x2="320" y2="60" stroke="#ff6600" stroke-width="2" stroke-linecap="round" filter="url(#glow-red)"/>
+  <line x1="332" y1="76" x2="339" y2="69" stroke="#ff6600" stroke-width="2" stroke-linecap="round" filter="url(#glow-red)"/>
+  <line x1="308" y1="76" x2="301" y2="69" stroke="#ff6600" stroke-width="2" stroke-linecap="round" filter="url(#glow-red)"/>
+  <line x1="338" y1="88" x2="348" y2="88" stroke="#ffaa00" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="302" y1="88" x2="292" y2="88" stroke="#ffaa00" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Rocket -->
+  <g transform="translate(294, 102) rotate(-40)">
+    <ellipse cx="0" cy="0" rx="7" ry="14" fill="#ffffff" opacity="0.9"/>
+    <polygon points="-7,8 7,8 0,18" fill="#cccccc"/>
+    <polygon points="-7,3 -14,12 -7,10" fill="#aaaaaa"/>
+    <polygon points="7,3 14,12 7,10" fill="#aaaaaa"/>
+    <!-- Flame -->
+    <ellipse cx="0" cy="20" rx="4" ry="7" fill="#ff6600" opacity="0.8" filter="url(#glow-red)"/>
+    <ellipse cx="0" cy="22" rx="2" ry="4" fill="#ffdd00" opacity="0.9"/>
+    <circle cx="0" cy="-6" r="3" fill="#88ccff" opacity="0.7"/>
+  </g>
+
+  <!-- Big multiplier badge -->
+  <rect x="110" y="55" width="130" height="50" rx="12" fill="#00ff8818" stroke="#00ff88" stroke-width="2" filter="url(#glow)"/>
+  <text x="175" y="87" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="28" font-weight="900" fill="#00ff88" filter="url(#glow-strong)">6.50x</text>
+
+  <!-- CRASHED badge -->
+  <rect x="280" y="180" width="90" height="28" rx="6" fill="#ff330025" stroke="#ff3300" stroke-width="1.5"/>
+  <text x="325" y="199" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="13" font-weight="900" fill="#ff5500">CRASHED</text>
+
+  <!-- Title -->
+  <text x="200" y="276" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="22" font-weight="900" letter-spacing="6" fill="#00ff88" filter="url(#glow)">CRASH</text>
+  <text x="200" y="291" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#00ff8870" letter-spacing="2">CASH OUT BEFORE IT CRASHES</text>
+</svg>

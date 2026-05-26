@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <!-- Deep warm background -->
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#120a00"/>
+      <stop offset="100%" stop-color="#060300"/>
+    </radialGradient>
+    <!-- Gold foil card surface -->
+    <linearGradient id="cardBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#1c1208"/>
+      <stop offset="40%"  stop-color="#241808"/>
+      <stop offset="100%" stop-color="#1a1006"/>
+    </linearGradient>
+    <!-- Gold foil edge/border gradient -->
+    <linearGradient id="goldFoil" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#92400e"/>
+      <stop offset="25%"  stop-color="#fbbf24"/>
+      <stop offset="50%"  stop-color="#fde68a"/>
+      <stop offset="75%"  stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <!-- Gold header bar -->
+    <linearGradient id="hdrGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#78350f"/>
+      <stop offset="30%"  stop-color="#d97706"/>
+      <stop offset="50%"  stop-color="#fcd34d"/>
+      <stop offset="70%"  stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+    <!-- Revealed tile background -->
+    <radialGradient id="tileBg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%"   stop-color="#1c1408"/>
+      <stop offset="100%" stop-color="#140e04"/>
+    </radialGradient>
+    <!-- Scratch metallic surface -->
+    <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#6b7280"/>
+      <stop offset="22%"  stop-color="#9ca3af"/>
+      <stop offset="48%"  stop-color="#4b5563"/>
+      <stop offset="76%"  stop-color="#9ca3af"/>
+      <stop offset="100%" stop-color="#6b7280"/>
+    </linearGradient>
+    <!-- Winner banner -->
+    <linearGradient id="winnerBg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#7f1d1d"/>
+      <stop offset="50%"  stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <!-- Ambient glow behind card -->
+    <radialGradient id="cardGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%"   stop-color="#d97706" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Scratch pattern -->
+    <pattern id="scrLines" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(42)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#4b5563" stroke-width="2"/>
+    </pattern>
+    <!-- Filters -->
+    <filter id="cardSh">
+      <feDropShadow dx="0" dy="10" stdDeviation="22" flood-color="#000" flood-opacity="0.85"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="winGlow">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="titleGlow">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="symbolGlow">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#fbbf24" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <!-- Ambient glow behind card -->
+  <ellipse cx="200" cy="155" rx="190" ry="140" fill="url(#cardGlow)"/>
+
+  <!-- Confetti particles -->
+  <rect x="38"  y="22"  width="7" height="7"  rx="1" fill="#fbbf24" opacity="0.75" transform="rotate(30 42 26)"/>
+  <rect x="72"  y="14"  width="5" height="5"  rx="1" fill="#dc2626" opacity="0.7"  transform="rotate(15 74 17)"/>
+  <rect x="110" y="20"  width="6" height="6"  rx="1" fill="#22c55e" opacity="0.65" transform="rotate(-20 113 23)"/>
+  <rect x="56"  y="44"  width="5" height="5"  rx="1" fill="#3b82f6" opacity="0.65" transform="rotate(45 58 47)"/>
+  <rect x="310" y="18"  width="7" height="7"  rx="1" fill="#fbbf24" opacity="0.7"  transform="rotate(-25 314 22)"/>
+  <rect x="346" y="28"  width="5" height="5"  rx="1" fill="#dc2626" opacity="0.65" transform="rotate(38 349 31)"/>
+  <rect x="326" y="46"  width="6" height="6"  rx="1" fill="#22c55e" opacity="0.6"  transform="rotate(-15 329 49)"/>
+  <rect x="360" y="14"  width="5" height="5"  rx="1" fill="#3b82f6" opacity="0.65" transform="rotate(20 362 17)"/>
+  <rect x="26"  y="62"  width="4" height="8"  rx="1" fill="#fbbf24" opacity="0.55" transform="rotate(55 28 66)"/>
+  <rect x="370" y="58"  width="4" height="8"  rx="1" fill="#dc2626" opacity="0.5"  transform="rotate(-40 372 62)"/>
+  <circle cx="88"  cy="28" r="3" fill="#fbbf24" opacity="0.6"/>
+  <circle cx="318" cy="32" r="3" fill="#fbbf24" opacity="0.6"/>
+  <circle cx="52"  cy="55" r="2" fill="#fde68a" opacity="0.5"/>
+  <circle cx="348" cy="55" r="2" fill="#fde68a" opacity="0.5"/>
+
+  <!-- Card base with shadow -->
+  <g filter="url(#cardSh)">
+    <!-- Card body -->
+    <rect x="36" y="30" width="328" height="240" rx="16" fill="url(#cardBody)"/>
+    <!-- Gold border -->
+    <rect x="36" y="30" width="328" height="240" rx="16" fill="none" stroke="url(#goldFoil)" stroke-width="3"/>
+  </g>
+
+  <!-- Inner card border line -->
+  <rect x="46" y="40" width="308" height="220" rx="12" fill="none" stroke="#fbbf24" stroke-width="0.6" stroke-opacity="0.25"/>
+
+  <!-- Gold header bar -->
+  <rect x="36" y="30" width="328" height="52" rx="16" fill="url(#hdrGold)"/>
+  <rect x="36" y="64" width="328" height="18" fill="url(#hdrGold)"/>
+
+  <!-- Header text -->
+  <text x="200" y="52" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" font-weight="900" fill="#fff7ed" letter-spacing="3" filter="url(#glow)">DAMBLER LUCKY CARD</text>
+  <text x="200" y="66" text-anchor="middle" font-family="Arial,sans-serif" font-size="7.5" fill="#fffbeb" fill-opacity="0.7" letter-spacing="2">INSTANT WIN GAME</text>
+
+  <!-- ─── ROW 1: Three matching LUCKY 7 tiles ─── -->
+  <!-- Tile 1 -->
+  <rect x="52"  y="88" width="88" height="70" rx="9" fill="url(#tileBg)" stroke="#d97706" stroke-width="1.5"/>
+  <!-- Tile 2 -->
+  <rect x="156" y="88" width="88" height="70" rx="9" fill="url(#tileBg)" stroke="#d97706" stroke-width="1.5"/>
+  <!-- Tile 3 -->
+  <rect x="260" y="88" width="88" height="70" rx="9" fill="url(#tileBg)" stroke="#d97706" stroke-width="1.5"/>
+
+  <!-- Lucky 7 symbols (large, golden) -->
+  <g filter="url(#symbolGlow)">
+    <text x="96"  y="147" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="44" font-weight="900" fill="#fbbf24">7</text>
+    <text x="200" y="147" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="44" font-weight="900" fill="#fbbf24">7</text>
+    <text x="304" y="147" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="44" font-weight="900" fill="#fbbf24">7</text>
+  </g>
+
+  <!-- WINNER stamp/banner over row 1 -->
+  <rect x="52" y="88" width="296" height="30" rx="7" fill="url(#winnerBg)" opacity="0.93"/>
+  <text x="200" y="108" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" font-weight="900" fill="#ffffff" letter-spacing="2" filter="url(#winGlow)">MATCH 3 — WINNER!</text>
+
+  <!-- ─── ROW 2: Two scratched tiles + one revealed coin ─── -->
+  <!-- Scratched tile R2C1 -->
+  <rect x="52"  y="172" width="88" height="54" rx="9" fill="url(#metal)"/>
+  <rect x="52"  y="172" width="88" height="54" rx="9" fill="url(#scrLines)" opacity="0.28"/>
+  <rect x="52"  y="172" width="88" height="54" rx="9" fill="none" stroke="#6b7280" stroke-width="1"/>
+  <!-- Scratch swipe mark -->
+  <path d="M64 190 Q88 183 108 190 Q128 197 134 208" stroke="#9ca3af" stroke-width="2.5" fill="none" opacity="0.6"/>
+  <!-- Partial reveal peeking through -->
+  <path d="M52 172 Q76 178 100 172 Q124 166 140 178 L140 200 L52 200 Z" fill="url(#tileBg)" opacity="0.5"/>
+  <text x="96" y="196" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="18" fill="#d97706" opacity="0.4">?</text>
+
+  <!-- Revealed center tile R2C2 -->
+  <rect x="156" y="172" width="88" height="54" rx="9" fill="url(#tileBg)" stroke="#6b7280" stroke-width="1"/>
+  <!-- Diamond symbol -->
+  <polygon points="200,180 218,199 200,218 182,199" fill="#3b82f6" opacity="0.85"/>
+  <polygon points="200,186 212,199 200,212 188,199" fill="#93c5fd" opacity="0.75"/>
+
+  <!-- Scratched tile R2C3 -->
+  <rect x="260" y="172" width="88" height="54" rx="9" fill="url(#metal)"/>
+  <rect x="260" y="172" width="88" height="54" rx="9" fill="url(#scrLines)" opacity="0.28"/>
+  <rect x="260" y="172" width="88" height="54" rx="9" fill="none" stroke="#6b7280" stroke-width="1"/>
+  <path d="M272 184 Q296 178 316 184" stroke="#9ca3af" stroke-width="2" fill="none" opacity="0.55"/>
+  <path d="M270 196 Q296 190 322 196" stroke="#9ca3af" stroke-width="2" fill="none" opacity="0.55"/>
+  <path d="M272 208 Q294 202 318 208" stroke="#9ca3af" stroke-width="2" fill="none" opacity="0.5"/>
+
+  <!-- ─── Prize amount at card bottom ─── -->
+  <line x1="52" y1="238" x2="348" y2="238" stroke="#fbbf24" stroke-width="0.7" stroke-opacity="0.3"/>
+  <text x="200" y="256" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#d97706" fill-opacity="0.6" letter-spacing="1">TOP PRIZE</text>
+  <text x="200" y="266" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#fbbf24" filter="url(#glow)">$50,000</text>
+
+  <!-- ─── Image title (outside/above card) ─── -->
+  <text x="200" y="16" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" font-weight="900" letter-spacing="4" fill="#fbbf24" filter="url(#titleGlow)">SCRATCH CARDS</text>
+</svg>

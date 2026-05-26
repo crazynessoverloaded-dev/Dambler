@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a0a0a"/><stop offset="100%" stop-color="#0d0404"/></linearGradient>
+    <radialGradient id="felt" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#7c1515"/><stop offset="100%" stop-color="#4a0808"/></radialGradient>
+    <filter id="g1"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="g2"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <ellipse cx="200" cy="150" rx="190" ry="135" fill="#c0392b" fill-opacity="0.07"/>
+  <path d="M28,242 L28,78 L372,78 L372,242 Z" fill="url(#felt)"/>
+  <path d="M28,242 L28,78 L372,78 L372,242 Z" fill="none" stroke="#e8b860" stroke-width="2.5" stroke-opacity="0.75"/>
+  <path d="M44,226 L44,94 L356,94 L356,226 Z" fill="none" stroke="#e8b860" stroke-width="1" stroke-opacity="0.35"/>
+  <rect x="44" y="174" width="312" height="52" rx="5" fill="#9b1b1b" fill-opacity="0.6" stroke="#e8b860" stroke-width="2" stroke-opacity="0.8"/>
+  <text x="200" y="207" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="17" font-weight="900" fill="#e8b860" letter-spacing="7" filter="url(#g1)">PASS LINE</text>
+  <rect x="44" y="150" width="312" height="22" rx="3" fill="#1a0808" fill-opacity="0.75" stroke="#e8b860" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="200" y="165" text-anchor="middle" font-family="Arial,sans-serif" font-size="9.5" font-weight="700" fill="#e8b860" fill-opacity="0.65" letter-spacing="3">DON'T PASS BAR</text>
+  <rect x="44" y="94" width="138" height="54" rx="3" fill="#a93226" fill-opacity="0.45" stroke="#e8b860" stroke-width="1" stroke-opacity="0.45"/>
+  <text x="113" y="126" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="15" font-weight="900" fill="#e8b860" letter-spacing="2">COME</text>
+  <rect x="184" y="94" width="172" height="54" rx="3" fill="#1a0808" fill-opacity="0.5" stroke="#e8b860" stroke-width="1" stroke-opacity="0.35"/>
+  <line x1="212" y1="94" x2="212" y2="148" stroke="#e8b860" stroke-width="0.8" stroke-opacity="0.25"/>
+  <line x1="240" y1="94" x2="240" y2="148" stroke="#e8b860" stroke-width="0.8" stroke-opacity="0.25"/>
+  <line x1="268" y1="94" x2="268" y2="148" stroke="#e8b860" stroke-width="0.8" stroke-opacity="0.25"/>
+  <line x1="296" y1="94" x2="296" y2="148" stroke="#e8b860" stroke-width="0.8" stroke-opacity="0.25"/>
+  <line x1="328" y1="94" x2="328" y2="148" stroke="#e8b860" stroke-width="0.8" stroke-opacity="0.25"/>
+  <text x="198" y="125" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#fff" fill-opacity="0.85">4</text>
+  <text x="226" y="125" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#fff" fill-opacity="0.85">5</text>
+  <text x="254" y="125" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#fff" fill-opacity="0.85">6</text>
+  <text x="282" y="125" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#fff" fill-opacity="0.85">8</text>
+  <text x="312" y="125" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#fff" fill-opacity="0.85">9</text>
+  <text x="344" y="125" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="12" fill="#fff" fill-opacity="0.85">10</text>
+  <rect x="52" y="96" width="54" height="50" rx="8" fill="#f5f0e0" stroke="#e8b860" stroke-width="1.5"/>
+  <circle cx="67" cy="111" r="5.5" fill="#b71c1c"/><circle cx="86" cy="121" r="5.5" fill="#b71c1c"/><circle cx="67" cy="131" r="5.5" fill="#b71c1c"/>
+  <g transform="rotate(-8 128 110)">
+    <rect x="112" y="97" width="46" height="46" rx="6" fill="#f5f0e0" stroke="#e8b860" stroke-width="1.5"/>
+    <circle cx="126" cy="110" r="4.5" fill="#b71c1c"/><circle cx="146" cy="110" r="4.5" fill="#b71c1c"/>
+    <circle cx="126" cy="132" r="4.5" fill="#b71c1c"/><circle cx="146" cy="132" r="4.5" fill="#b71c1c"/>
+  </g>
+  <text x="200" y="44" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="30" font-weight="900" letter-spacing="7" fill="#e8b860" filter="url(#g2)">CRAPS</text>
+  <text x="200" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="9.5" fill="#e8b860" fill-opacity="0.55" letter-spacing="3">CASINO TABLE GAME</text>
+</svg>

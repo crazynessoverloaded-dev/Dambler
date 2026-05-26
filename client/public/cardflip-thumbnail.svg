@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050a04"/>
+      <stop offset="100%" stop-color="#0a120a"/>
+    </linearGradient>
+    <radialGradient id="tableGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#166534" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#166534" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Card back: dark blue pattern -->
+    <linearGradient id="backGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </linearGradient>
+    <!-- Card face: cream -->
+    <linearGradient id="faceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8f5ee"/>
+    </linearGradient>
+    <radialGradient id="aceGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="winBadge" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#14532d"/>
+      <stop offset="50%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#14532d"/>
+    </linearGradient>
+    <filter id="cardSh">
+      <feDropShadow dx="4" dy="8" stdDeviation="10" flood-color="#000" flood-opacity="0.7"/>
+    </filter>
+    <filter id="aceBloom">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Back pattern -->
+    <pattern id="cardPattern" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
+      <rect width="7" height="14" fill="#1d4ed8" opacity="0.5"/>
+    </pattern>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <rect width="400" height="300" fill="url(#tableGlow)"/>
+
+  <!-- Subtle felt texture suggestion -->
+  <ellipse cx="200" cy="180" rx="190" ry="90" fill="#166534" opacity="0.08"/>
+
+  <!-- ─── CARD 1 — face-down, left (x=55, y=82, 86×130) ─── -->
+  <g filter="url(#cardSh)">
+    <rect x="55" y="82" width="86" height="130" rx="9" fill="url(#backGrad)"/>
+    <!-- Pattern fill -->
+    <rect x="55" y="82" width="86" height="130" rx="9" fill="url(#cardPattern)"/>
+    <!-- Inner border -->
+    <rect x="61" y="88" width="74" height="118" rx="6" fill="none" stroke="#3b82f6" stroke-width="1.2"/>
+    <!-- Diamond center motif -->
+    <polygon points="98,117 110,137 98,157 86,137" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.7"/>
+    <polygon points="98,125 106,137 98,149 90,137" fill="#3b82f6" opacity="0.4"/>
+    <!-- Question mark hint -->
+    <text x="98" y="148" text-anchor="middle" fill="#93c5fd" font-size="13" font-weight="900" font-family="Georgia,serif" opacity="0.5">?</text>
+    <!-- Outer border -->
+    <rect x="55" y="82" width="86" height="130" rx="9" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+  </g>
+
+  <!-- ─── CARD 2 — ACE OF SPADES, face-up, center (x=157, y=58, 86×130) ─── -->
+  <!-- Glow behind ace card -->
+  <ellipse cx="200" cy="123" rx="68" ry="80" fill="url(#aceGlow)" filter="url(#aceBloom)"/>
+  <g filter="url(#cardSh)">
+    <!-- Card face -->
+    <rect x="157" y="58" width="86" height="130" rx="9" fill="url(#faceGrad)"/>
+    <!-- Gold border (win state) -->
+    <rect x="157" y="58" width="86" height="130" rx="9" fill="none" stroke="#00ff88" stroke-width="2.5"/>
+    <!-- Inner border detail -->
+    <rect x="162" y="63" width="76" height="120" rx="6" fill="none" stroke="#d1fae5" stroke-width="0.8" opacity="0.6"/>
+
+    <!-- Top-left corner: A + ♠ -->
+    <text x="166" y="76" fill="#111827" font-size="14" font-weight="900" font-family="Georgia,serif">A</text>
+    <text x="168" y="90" fill="#111827" font-size="11" font-family="Georgia,serif">♠</text>
+
+    <!-- Center spade — large -->
+    <text x="200" y="138" text-anchor="middle" fill="#111827" font-size="52" font-family="Georgia,serif">♠</text>
+
+    <!-- Bottom-right corner (rotated 180°) -->
+    <text x="234" y="176" fill="#111827" font-size="14" font-weight="900" font-family="Georgia,serif"
+      transform="rotate(180 234 169)">A</text>
+    <text x="232" y="180" fill="#111827" font-size="11" font-family="Georgia,serif"
+      transform="rotate(180 232 174)">♠</text>
+  </g>
+
+  <!-- ─── CARD 3 — face-down, right (x=259, y=82, 86×130) ─── -->
+  <g filter="url(#cardSh)">
+    <rect x="259" y="82" width="86" height="130" rx="9" fill="url(#backGrad)"/>
+    <rect x="259" y="82" width="86" height="130" rx="9" fill="url(#cardPattern)"/>
+    <rect x="265" y="88" width="74" height="118" rx="6" fill="none" stroke="#3b82f6" stroke-width="1.2"/>
+    <polygon points="302,117 314,137 302,157 290,137" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.7"/>
+    <polygon points="302,125 310,137 302,149 294,137" fill="#3b82f6" opacity="0.4"/>
+    <text x="302" y="148" text-anchor="middle" fill="#93c5fd" font-size="13" font-weight="900" font-family="Georgia,serif" opacity="0.5">?</text>
+    <rect x="259" y="82" width="86" height="130" rx="9" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+  </g>
+
+  <!-- Win badge on center card -->
+  <rect x="168" y="176" width="64" height="20" rx="6" fill="url(#winBadge)"/>
+  <text x="200" y="190" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="900" font-family="sans-serif">WIN 2.7×</text>
+
+  <!-- Tagline -->
+  <text x="200" y="238" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700" font-family="sans-serif" letter-spacing="1">Find the Ace — Pick the winning card</text>
+
+  <text x="200" y="270" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="900" font-family="sans-serif" letter-spacing="3">CARD FLIP</text>
+</svg>

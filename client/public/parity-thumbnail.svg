@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stopColor="#0a1a10"/>
+      <stop offset="100%" stopColor="#050d08"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- 4 number tiles -->
+  <rect x="44" y="80" width="70" height="90" rx="10" fill="#0d2a18" stroke="#00ff88" stroke-width="1.5" stroke-opacity="0.6"/>
+  <text x="79" y="140" fill="#00ff88" font-family="monospace" font-weight="900" font-size="38" text-anchor="middle" filter="url(#glow)">3</text>
+
+  <rect x="128" y="80" width="70" height="90" rx="10" fill="#0d2a18" stroke="#00ff88" stroke-width="1.5" stroke-opacity="0.6"/>
+  <text x="163" y="140" fill="#00ff88" font-family="monospace" font-weight="900" font-size="38" text-anchor="middle" filter="url(#glow)">7</text>
+
+  <rect x="212" y="80" width="70" height="90" rx="10" fill="#0d2a18" stroke="#00ff88" stroke-width="1.5" stroke-opacity="0.6"/>
+  <text x="247" y="140" fill="#00ff88" font-family="monospace" font-weight="900" font-size="38" text-anchor="middle" filter="url(#glow)">2</text>
+
+  <rect x="296" y="80" width="70" height="90" rx="10" fill="#0d2a18" stroke="#00ff88" stroke-width="1.5" stroke-opacity="0.6"/>
+  <text x="331" y="140" fill="#00ff88" font-family="monospace" font-weight="900" font-size="38" text-anchor="middle" filter="url(#glow)">6</text>
+
+  <!-- Plus signs between tiles -->
+  <text x="116" y="133" fill="#00ff88" font-family="monospace" font-weight="900" font-size="20" text-anchor="middle" fill-opacity="0.4">+</text>
+  <text x="200" y="133" fill="#00ff88" font-family="monospace" font-weight="900" font-size="20" text-anchor="middle" fill-opacity="0.4">+</text>
+  <text x="284" y="133" fill="#00ff88" font-family="monospace" font-weight="900" font-size="20" text-anchor="middle" fill-opacity="0.4">+</text>
+
+  <!-- Sum result -->
+  <text x="200" y="204" fill="#00ff88" font-family="monospace" font-weight="900" font-size="22" text-anchor="middle" fill-opacity="0.6">= 18</text>
+
+  <!-- EVEN badge -->
+  <rect x="140" y="214" width="120" height="34" rx="8" fill="#00ff88" fill-opacity="0.15" stroke="#00ff88" stroke-width="1.5"/>
+  <text x="200" y="237" fill="#00ff88" font-family="monospace" font-weight="900" font-size="16" text-anchor="middle" filter="url(#glow)">偶 EVEN</text>
+
+  <!-- Title -->
+  <text x="200" y="278" fill="#00ff88" font-family="monospace" font-weight="900" font-size="20" text-anchor="middle" letter-spacing="6" filter="url(#glow)">PARITY</text>
+</svg>

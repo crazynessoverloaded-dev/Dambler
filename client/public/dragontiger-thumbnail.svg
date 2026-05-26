@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<defs>
+  <radialGradient id="dt-bg" cx="50%" cy="50%" r="70%">
+    <stop offset="0%" stop-color="#0e0a00"/><stop offset="100%" stop-color="#050300"/>
+  </radialGradient>
+  <radialGradient id="dt-fire" cx="25%" cy="60%" r="55%">
+    <stop offset="0%" stop-color="#f97316" stop-opacity="0.28"/><stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="dt-ice" cx="75%" cy="60%" r="55%">
+    <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.22"/><stop offset="100%" stop-color="#0ea5e9" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="dt-card-d" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#fff7ed"/>
+  </linearGradient>
+  <linearGradient id="dt-card-t" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#f0f9ff"/>
+  </linearGradient>
+  <linearGradient id="dt-divider" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#fbbf24"/><stop offset="50%" stop-color="#ffffff"/><stop offset="100%" stop-color="#fbbf24"/>
+  </linearGradient>
+  <filter id="dt-shadow"><feDropShadow dx="4" dy="7" stdDeviation="10" flood-color="#000" flood-opacity="0.85"/></filter>
+  <filter id="dt-glow-fire"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="dt-glow-ice"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="400" height="300" fill="url(#dt-bg)"/>
+<rect width="400" height="300" fill="url(#dt-fire)"/>
+<rect width="400" height="300" fill="url(#dt-ice)"/>
+<!-- Dragon side label -->
+<text x="95" y="38" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="22" font-weight="900" letter-spacing="2" fill="#f97316" filter="url(#dt-glow-fire)">DRAGON</text>
+<!-- Tiger side label -->
+<text x="305" y="38" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="22" font-weight="900" letter-spacing="2" fill="#0ea5e9" filter="url(#dt-glow-ice)">TIGER</text>
+<!-- Dragon decorative flames (SVG paths) -->
+<path d="M 42 280 Q 55 230 48 200 Q 60 220 65 195 Q 70 220 80 210 Q 72 240 88 270" fill="#f97316" opacity="0.35"/>
+<path d="M 20 280 Q 35 240 28 215 Q 40 230 44 210 Q 50 235 60 225 Q 52 255 68 280" fill="#ea580c" opacity="0.2"/>
+<!-- Tiger stripe decorations -->
+<path d="M 312 60 Q 320 68 312 76 Q 322 72 330 80 Q 320 84 328 92" stroke="#0ea5e9" stroke-width="3" fill="none" opacity="0.4"/>
+<path d="M 332 55 Q 340 63 332 71 Q 342 67 350 75 Q 340 79 348 87" stroke="#38bdf8" stroke-width="3" fill="none" opacity="0.3"/>
+<!-- Dragon card - 9 of diamonds (DRAGON WINS = 9) -->
+<g transform="rotate(-10,105,162)" filter="url(#dt-shadow)">
+  <rect x="40" y="80" width="110" height="158" rx="13" fill="url(#dt-card-d)" stroke="#fed7aa" stroke-width="2.5"/>
+  <text x="56" y="113" font-family="Arial Black,sans-serif" font-size="26" font-weight="900" fill="#dc2626">9</text>
+  <text x="56" y="135" font-family="Arial,sans-serif" font-size="18" fill="#dc2626">♦</text>
+  <text x="95" y="202" text-anchor="middle" font-family="Arial,sans-serif" font-size="78" fill="#dc2626">♦</text>
+  <text x="134" y="231" font-family="Arial Black,sans-serif" font-size="26" font-weight="900" fill="#dc2626" transform="rotate(180,134,222)">9</text>
+</g>
+<!-- Tiger card - 3 of spades (loses) -->
+<g transform="rotate(10,295,162)" filter="url(#dt-shadow)">
+  <rect x="250" y="80" width="110" height="158" rx="13" fill="url(#dt-card-t)" stroke="#bae6fd" stroke-width="2.5" opacity="0.75"/>
+  <text x="266" y="113" font-family="Arial Black,sans-serif" font-size="26" font-weight="900" fill="#111" opacity="0.7">3</text>
+  <text x="266" y="135" font-family="Arial,sans-serif" font-size="18" fill="#111" opacity="0.7">♠</text>
+  <text x="305" y="202" text-anchor="middle" font-family="Arial,sans-serif" font-size="78" fill="#111" opacity="0.7">♠</text>
+  <text x="344" y="231" font-family="Arial Black,sans-serif" font-size="26" font-weight="900" fill="#111" transform="rotate(180,344,222)" opacity="0.7">3</text>
+</g>
+<!-- Center VS divider -->
+<line x1="200" y1="65" x2="200" y2="245" stroke="url(#dt-divider)" stroke-width="2" opacity="0.5"/>
+<circle cx="200" cy="155" r="22" fill="#0e0a00" stroke="#fbbf24" stroke-width="2"/>
+<text x="200" y="161" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#fbbf24">VS</text>
+<!-- Dragon wins badge -->
+<rect x="42" y="254" width="116" height="30" rx="10" fill="#1c0a00" stroke="#f97316" stroke-width="2" filter="url(#dt-glow-fire)"/>
+<text x="100" y="274" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#f97316">DRAGON WINS!</text>
+<!-- Subtitle -->
+<text x="200" y="292" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" letter-spacing="3" fill="#fbbf2450">DRAGON TIGER</text>
+</svg>

@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1a0f"/>
+      <stop offset="100%" stop-color="#0d1f12"/>
+    </linearGradient>
+    <!-- Gold coin gradient -->
+    <radialGradient id="coinFace" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="45%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </radialGradient>
+    <!-- Tails coin (slightly dimmer) -->
+    <radialGradient id="coinTails" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#d1d5db"/>
+      <stop offset="45%" stop-color="#9ca3af"/>
+      <stop offset="100%" stop-color="#374151"/>
+    </radialGradient>
+    <!-- Rim gradient -->
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#92400e"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <radialGradient id="coinGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#eab308" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- Tails coin (back, slightly offset) -->
+  <ellipse cx="232" cy="158" rx="72" ry="72" fill="#1f2937" stroke="#4b5563" stroke-width="2" opacity="0.6"/>
+  <ellipse cx="232" cy="158" rx="64" ry="64" fill="url(#coinTails)" opacity="0.5"/>
+  <text x="232" y="165" text-anchor="middle" dominant-baseline="middle" fill="#6b7280" font-size="36" font-weight="900" font-family="sans-serif">T</text>
+
+  <!-- Coin glow -->
+  <ellipse cx="192" cy="150" rx="110" ry="110" fill="url(#coinGlow)"/>
+
+  <!-- Main coin (Heads) -->
+  <g filter="url(#shadow)">
+    <!-- Rim -->
+    <circle cx="192" cy="150" r="78" fill="url(#rimGrad)"/>
+    <!-- Face -->
+    <circle cx="192" cy="150" r="72" fill="url(#coinFace)"/>
+    <!-- Inner ring detail -->
+    <circle cx="192" cy="150" r="62" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.5"/>
+    <!-- Shine highlight -->
+    <ellipse cx="173" cy="128" rx="18" ry="10" fill="#fef9c3" opacity="0.35" transform="rotate(-30 173 128)"/>
+  </g>
+
+  <!-- H letter on heads coin -->
+  <text x="192" y="158" text-anchor="middle" dominant-baseline="middle"
+    fill="#92400e" font-size="64" font-weight="900" font-family="serif" opacity="0.9">H</text>
+
+  <!-- VS divider -->
+  <text x="290" y="155" text-anchor="middle" dominant-baseline="middle"
+    fill="#374151" font-size="14" font-weight="900" font-family="sans-serif">vs</text>
+
+  <!-- Labels -->
+  <text x="144" y="246" text-anchor="middle" fill="#eab308" font-size="12" font-weight="700" font-family="sans-serif">HEADS</text>
+  <text x="252" y="246" text-anchor="middle" fill="#6b7280" font-size="12" font-weight="700" font-family="sans-serif">TAILS</text>
+
+  <!-- Green accent line -->
+  <line x1="80" y1="265" x2="320" y2="265" stroke="#00ff88" stroke-width="0.8" opacity="0.2"/>
+
+  <text x="200" y="285" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="900" font-family="sans-serif">COIN FLIP</text>
+</svg>

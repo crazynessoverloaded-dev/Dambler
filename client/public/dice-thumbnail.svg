@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#050a1a"/><stop offset="100%" stop-color="#020508"/></linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="60%"><stop offset="0%" stop-color="#2979ff" stop-opacity="0.25"/><stop offset="100%" stop-color="#2979ff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="die1" x1="10%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0a1830"/><stop offset="100%" stop-color="#040c18"/></linearGradient>
+    <filter id="dg"><feGaussianBlur stdDeviation="4.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="dgs"><feGaussianBlur stdDeviation="11" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <ellipse cx="190" cy="150" rx="175" ry="125" fill="url(#glow)"/>
+  <!-- Main die -->
+  <rect x="82" y="80" width="138" height="138" rx="16" fill="url(#die1)" stroke="#2979ff" stroke-width="2.5" stroke-opacity="0.85"/>
+  <polygon points="82,80 116,52 254,52 220,80" fill="#0d1f40" stroke="#2979ff" stroke-width="2" stroke-opacity="0.55"/>
+  <polygon points="220,80 254,52 254,190 220,218" fill="#061020" stroke="#2979ff" stroke-width="1.5" stroke-opacity="0.4"/>
+  <!-- 5 pips blue -->
+  <circle cx="118" cy="110" r="9" fill="#2979ff" filter="url(#dg)"/>
+  <circle cx="183" cy="110" r="9" fill="#2979ff" filter="url(#dg)"/>
+  <circle cx="150" cy="149" r="9" fill="#2979ff" filter="url(#dg)"/>
+  <circle cx="118" cy="188" r="9" fill="#2979ff" filter="url(#dg)"/>
+  <circle cx="183" cy="188" r="9" fill="#2979ff" filter="url(#dg)"/>
+  <!-- Top face pips -->
+  <circle cx="155" cy="62" r="5" fill="#2979ff" fill-opacity="0.55"/>
+  <circle cx="178" cy="57" r="5" fill="#2979ff" fill-opacity="0.55"/>
+  <circle cx="201" cy="62" r="5" fill="#2979ff" fill-opacity="0.55"/>
+  <!-- Second die, smaller rotated -->
+  <g transform="rotate(-14 316 154)">
+    <rect x="270" y="112" width="90" height="90" rx="11" fill="url(#die1)" stroke="#2979ff" stroke-width="2" stroke-opacity="0.7"/>
+    <polygon points="270,112 293,90 383,90 360,112" fill="#0d1f40" stroke="#2979ff" stroke-width="1.5" stroke-opacity="0.4"/>
+    <polygon points="360,112 383,90 383,202 360,224" fill="#061020" stroke="#2979ff" stroke-width="1" stroke-opacity="0.3"/>
+    <circle cx="290" cy="130" r="7" fill="#2979ff" filter="url(#dg)"/>
+    <circle cx="340" cy="174" r="7" fill="#2979ff" filter="url(#dg)"/>
+  </g>
+  <!-- Motion lines -->
+  <line x1="256" y1="112" x2="240" y2="102" stroke="#2979ff" stroke-width="2" stroke-opacity="0.4" stroke-dasharray="5,3"/>
+  <line x1="258" y1="130" x2="240" y2="126" stroke="#2979ff" stroke-width="1.5" stroke-opacity="0.28" stroke-dasharray="4,4"/>
+  <!-- Prediction UI -->
+  <rect x="22" y="238" width="166" height="36" rx="9" fill="#2979ff" fill-opacity="0.12" stroke="#2979ff" stroke-width="1.5" stroke-opacity="0.55"/>
+  <text x="105" y="261" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#2979ff" filter="url(#dg)">OVER 50</text>
+  <rect x="212" y="238" width="166" height="36" rx="9" fill="#ef5350" fill-opacity="0.1" stroke="#ef5350" stroke-width="1.5" stroke-opacity="0.5"/>
+  <text x="295" y="261" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#ef5350" filter="url(#dg)">UNDER 50</text>
+  <line x1="196" y1="238" x2="204" y2="274" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <text x="200" y="44" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="36" font-weight="900" letter-spacing="8" fill="#2979ff" filter="url(#dgs)">DICE</text>
+  <text x="200" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#2979ff" fill-opacity="0.6" letter-spacing="3">PREDICT THE ROLL</text>
+</svg>

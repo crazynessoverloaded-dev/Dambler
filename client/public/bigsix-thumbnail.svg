@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="g1bg" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#04100a"/>
+      <stop offset="100%" stop-color="#020604"/>
+    </radialGradient>
+    <radialGradient id="g1glow" cx="50%" cy="54%" r="48%">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="g1ptr">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="g1rim">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#g1bg)"/>
+  <rect width="400" height="300" fill="url(#g1glow)"/>
+
+  <!-- Outer glow ring -->
+  <circle cx="200" cy="165" r="140" fill="none" stroke="#00ff88" stroke-width="1" stroke-opacity="0.1" filter="url(#g1rim)"/>
+
+  <!-- Dark rim base -->
+  <circle cx="200" cy="165" r="132" fill="#080e09" stroke="#111" stroke-width="2"/>
+
+  <!-- 6 Segments — center (200,165), r=128, 60° each starting at 270° -->
+  <!-- Boundary points: (200,37),(311,101),(311,229),(200,293),(89,229),(89,101) -->
+
+  <!-- Seg 1 (270°→330°): JOKER — emerald green -->
+  <path d="M200,165 L200,37 A128,128 0 0 1 311,101 Z" fill="#16a34a"/>
+  <!-- Seg 2 (330°→30°): 1× — royal blue -->
+  <path d="M200,165 L311,101 A128,128 0 0 1 311,229 Z" fill="#1d4ed8"/>
+  <!-- Seg 3 (30°→90°): 2× — amber -->
+  <path d="M200,165 L311,229 A128,128 0 0 1 200,293 Z" fill="#d97706"/>
+  <!-- Seg 4 (90°→150°): 5× — deep orange -->
+  <path d="M200,165 L200,293 A128,128 0 0 1 89,229 Z" fill="#c2410c"/>
+  <!-- Seg 5 (150°→210°): 10× — violet -->
+  <path d="M200,165 L89,229 A128,128 0 0 1 89,101 Z" fill="#7c3aed"/>
+  <!-- Seg 6 (210°→270°): 40× — crimson -->
+  <path d="M200,165 L89,101 A128,128 0 0 1 200,37 Z" fill="#be123c"/>
+
+  <!-- Metallic rim ring -->
+  <circle cx="200" cy="165" r="128" fill="none" stroke="#888" stroke-width="3.5"/>
+  <circle cx="200" cy="165" r="130" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+  <!-- Divider spokes -->
+  <line x1="200" y1="165" x2="200" y2="37"  stroke="#000" stroke-width="2.5"/>
+  <line x1="200" y1="165" x2="311" y2="101" stroke="#000" stroke-width="2.5"/>
+  <line x1="200" y1="165" x2="311" y2="229" stroke="#000" stroke-width="2.5"/>
+  <line x1="200" y1="165" x2="200" y2="293" stroke="#000" stroke-width="2.5"/>
+  <line x1="200" y1="165" x2="89"  y2="229" stroke="#000" stroke-width="2.5"/>
+  <line x1="200" y1="165" x2="89"  y2="101" stroke="#000" stroke-width="2.5"/>
+
+  <!-- Rim peg dots at each boundary -->
+  <circle cx="200" cy="37"  r="5" fill="#00ff88" opacity="0.85"/>
+  <circle cx="311" cy="101" r="4" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="311" cy="229" r="4" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="200" cy="293" r="4" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="89"  cy="229" r="4" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="89"  cy="101" r="4" fill="rgba(255,255,255,0.5)"/>
+
+  <!-- Segment labels — at r=84 from center -->
+  <!-- Seg1 mid 300°: (242,92) -->
+  <text x="242" y="88" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="11" font-weight="900" fill="#000">JOKER</text>
+  <!-- Seg2 mid 0°: (284,165) -->
+  <text x="284" y="161" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#fff">1×</text>
+  <!-- Seg3 mid 60°: (242,238) -->
+  <text x="242" y="234" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="15" font-weight="900" fill="#000">2×</text>
+  <!-- Seg4 mid 120°: (158,238) -->
+  <text x="158" y="234" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="15" font-weight="900" fill="#fff">5×</text>
+  <!-- Seg5 mid 180°: (116,165) -->
+  <text x="116" y="161" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#fff">10×</text>
+  <!-- Seg6 mid 240°: (158,92) -->
+  <text x="158" y="88" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#fff">40×</text>
+
+  <!-- Inner decorative ring -->
+  <circle cx="200" cy="165" r="36" fill="#030806" stroke="#00ff88" stroke-width="2.5" stroke-opacity="0.6"/>
+  <!-- Hub text -->
+  <text x="200" y="162" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" font-weight="900" fill="#00ff88">BIG</text>
+  <text x="200" y="175" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" font-weight="900" fill="#00ff88">SIX</text>
+
+  <!-- Pointer at top -->
+  <polygon points="190,20 210,20 200,40" fill="#00ff88" filter="url(#g1ptr)"/>
+  <rect x="196" y="2" width="8" height="20" rx="3" fill="#00ff88" opacity="0.55"/>
+</svg>

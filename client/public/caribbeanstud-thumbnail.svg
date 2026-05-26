@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<defs>
+  <radialGradient id="cs-bg" cx="50%" cy="50%" r="70%">
+    <stop offset="0%" stop-color="#0a1a0e"/><stop offset="100%" stop-color="#030806"/>
+  </radialGradient>
+  <radialGradient id="cs-glow" cx="50%" cy="55%" r="60%">
+    <stop offset="0%" stop-color="#00ff88" stop-opacity="0.18"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="cs-card" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#f0fdf4"/>
+  </linearGradient>
+  <linearGradient id="cs-back" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#1e3a5f"/><stop offset="100%" stop-color="#0d1f36"/>
+  </linearGradient>
+  <filter id="cs-shadow"><feDropShadow dx="3" dy="5" stdDeviation="8" flood-color="#000" flood-opacity="0.85"/></filter>
+  <filter id="cs-glow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="cs-big"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="400" height="300" fill="url(#cs-bg)"/>
+<ellipse cx="200" cy="165" rx="195" ry="130" fill="url(#cs-glow)"/>
+<!-- Felt table -->
+<ellipse cx="200" cy="320" rx="270" ry="165" fill="#082010" opacity="0.6"/>
+<!-- Dealer row: 1 face-up + 4 face-down -->
+<text x="200" y="35" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" letter-spacing="3" fill="#00ff8870">DEALER</text>
+<!-- Dealer face-up card: K of clubs -->
+<g filter="url(#cs-shadow)">
+  <rect x="62" y="42" width="56" height="80" rx="8" fill="url(#cs-card)" stroke="#d1d5db" stroke-width="1"/>
+  <text x="72" y="64" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#111">K</text>
+  <text x="72" y="78" font-family="Arial,sans-serif" font-size="12" fill="#111">♣</text>
+  <text x="90" y="110" text-anchor="middle" font-family="Arial,sans-serif" font-size="42" fill="#111">♣</text>
+</g>
+<!-- Dealer face-down cards x4 -->
+<g transform="rotate(-2,140,82)" filter="url(#cs-shadow)">
+  <rect x="126" y="42" width="56" height="80" rx="8" fill="url(#cs-back)" stroke="#2563eb" stroke-width="1"/>
+  <rect x="132" y="48" width="44" height="68" rx="5" fill="none" stroke="#3b82f6" stroke-width="0.8"/>
+</g>
+<g transform="rotate(1,200,82)" filter="url(#cs-shadow)">
+  <rect x="186" y="42" width="56" height="80" rx="8" fill="url(#cs-back)" stroke="#2563eb" stroke-width="1"/>
+  <rect x="192" y="48" width="44" height="68" rx="5" fill="none" stroke="#3b82f6" stroke-width="0.8"/>
+</g>
+<g transform="rotate(-1,260,82)" filter="url(#cs-shadow)">
+  <rect x="246" y="42" width="56" height="80" rx="8" fill="url(#cs-back)" stroke="#2563eb" stroke-width="1"/>
+  <rect x="252" y="48" width="44" height="68" rx="5" fill="none" stroke="#3b82f6" stroke-width="0.8"/>
+</g>
+<g transform="rotate(2,320,82)" filter="url(#cs-shadow)">
+  <rect x="306" y="42" width="56" height="80" rx="8" fill="url(#cs-back)" stroke="#2563eb" stroke-width="1"/>
+  <rect x="312" y="48" width="44" height="68" rx="5" fill="none" stroke="#3b82f6" stroke-width="0.8"/>
+</g>
+<!-- Divider -->
+<line x1="40" y1="140" x2="360" y2="140" stroke="#00ff88" stroke-width="1" opacity="0.2"/>
+<text x="200" y="155" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" letter-spacing="3" fill="#00ff8870">YOUR HAND</text>
+<!-- Player 5-card fan: A K J 9 7 all diamonds = FLUSH -->
+<g transform="rotate(-28,100,212)" filter="url(#cs-shadow)">
+  <rect x="56" y="155" width="68" height="98" rx="9" fill="url(#cs-card)" stroke="#d1d5db" stroke-width="1"/>
+  <text x="68" y="178" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" fill="#dc2626">A</text>
+  <text x="90" y="224" text-anchor="middle" font-family="Arial,sans-serif" font-size="46" fill="#dc2626">♦</text>
+</g>
+<g transform="rotate(-14,155,210)" filter="url(#cs-shadow)">
+  <rect x="120" y="152" width="68" height="98" rx="9" fill="url(#cs-card)" stroke="#d1d5db" stroke-width="1"/>
+  <text x="132" y="175" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" fill="#dc2626">K</text>
+  <text x="154" y="221" text-anchor="middle" font-family="Arial,sans-serif" font-size="46" fill="#dc2626">♦</text>
+</g>
+<g filter="url(#cs-shadow)">
+  <rect x="186" y="150" width="68" height="98" rx="9" fill="url(#cs-card)" stroke="#00ff88" stroke-width="2" filter="url(#cs-glow)"/>
+  <text x="198" y="173" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" fill="#dc2626">J</text>
+  <text x="220" y="219" text-anchor="middle" font-family="Arial,sans-serif" font-size="46" fill="#dc2626">♦</text>
+</g>
+<g transform="rotate(14,265,210)" filter="url(#cs-shadow)">
+  <rect x="252" y="152" width="68" height="98" rx="9" fill="url(#cs-card)" stroke="#d1d5db" stroke-width="1"/>
+  <text x="264" y="175" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" fill="#dc2626">9</text>
+  <text x="286" y="221" text-anchor="middle" font-family="Arial,sans-serif" font-size="46" fill="#dc2626">♦</text>
+</g>
+<g transform="rotate(28,320,212)" filter="url(#cs-shadow)">
+  <rect x="316" y="155" width="68" height="98" rx="9" fill="url(#cs-card)" stroke="#d1d5db" stroke-width="1"/>
+  <text x="328" y="178" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" fill="#dc2626">7</text>
+  <text x="350" y="224" text-anchor="middle" font-family="Arial,sans-serif" font-size="46" fill="#dc2626">♦</text>
+</g>
+<!-- FLUSH WIN banner -->
+<rect x="120" y="262" width="160" height="32" rx="12" fill="#001a08" stroke="#00ff88" stroke-width="2" filter="url(#cs-glow)"/>
+<text x="200" y="274" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" fill="#00ff88">FLUSH</text>
+<text x="200" y="288" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" font-weight="900" fill="#00ff88" filter="url(#cs-big)">CALL 5 : 1</text>
+</svg>

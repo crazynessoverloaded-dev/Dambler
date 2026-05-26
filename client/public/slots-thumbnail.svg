@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1a0f05"/>
+      <stop offset="100%" stop-color="#0a0602"/>
+    </radialGradient>
+    <linearGradient id="machine-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a1a08"/>
+      <stop offset="100%" stop-color="#1a0f04"/>
+    </linearGradient>
+    <linearGradient id="reel-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffee44"/>
+      <stop offset="100%" stop-color="#cc8800"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-strong">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="neon-red">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- Machine body -->
+  <rect x="40" y="55" width="320" height="220" rx="20" fill="url(#machine-body)" stroke="#cc880055" stroke-width="2"/>
+
+  <!-- Top panel with SLOTS sign -->
+  <rect x="60" y="62" width="280" height="45" rx="10" fill="#110800" stroke="#ff880033" stroke-width="1.5"/>
+  <!-- SLOTS neon text -->
+  <text x="200" y="95" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="32" font-weight="900" letter-spacing="8" fill="#ff4400" filter="url(#neon-red)" opacity="0.3">SLOTS</text>
+  <text x="200" y="95" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="32" font-weight="900" letter-spacing="8" fill="#ff6622" filter="url(#neon-red)">SLOTS</text>
+
+  <!-- Reel window frame -->
+  <rect x="58" y="118" width="284" height="110" rx="8" fill="#000000" stroke="#ffaa0044" stroke-width="2"/>
+
+  <!-- Win line highlight -->
+  <rect x="58" y="152" width="284" height="42" rx="0" fill="#ffff0008"/>
+  <line x1="58" y1="153" x2="342" y2="153" stroke="#ffdd0060" stroke-width="1" stroke-dasharray="6,3"/>
+  <line x1="58" y1="194" x2="342" y2="194" stroke="#ffdd0060" stroke-width="1" stroke-dasharray="6,3"/>
+
+  <!-- === REEL 1 === -->
+  <rect x="62" y="121" width="88" height="104" rx="4" fill="url(#reel-bg)"/>
+  <!-- Symbol above (cherry) -->
+  <text x="106" y="148" text-anchor="middle" font-size="26">🍒</text>
+  <!-- CENTER SYMBOL: 7 -->
+  <text x="106" y="186" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="36" font-weight="900" fill="url(#gold)" filter="url(#glow-strong)">7</text>
+  <!-- Symbol below (bar) -->
+  <text x="106" y="218" text-anchor="middle" font-size="22" fill="#888">BAR</text>
+
+  <!-- === REEL 2 === -->
+  <rect x="156" y="121" width="88" height="104" rx="4" fill="url(#reel-bg)"/>
+  <text x="200" y="148" text-anchor="middle" font-size="26">⭐</text>
+  <text x="200" y="186" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="36" font-weight="900" fill="url(#gold)" filter="url(#glow-strong)">7</text>
+  <text x="200" y="218" text-anchor="middle" font-size="22" fill="#888">🍋</text>
+
+  <!-- === REEL 3 === -->
+  <rect x="250" y="121" width="88" height="104" rx="4" fill="url(#reel-bg)"/>
+  <text x="294" y="148" text-anchor="middle" font-size="26">💎</text>
+  <text x="294" y="186" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="36" font-weight="900" fill="url(#gold)" filter="url(#glow-strong)">7</text>
+  <text x="294" y="218" text-anchor="middle" font-size="22" fill="#888">🍒</text>
+
+  <!-- WIN flash -->
+  <rect x="58" y="152" width="284" height="42" rx="0" fill="#ffdd0012" stroke="#ffdd0060" stroke-width="1.5"/>
+  <text x="342" y="178" text-anchor="end" font-family="Arial Black, sans-serif" font-size="11" fill="#ffdd00" filter="url(#glow)">WIN!</text>
+
+  <!-- Handle -->
+  <rect x="346" y="130" width="18" height="80" rx="9" fill="#cc7700" stroke="#ffaa0055" stroke-width="1.5"/>
+  <circle cx="355" cy="128" r="12" fill="#ff4400" stroke="#ff880088" stroke-width="2" filter="url(#neon-red)"/>
+
+  <!-- Coin tray -->
+  <rect x="80" y="245" width="240" height="22" rx="6" fill="#110800" stroke="#cc880033" stroke-width="1.5"/>
+
+  <!-- Jackpot amount -->
+  <text x="200" y="282" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="13" font-weight="900" fill="#00ff88" filter="url(#glow)" letter-spacing="1">JACKPOT: $50,000</text>
+
+  <!-- Corner lights -->
+  <circle cx="68" cy="70" r="5" fill="#ff4400" filter="url(#neon-red)" opacity="0.8"/>
+  <circle cx="332" cy="70" r="5" fill="#ff4400" filter="url(#neon-red)" opacity="0.8"/>
+  <circle cx="68" cy="267" r="5" fill="#ffaa00" filter="url(#glow)" opacity="0.6"/>
+  <circle cx="332" cy="267" r="5" fill="#ffaa00" filter="url(#glow)" opacity="0.6"/>
+</svg>

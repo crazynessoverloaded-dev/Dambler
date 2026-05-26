@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0a1a0f"/>
+      <stop offset="100%" stop-color="#040a06"/>
+    </radialGradient>
+    <radialGradient id="picked" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#80ffcc"/>
+      <stop offset="100%" stop-color="#00aa55"/>
+    </radialGradient>
+    <radialGradient id="match-grad" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffff88"/>
+      <stop offset="100%" stop-color="#ffaa00"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-strong">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- Number grid (8 cols x 5 rows = 40 numbers) -->
+  <g>
+    <!-- Define grid helper: col=0-7, row=0-4, num = row*8 + col + 1 -->
+    <!-- Row 0: 1-8 -->
+    <!-- Plain tiles -->
+    <rect x="25" y="75" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="42" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">1</text>
+
+    <!-- Picked (green) -->
+    <rect x="65" y="75" width="35" height="30" rx="5" fill="url(#picked)" filter="url(#glow)"/>
+    <text x="82" y="95" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="11" font-weight="bold" fill="#003322">2</text>
+
+    <rect x="105" y="75" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="122" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">3</text>
+
+    <!-- Picked -->
+    <rect x="145" y="75" width="35" height="30" rx="5" fill="url(#picked)" filter="url(#glow)"/>
+    <text x="162" y="95" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="11" font-weight="bold" fill="#003322">4</text>
+
+    <rect x="185" y="75" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="202" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">5</text>
+
+    <rect x="225" y="75" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="242" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">6</text>
+
+    <!-- Picked -->
+    <rect x="265" y="75" width="35" height="30" rx="5" fill="url(#picked)" filter="url(#glow)"/>
+    <text x="282" y="95" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="11" font-weight="bold" fill="#003322">7</text>
+
+    <rect x="305" y="75" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="322" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">8</text>
+
+    <!-- Row 1: 9-16 -->
+    <rect x="25" y="112" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="42" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">9</text>
+
+    <!-- MATCH (yellow/gold) -->
+    <rect x="65" y="112" width="35" height="30" rx="5" fill="url(#match-grad)" filter="url(#glow-strong)"/>
+    <text x="82" y="132" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="11" font-weight="bold" fill="#5a3300">10</text>
+
+    <rect x="105" y="112" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="122" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">11</text>
+
+    <rect x="145" y="112" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="162" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">12</text>
+
+    <!-- MATCH -->
+    <rect x="185" y="112" width="35" height="30" rx="5" fill="url(#match-grad)" filter="url(#glow-strong)"/>
+    <text x="202" y="132" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="11" font-weight="bold" fill="#5a3300">13</text>
+
+    <rect x="225" y="112" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="242" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">14</text>
+
+    <rect x="265" y="112" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="282" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">15</text>
+
+    <!-- Drawn (but not picked - accent) -->
+    <rect x="305" y="112" width="35" height="30" rx="5" fill="#00ff8822" stroke="#00ff8855" stroke-width="1.5"/>
+    <text x="322" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#00ff8880">16</text>
+
+    <!-- Row 2: 17-24 -->
+    <rect x="25" y="149" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="42" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">17</text>
+
+    <rect x="65" y="149" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="82" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">18</text>
+
+    <!-- MATCH -->
+    <rect x="105" y="149" width="35" height="30" rx="5" fill="url(#match-grad)" filter="url(#glow-strong)"/>
+    <text x="122" y="169" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="11" font-weight="bold" fill="#5a3300">19</text>
+
+    <rect x="145" y="149" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="162" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">20</text>
+
+    <rect x="185" y="149" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="202" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">21</text>
+
+    <!-- Drawn not picked -->
+    <rect x="225" y="149" width="35" height="30" rx="5" fill="#00ff8822" stroke="#00ff8855" stroke-width="1.5"/>
+    <text x="242" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#00ff8880">22</text>
+
+    <rect x="265" y="149" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="282" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">23</text>
+
+    <rect x="305" y="149" width="35" height="30" rx="5" fill="#0a1a0f" stroke="#00ff8815" stroke-width="1"/>
+    <text x="322" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ffffff30">24</text>
+
+    <!-- Row 3: 25-32 (small, faded) -->
+    <rect x="25" y="186" width="35" height="25" rx="4" fill="#0a1a0f" stroke="#00ff8810" stroke-width="1"/>
+    <text x="42" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ffffff20">25</text>
+    <rect x="65" y="186" width="35" height="25" rx="4" fill="#0a1a0f" stroke="#00ff8810" stroke-width="1"/>
+    <text x="82" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ffffff20">26</text>
+    <rect x="105" y="186" width="35" height="25" rx="4" fill="#0a1a0f" stroke="#00ff8810" stroke-width="1"/>
+    <text x="122" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ffffff20">27</text>
+    <rect x="145" y="186" width="35" height="25" rx="4" fill="#0a1a0f" stroke="#00ff8810" stroke-width="1"/>
+    <text x="162" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ffffff20">28</text>
+    <rect x="185" y="186" width="35" height="25" rx="4" fill="#0a1a0f" stroke="#00ff8810" stroke-width="1"/>
+    <text x="202" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ffffff20">29</text>
+    <rect x="225" y="186" width="35" height="25" rx="4" fill="#0a1a0f" stroke="#00ff8810" stroke-width="1"/>
+    <text x="242" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ffffff20">30</text>
+    <rect x="265" y="186" width="35" height="25" rx="4" fill="#0a1a0f" stroke="#00ff8810" stroke-width="1"/>
+    <text x="282" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ffffff20">31</text>
+    <rect x="305" y="186" width="35" height="25" rx="4" fill="#0a1a0f" stroke="#00ff8810" stroke-width="1"/>
+    <text x="322" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ffffff20">32</text>
+  </g>
+
+  <!-- Fade out bottom rows -->
+  <rect x="0" y="195" width="400" height="60" fill="url(#bg)" opacity="0.7"/>
+
+  <!-- Stats bar -->
+  <rect x="25" y="222" width="350" height="38" rx="8" fill="#00ff8812" stroke="#00ff8830" stroke-width="1"/>
+  <text x="90" y="242" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#00ff8880">PICKED</text>
+  <text x="90" y="255" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="13" font-weight="900" fill="#00ff88">5</text>
+  <line x1="145" y1="228" x2="145" y2="254" stroke="#00ff8820" stroke-width="1"/>
+  <text x="200" y="242" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#00ff8880">MATCHES</text>
+  <text x="200" y="255" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="13" font-weight="900" fill="#ffaa00" filter="url(#glow)">3</text>
+  <line x1="255" y1="228" x2="255" y2="254" stroke="#00ff8820" stroke-width="1"/>
+  <text x="313" y="242" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#00ff8880">PAYOUT</text>
+  <text x="313" y="255" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="13" font-weight="900" fill="#00ff88" filter="url(#glow)">15x</text>
+
+  <!-- Title -->
+  <text x="200" y="44" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="28" font-weight="900" letter-spacing="6" fill="#00ff88" filter="url(#glow)">KENO</text>
+  <text x="200" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#00ff8880" letter-spacing="2">PICK YOUR NUMBERS</text>
+
+  <!-- Win flash -->
+  <text x="200" y="278" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="14" fill="#ffaa00" filter="url(#glow)">+$150.00 WIN!</text>
+</svg>

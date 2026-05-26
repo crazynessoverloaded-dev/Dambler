@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="g3bg" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#08060e"/>
+      <stop offset="100%" stop-color="#030204"/>
+    </radialGradient>
+    <filter id="g3ptr">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="g3rim">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#g3bg)"/>
+
+  <!-- Colored ambient glows behind wheel -->
+  <ellipse cx="280" cy="165" rx="110" ry="95" fill="#dc2626" fill-opacity="0.07"/>
+  <ellipse cx="140" cy="225" rx="85" ry="70" fill="#1d4ed8" fill-opacity="0.08"/>
+  <ellipse cx="148" cy="100" rx="70" ry="55" fill="#b45309" fill-opacity="0.08"/>
+
+  <!-- Outer glow ring -->
+  <circle cx="200" cy="165" r="140" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" filter="url(#g3rim)"/>
+
+  <!-- Dark rim base -->
+  <circle cx="200" cy="165" r="132" fill="#06050c" stroke="#111" stroke-width="2"/>
+
+  <!-- 3 Segments — center (200,165), r=128 -->
+  <!-- Boundary points: 270°=(200,37), 90°=(200,293), 216°=(96,90) -->
+
+  <!-- Red: 270°→90° CW (180°) — large-arc=0, sweep=1 -->
+  <!-- Goes clockwise from top (270°) through right to bottom (90°) = right half -->
+  <path d="M200,165 L200,37 A128,128 0 0 1 200,293 Z" fill="#dc2626"/>
+
+  <!-- Blue: 90°→216° CW (126°) -->
+  <path d="M200,165 L200,293 A128,128 0 0 1 96,90 Z" fill="#1d4ed8"/>
+
+  <!-- Gold: 216°→270° CW (54°) -->
+  <path d="M200,165 L96,90 A128,128 0 0 1 200,37 Z" fill="#b45309"/>
+
+  <!-- Metallic rim -->
+  <circle cx="200" cy="165" r="128" fill="none" stroke="#aaa" stroke-width="4"/>
+  <circle cx="200" cy="165" r="131" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+
+  <!-- Dividers -->
+  <line x1="200" y1="165" x2="200" y2="37"  stroke="#000" stroke-width="3"/>
+  <line x1="200" y1="165" x2="200" y2="293" stroke="#000" stroke-width="3"/>
+  <line x1="200" y1="165" x2="96"  y2="90"  stroke="#000" stroke-width="3"/>
+
+  <!-- Rim pegs -->
+  <circle cx="200" cy="37"  r="5.5" fill="#fff" opacity="0.7"/>
+  <circle cx="200" cy="293" r="5"   fill="#fff" opacity="0.5"/>
+  <circle cx="96"  cy="90"  r="5"   fill="#fff" opacity="0.5"/>
+
+  <!-- Labels at r=82 -->
+  <!-- Red mid 0°: (282,165) -->
+  <text x="282" y="157" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="19" font-weight="900" fill="#fff">RED</text>
+  <text x="282" y="177" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.7)">1.9×</text>
+
+  <!-- Blue mid 153°: (127,202) -->
+  <text x="127" y="196" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#fff">BLUE</text>
+  <text x="127" y="214" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.7)">2.7×</text>
+
+  <!-- Gold mid 243°: (163,92) -->
+  <text x="163" y="88" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#fff">GOLD</text>
+  <text x="163" y="103" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.75)">6×</text>
+
+  <!-- Hub -->
+  <circle cx="200" cy="165" r="32" fill="#050408" stroke="rgba(255,255,255,0.25)" stroke-width="2.5"/>
+  <circle cx="200" cy="165" r="8" fill="rgba(255,255,255,0.12)"/>
+  <circle cx="200" cy="165" r="4" fill="rgba(255,255,255,0.4)"/>
+
+  <!-- Pointer -->
+  <polygon points="190,20 210,20 200,40" fill="#ffffff" filter="url(#g3ptr)" opacity="0.9"/>
+  <rect x="196" y="2" width="8" height="20" rx="3" fill="rgba(255,255,255,0.5)"/>
+
+  <!-- Title at very top -->
+  <text x="200" y="13" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" font-weight="900" fill="rgba(255,255,255,0.3)" letter-spacing="2">COLOR SPIN</text>
+</svg>

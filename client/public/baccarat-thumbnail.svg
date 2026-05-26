@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<defs>
+  <radialGradient id="bac-bg" cx="50%" cy="50%" r="70%">
+    <stop offset="0%" stop-color="#12091f"/><stop offset="100%" stop-color="#060308"/>
+  </radialGradient>
+  <radialGradient id="bac-glow-l" cx="25%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.25"/><stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="bac-glow-r" cx="75%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#d97706" stop-opacity="0.25"/><stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="bac-card" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#eff6ff"/>
+  </linearGradient>
+  <linearGradient id="bac-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#b45309"/><stop offset="50%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#b45309"/>
+  </linearGradient>
+  <filter id="bac-shadow"><feDropShadow dx="3" dy="5" stdDeviation="8" flood-color="#000" flood-opacity="0.8"/></filter>
+  <filter id="bac-glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="bac-win"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="400" height="300" fill="url(#bac-bg)"/>
+<rect width="400" height="300" fill="url(#bac-glow-l)"/>
+<rect width="400" height="300" fill="url(#bac-glow-r)"/>
+<!-- Gold divider line -->
+<line x1="200" y1="30" x2="200" y2="270" stroke="url(#bac-gold)" stroke-width="1.5" opacity="0.6"/>
+<!-- PLAYER label -->
+<text x="100" y="42" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" letter-spacing="3" fill="#a78bfa">PLAYER</text>
+<!-- BANKER label -->
+<text x="300" y="42" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" letter-spacing="3" fill="#fbbf24">BANKER</text>
+<!-- Player cards -->
+<g transform="rotate(-8,80,148)" filter="url(#bac-shadow)">
+  <rect x="30" y="65" width="90" height="130" rx="10" fill="url(#bac-card)" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="44" y="91" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#111">8</text>
+  <text x="75" y="142" text-anchor="middle" font-family="Arial,sans-serif" font-size="56" fill="#dc2626">♥</text>
+</g>
+<g transform="rotate(4,155,148)" filter="url(#bac-shadow)">
+  <rect x="108" y="62" width="90" height="130" rx="10" fill="url(#bac-card)" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="122" y="88" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#111">A</text>
+  <text x="153" y="140" text-anchor="middle" font-family="Arial,sans-serif" font-size="56" fill="#111">♠</text>
+</g>
+<!-- Player total badge -->
+<rect x="48" y="215" width="104" height="38" rx="12" fill="#3b0764" stroke="#a78bfa" stroke-width="2" filter="url(#bac-win)"/>
+<text x="100" y="230" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" fill="#c4b5fd">NATURAL</text>
+<text x="100" y="248" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#a78bfa">9</text>
+<!-- Banker cards -->
+<g transform="rotate(-4,248,148)" filter="url(#bac-shadow)">
+  <rect x="210" y="62" width="90" height="130" rx="10" fill="url(#bac-card)" stroke="#fcd34d" stroke-width="1.5"/>
+  <text x="224" y="88" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#dc2626">K</text>
+  <text x="255" y="140" text-anchor="middle" font-family="Arial,sans-serif" font-size="56" fill="#dc2626">♦</text>
+</g>
+<g transform="rotate(8,330,148)" filter="url(#bac-shadow)">
+  <rect x="288" y="65" width="90" height="130" rx="10" fill="url(#bac-card)" stroke="#fcd34d" stroke-width="1.5"/>
+  <text x="302" y="91" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#111">6</text>
+  <text x="333" y="142" text-anchor="middle" font-family="Arial,sans-serif" font-size="56" fill="#111">♣</text>
+</g>
+<!-- Banker total badge -->
+<rect x="248" y="215" width="104" height="38" rx="12" fill="#422006" stroke="#fbbf24" stroke-width="1.5"/>
+<text x="300" y="230" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" fill="#fcd34d">TOTAL</text>
+<text x="300" y="248" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#fbbf24">6</text>
+<!-- PLAYER WINS banner -->
+<rect x="108" y="264" width="184" height="28" rx="8" fill="#1f0045" stroke="#a78bfa" stroke-width="1.5" filter="url(#bac-glow)"/>
+<text x="200" y="283" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#a78bfa" filter="url(#bac-glow)">PLAYER WINS!</text>
+<!-- Title -->
+<text x="200" y="22" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" letter-spacing="5" fill="#fbbf2490">BACCARAT</text>
+</svg>

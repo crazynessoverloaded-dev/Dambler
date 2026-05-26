@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#080f08"/>
+      <stop offset="100%" stop-color="#030603"/>
+    </radialGradient>
+    <radialGradient id="wheel-bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
+    </radialGradient>
+    <radialGradient id="inner-wheel" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2a1a00"/>
+      <stop offset="100%" stop-color="#1a0f00"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-strong">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- ============ WHEEL ============ -->
+  <g transform="translate(130, 155)">
+    <!-- Outer ring -->
+    <circle cx="0" cy="0" r="105" fill="#2a1a00" stroke="#cc8800" stroke-width="3"/>
+    <circle cx="0" cy="0" r="98" fill="none" stroke="#ffaa0040" stroke-width="1"/>
+
+    <!-- Wheel segments (simplified - just show colored bands) -->
+    <!-- Generate 37 segments of red/black/green -->
+    <!-- 0 = green, odds of red numbers shown -->
+
+    <!-- Segment colors approximation using arcs -->
+    <!-- We'll draw 6 groups of colored arcs to represent the wheel pattern -->
+    <path d="M 0 -98 A 98 98 0 0 1 47 -86 L 40 -73 A 83 83 0 0 0 0 -83 Z" fill="#cc2200"/>
+    <path d="M 47 -86 A 98 98 0 0 1 86 -47 L 73 -40 A 83 83 0 0 0 40 -73 Z" fill="#111111"/>
+    <path d="M 86 -47 A 98 98 0 0 1 98 0 L 83 0 A 83 83 0 0 0 73 -40 Z" fill="#cc2200"/>
+    <path d="M 98 0 A 98 98 0 0 1 86 47 L 73 40 A 83 83 0 0 0 83 0 Z" fill="#111111"/>
+    <path d="M 86 47 A 98 98 0 0 1 47 86 L 40 73 A 83 83 0 0 0 73 40 Z" fill="#cc2200"/>
+    <path d="M 47 86 A 98 98 0 0 1 0 98 L 0 83 A 83 83 0 0 0 40 73 Z" fill="#111111"/>
+    <path d="M 0 98 A 98 98 0 0 1 -47 86 L -40 73 A 83 83 0 0 0 0 83 Z" fill="#cc2200"/>
+    <path d="M -47 86 A 98 98 0 0 1 -86 47 L -73 40 A 83 83 0 0 0 -40 73 Z" fill="#111111"/>
+    <path d="M -86 47 A 98 98 0 0 1 -98 0 L -83 0 A 83 83 0 0 0 -73 40 Z" fill="#cc2200"/>
+    <path d="M -98 0 A 98 98 0 0 1 -86 -47 L -73 -40 A 83 83 0 0 0 -83 0 Z" fill="#111111"/>
+    <path d="M -86 -47 A 98 98 0 0 1 -47 -86 L -40 -73 A 83 83 0 0 0 -73 -40 Z" fill="#cc2200"/>
+    <path d="M -47 -86 A 98 98 0 0 1 0 -98 L 0 -83 A 83 83 0 0 0 -40 -73 Z" fill="#007722"/>
+
+    <!-- Number labels on wheel (a few) -->
+    <text x="0" y="-90" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="8" font-weight="bold" fill="white" transform="rotate(0)">32</text>
+    <text x="90" y="0" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="8" font-weight="bold" fill="white" transform="rotate(90) translate(0,-90)">15</text>
+    <text x="0" y="-90" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="8" font-weight="bold" fill="white" transform="rotate(180)">19</text>
+    <text x="0" y="-90" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="8" font-weight="bold" fill="white" transform="rotate(270)">4</text>
+
+    <!-- Inner ring (wooden look) -->
+    <circle cx="0" cy="0" r="74" fill="url(#inner-wheel)" stroke="#cc8800" stroke-width="2"/>
+    <circle cx="0" cy="0" r="68" fill="#0a0a0a" stroke="#442200" stroke-width="1"/>
+
+    <!-- Center -->
+    <circle cx="0" cy="0" r="22" fill="#cc8800"/>
+    <circle cx="0" cy="0" r="18" fill="#ffcc44"/>
+    <circle cx="0" cy="0" r="12" fill="#cc8800"/>
+    <circle cx="0" cy="0" r="6" fill="#ffee88"/>
+
+    <!-- Ball position (at ~top-right, indicating result) -->
+    <circle cx="58" cy="-58" r="7" fill="white" filter="url(#glow)"/>
+    <circle cx="58" cy="-58" r="5" fill="#f0f0f0"/>
+
+    <!-- Pointer -->
+    <polygon points="0,-108 -6,-94 6,-94" fill="#00ff88" filter="url(#glow)"/>
+
+    <!-- Outer gold border details -->
+    <circle cx="0" cy="-100" r="4" fill="#ffcc44"/>
+    <circle cx="100" cy="0" r="4" fill="#ffcc44"/>
+    <circle cx="0" cy="100" r="4" fill="#ffcc44"/>
+    <circle cx="-100" cy="0" r="4" fill="#ffcc44"/>
+  </g>
+
+  <!-- ============ BETTING GRID (right side) ============ -->
+  <g transform="translate(258, 70)">
+    <!-- 0 -->
+    <rect x="0" y="0" width="25" height="60" rx="4" fill="#007722" stroke="#00ff8840" stroke-width="1"/>
+    <text x="12" y="34" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="11" font-weight="bold" fill="white">0</text>
+
+    <!-- Number grid 3 cols -->
+    <!-- Col 1 (3,6,9,...) -->
+    <rect x="28" y="0" width="22" height="18" rx="2" fill="#cc2200" stroke="#ffffff15" stroke-width="1"/>
+    <text x="39" y="13" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">3</text>
+    <rect x="28" y="21" width="22" height="18" rx="2" fill="#111" stroke="#ffffff15" stroke-width="1"/>
+    <text x="39" y="34" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">6</text>
+    <rect x="28" y="42" width="22" height="18" rx="2" fill="#cc2200" stroke="#ffffff15" stroke-width="1"/>
+    <text x="39" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">9</text>
+
+    <!-- Col 2 -->
+    <rect x="53" y="0" width="22" height="18" rx="2" fill="#111" stroke="#ffffff15" stroke-width="1"/>
+    <text x="64" y="13" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">2</text>
+    <rect x="53" y="21" width="22" height="18" rx="2" fill="#cc2200" stroke="#ffffff15" stroke-width="1"/>
+    <text x="64" y="34" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">5</text>
+    <rect x="53" y="42" width="22" height="18" rx="2" fill="#111" stroke="#ffffff15" stroke-width="1"/>
+    <text x="64" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">8</text>
+
+    <!-- Col 3 (highlighted - winning number area) -->
+    <rect x="78" y="0" width="22" height="18" rx="2" fill="#cc2200" stroke="#00ff88" stroke-width="2" filter="url(#glow)"/>
+    <text x="89" y="13" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="9" font-weight="bold" fill="white">1</text>
+    <rect x="78" y="21" width="22" height="18" rx="2" fill="#111" stroke="#ffffff15" stroke-width="1"/>
+    <text x="89" y="34" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">4</text>
+    <rect x="78" y="42" width="22" height="18" rx="2" fill="#cc2200" stroke="#ffffff15" stroke-width="1"/>
+    <text x="89" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">7</text>
+
+    <!-- Outside bets -->
+    <rect x="0" y="64" width="50" height="18" rx="3" fill="#cc2200" stroke="#ff444440" stroke-width="1"/>
+    <text x="25" y="77" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="9" font-weight="bold" fill="white">RED</text>
+
+    <rect x="53" y="64" width="50" height="18" rx="3" fill="#111" stroke="#ffffff20" stroke-width="1"/>
+    <text x="78" y="77" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="9" font-weight="bold" fill="white">BLACK</text>
+
+    <rect x="0" y="86" width="50" height="18" rx="3" fill="#1a1a3a" stroke="#4444aa30" stroke-width="1"/>
+    <text x="25" y="99" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="9" font-weight="bold" fill="#aaaaff">ODD</text>
+
+    <rect x="53" y="86" width="50" height="18" rx="3" fill="#1a1a3a" stroke="#4444aa30" stroke-width="1"/>
+    <text x="78" y="99" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="9" font-weight="bold" fill="#aaaaff">EVEN</text>
+
+    <!-- Chip on red -->
+    <circle cx="25" cy="73" r="8" fill="#ffee44" stroke="#cc8800" stroke-width="1.5" filter="url(#glow)"/>
+    <text x="25" y="77" text-anchor="middle" font-family="Arial Bold, sans-serif" font-size="7" font-weight="bold" fill="#5a3300">$10</text>
+  </g>
+
+  <!-- Result display -->
+  <rect x="258" y="188" width="130" height="50" rx="10" fill="#00ff8815" stroke="#00ff8845" stroke-width="1.5"/>
+  <text x="323" y="208" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#00ff8880">RESULT</text>
+  <text x="323" y="230" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="24" font-weight="900" fill="#cc2200" filter="url(#glow-strong)">32 🔴</text>
+
+  <!-- Win amount -->
+  <text x="323" y="258" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="16" font-weight="900" fill="#00ff88" filter="url(#glow)">+$20.00</text>
+
+  <!-- Title -->
+  <text x="130" y="38" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="22" font-weight="900" letter-spacing="4" fill="#00ff88" filter="url(#glow)">ROULETTE</text>
+  <text x="130" y="54" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#00ff8880" letter-spacing="2">SPIN THE WHEEL</text>
+</svg>

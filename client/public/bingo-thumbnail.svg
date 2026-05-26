@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stopColor="#0a1a10"/>
+      <stop offset="100%" stopColor="#050d08"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- Card grid -->
+  <g transform="translate(80,55)">
+    <!-- Header row: B I N G O -->
+    <g fill="#00ff88" font-family="monospace" font-weight="900" font-size="18" text-anchor="middle" filter="url(#glow)">
+      <text x="24" y="24">B</text>
+      <text x="72" y="24">I</text>
+      <text x="120" y="24">N</text>
+      <text x="168" y="24">G</text>
+      <text x="216" y="24">O</text>
+    </g>
+    <!-- Grid cells -->
+    <g fill="none" stroke="#00ff88" stroke-width="1" stroke-opacity="0.3">
+      <!-- 5x5 grid rectangles -->
+      <rect x="4" y="32" width="40" height="36" rx="4"/>
+      <rect x="52" y="32" width="40" height="36" rx="4"/>
+      <rect x="100" y="32" width="40" height="36" rx="4"/>
+      <rect x="148" y="32" width="40" height="36" rx="4"/>
+      <rect x="196" y="32" width="40" height="36" rx="4"/>
+
+      <rect x="4" y="76" width="40" height="36" rx="4"/>
+      <rect x="52" y="76" width="40" height="36" rx="4"/>
+      <rect x="100" y="76" width="40" height="36" rx="4"/>
+      <rect x="148" y="76" width="40" height="36" rx="4"/>
+      <rect x="196" y="76" width="40" height="36" rx="4"/>
+
+      <rect x="4" y="120" width="40" height="36" rx="4"/>
+      <rect x="52" y="120" width="40" height="36" rx="4"/>
+      <!-- Free space -->
+      <rect x="100" y="120" width="40" height="36" rx="4" fill="#00ff88" fill-opacity="0.15" stroke="#00ff88" stroke-opacity="0.8"/>
+      <rect x="148" y="120" width="40" height="36" rx="4"/>
+      <rect x="196" y="120" width="40" height="36" rx="4"/>
+
+      <rect x="4" y="164" width="40" height="36" rx="4"/>
+      <rect x="52" y="164" width="40" height="36" rx="4"/>
+      <rect x="100" y="164" width="40" height="36" rx="4"/>
+      <rect x="148" y="164" width="40" height="36" rx="4"/>
+      <rect x="196" y="164" width="40" height="36" rx="4"/>
+
+      <rect x="4" y="208" width="40" height="36" rx="4"/>
+      <rect x="52" y="208" width="40" height="36" rx="4"/>
+      <rect x="100" y="208" width="40" height="36" rx="4"/>
+      <rect x="148" y="208" width="40" height="36" rx="4"/>
+      <rect x="196" y="208" width="40" height="36" rx="4"/>
+    </g>
+    <!-- Marked cells (diagonal win) -->
+    <g fill="#00ff88" fill-opacity="0.25" stroke="#00ff88" stroke-width="1.5" stroke-opacity="0.9">
+      <rect x="4" y="32" width="40" height="36" rx="4"/>
+      <rect x="52" y="76" width="40" height="36" rx="4"/>
+      <rect x="100" y="120" width="40" height="36" rx="4"/>
+      <rect x="148" y="164" width="40" height="36" rx="4"/>
+      <rect x="196" y="208" width="40" height="36" rx="4"/>
+    </g>
+    <!-- Numbers in cells -->
+    <g fill="#a0e8c0" font-family="monospace" font-weight="700" font-size="13" text-anchor="middle">
+      <text x="24" y="55">7</text>
+      <text x="72" y="55">18</text>
+      <text x="120" y="55">42</text>
+      <text x="168" y="55">54</text>
+      <text x="216" y="55">63</text>
+      <text x="24" y="99">3</text>
+      <text x="72" y="99">21</text>
+      <text x="120" y="99">38</text>
+      <text x="168" y="99">47</text>
+      <text x="216" y="99">71</text>
+    </g>
+    <!-- FREE text -->
+    <text x="120" y="143" fill="#00ff88" font-family="monospace" font-weight="900" font-size="11" text-anchor="middle" filter="url(#glow)">FREE</text>
+    <!-- Numbers row 4 -->
+    <g fill="#a0e8c0" font-family="monospace" font-weight="700" font-size="13" text-anchor="middle">
+      <text x="24" y="187">12</text>
+      <text x="72" y="187">27</text>
+      <text x="120" y="187">33</text>
+      <text x="168" y="187">60</text>
+      <text x="216" y="187">68</text>
+      <text x="24" y="231">9</text>
+      <text x="72" y="231">16</text>
+      <text x="120" y="231">44</text>
+      <text x="168" y="231">58</text>
+      <text x="216" y="231">75</text>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="278" fill="#00ff88" font-family="monospace" font-weight="900" font-size="22" text-anchor="middle" letter-spacing="6" filter="url(#glow)">BINGO</text>
+</svg>

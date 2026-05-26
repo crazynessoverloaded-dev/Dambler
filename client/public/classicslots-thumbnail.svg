@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080808"/>
+      <stop offset="100%" stop-color="#101010"/>
+    </linearGradient>
+    <linearGradient id="cabinet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#222222"/>
+      <stop offset="100%" stop-color="#111111"/>
+    </linearGradient>
+    <linearGradient id="marqueeRed" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7f0000"/>
+      <stop offset="50%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#7f0000"/>
+    </linearGradient>
+    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="leverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6b7280"/>
+      <stop offset="40%" stop-color="#d1d5db"/>
+      <stop offset="100%" stop-color="#6b7280"/>
+    </linearGradient>
+    <radialGradient id="leverBall" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="60%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </radialGradient>
+    <radialGradient id="winGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="cabSh">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000" flood-opacity="0.8"/>
+    </filter>
+    <filter id="winBloom">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="neonText">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- Cabinet body -->
+  <g filter="url(#cabSh)">
+    <!-- Gold outer border -->
+    <rect x="73" y="18" width="254" height="232" rx="16" fill="url(#goldBorder)"/>
+    <!-- Cabinet inner -->
+    <rect x="77" y="22" width="246" height="224" rx="13" fill="url(#cabinet)"/>
+  </g>
+
+  <!-- Top marquee -->
+  <rect x="77" y="22" width="246" height="44" rx="13" fill="url(#marqueeRed)"/>
+  <rect x="77" y="48" width="246" height="18" fill="url(#marqueeRed)"/>
+  <!-- Marquee stars -->
+  <text x="93"  y="42" fill="#fbbf24" font-size="10" font-family="sans-serif">★</text>
+  <text x="307" y="42" fill="#fbbf24" font-size="10" font-family="sans-serif">★</text>
+  <text x="200" y="44" text-anchor="middle" fill="#fef08a" font-size="15" font-weight="900" font-family="sans-serif" letter-spacing="2" filter="url(#neonText)">CLASSIC SLOTS</text>
+
+  <!-- Chrome strip under marquee -->
+  <rect x="77" y="66" width="246" height="7" fill="url(#leverGrad)" opacity="0.6"/>
+
+  <!-- Reel section background -->
+  <rect x="84" y="74" width="232" height="108" rx="8" fill="#080808"/>
+  <rect x="84" y="74" width="232" height="108" rx="8" fill="none" stroke="url(#goldBorder)" stroke-width="1"/>
+
+  <!-- Win glow on reels -->
+  <ellipse cx="200" cy="128" rx="110" ry="45" fill="url(#winGlow)"/>
+
+  <!-- Reel window 1 -->
+  <rect x="90"  y="80" width="66" height="96" rx="7" fill="#030303"/>
+  <rect x="90"  y="80" width="66" height="96" rx="7" fill="none" stroke="#fbbf24" stroke-width="1.5" filter="url(#winBloom)"/>
+  <!-- Reel window 2 -->
+  <rect x="167" y="80" width="66" height="96" rx="7" fill="#030303"/>
+  <rect x="167" y="80" width="66" height="96" rx="7" fill="none" stroke="#fbbf24" stroke-width="1.5" filter="url(#winBloom)"/>
+  <!-- Reel window 3 -->
+  <rect x="244" y="80" width="66" height="96" rx="7" fill="#030303"/>
+  <rect x="244" y="80" width="66" height="96" rx="7" fill="none" stroke="#fbbf24" stroke-width="1.5" filter="url(#winBloom)"/>
+
+  <!-- Top fade on windows -->
+  <rect x="90"  y="80"  width="66" height="20" rx="7" fill="#080808"/>
+  <rect x="167" y="80"  width="66" height="20" rx="7" fill="#080808"/>
+  <rect x="244" y="80"  width="66" height="20" rx="7" fill="#080808"/>
+  <!-- Bottom fade on windows -->
+  <rect x="90"  y="156" width="66" height="20" rx="7" fill="#080808"/>
+  <rect x="167" y="156" width="66" height="20" rx="7" fill="#080808"/>
+  <rect x="244" y="156" width="66" height="20" rx="7" fill="#080808"/>
+
+  <!-- PAYLINE — red line through center (y=128) -->
+  <line x1="84" y1="128" x2="316" y2="128" stroke="#dc2626" stroke-width="1.5" opacity="0.7"/>
+  <!-- Payline markers -->
+  <polygon points="84,122 84,134 76,128" fill="#dc2626" opacity="0.9"/>
+  <polygon points="316,122 316,134 324,128" fill="#dc2626" opacity="0.9"/>
+
+  <!-- Symbols Window 1: top/center/bottom -->
+  <text x="123" y="108" text-anchor="middle" font-size="20" font-family="sans-serif" opacity="0.5">🍋</text>
+  <text x="123" y="135" text-anchor="middle" font-size="30" font-family="sans-serif">🍒</text>
+  <text x="123" y="162" text-anchor="middle" font-size="20" font-family="sans-serif" opacity="0.5">🔔</text>
+
+  <!-- Symbols Window 2 -->
+  <text x="200" y="108" text-anchor="middle" font-size="20" font-family="sans-serif" opacity="0.5">🍇</text>
+  <text x="200" y="135" text-anchor="middle" font-size="30" font-family="sans-serif">🍒</text>
+  <text x="200" y="162" text-anchor="middle" font-size="20" font-family="sans-serif" opacity="0.5">⭐</text>
+
+  <!-- Symbols Window 3 -->
+  <text x="277" y="108" text-anchor="middle" font-size="20" font-family="sans-serif" opacity="0.5">7️⃣</text>
+  <text x="277" y="135" text-anchor="middle" font-size="30" font-family="sans-serif">🍒</text>
+  <text x="277" y="162" text-anchor="middle" font-size="20" font-family="sans-serif" opacity="0.5">🍋</text>
+
+  <!-- Win banner -->
+  <rect x="90" y="188" width="220" height="26" rx="7" fill="#7f1d1d" opacity="0.9"/>
+  <rect x="90" y="188" width="220" height="26" rx="7" fill="none" stroke="#fbbf24" stroke-width="1"/>
+  <text x="200" y="205" text-anchor="middle" fill="#fef08a" font-size="12" font-weight="900" font-family="sans-serif" filter="url(#neonText)">🍒 🍒 🍒  CHERRY JACKPOT!</text>
+
+  <!-- SPIN button -->
+  <rect x="155" y="220" width="90" height="22" rx="7" fill="#00ff88" opacity="0.12"/>
+  <rect x="155" y="220" width="90" height="22" rx="7" fill="none" stroke="#00ff88" stroke-width="1.2"/>
+  <text x="200" y="235" text-anchor="middle" fill="#00ff88" font-size="11" font-weight="900" font-family="sans-serif">S P I N</text>
+
+  <!-- Lever arm (right side) -->
+  <rect x="334" y="68" width="9" height="100" rx="4" fill="url(#leverGrad)"/>
+  <!-- Lever mount -->
+  <rect x="330" y="62" width="17" height="12" rx="4" fill="#374151"/>
+  <!-- Lever ball grip -->
+  <circle cx="338" cy="168" r="14" fill="url(#leverBall)"/>
+  <circle cx="334" cy="163" r="4" fill="#fca5a5" opacity="0.5"/>
+
+  <!-- Coin slot -->
+  <rect x="175" y="246" width="50" height="8" rx="4" fill="#111" stroke="#4b5563" stroke-width="1"/>
+
+  <text x="200" y="285" text-anchor="middle" fill="#fef08a" font-size="15" font-weight="900" font-family="sans-serif" letter-spacing="3" filter="url(#neonText)">CLASSIC SLOTS</text>
+</svg>

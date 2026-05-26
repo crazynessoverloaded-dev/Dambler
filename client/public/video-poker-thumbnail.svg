@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<defs>
+  <radialGradient id="vp-bg" cx="50%" cy="50%" r="70%">
+    <stop offset="0%" stop-color="#0c0814"/><stop offset="100%" stop-color="#050308"/>
+  </radialGradient>
+  <radialGradient id="vp-center-glow" cx="50%" cy="45%" r="55%">
+    <stop offset="0%" stop-color="#dc2626" stop-opacity="0.15"/><stop offset="100%" stop-color="#dc2626" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="vp-card" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#fff5f5"/>
+  </linearGradient>
+  <linearGradient id="vp-machine" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#1e1b4b"/><stop offset="100%" stop-color="#0f0a2e"/>
+  </linearGradient>
+  <filter id="vp-shadow"><feDropShadow dx="2" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.8"/></filter>
+  <filter id="vp-glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="vp-jackpot"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="400" height="300" fill="url(#vp-bg)"/>
+<rect width="400" height="300" fill="url(#vp-center-glow)"/>
+<!-- Machine frame -->
+<rect x="15" y="15" width="370" height="270" rx="16" fill="url(#vp-machine)" stroke="#4338ca" stroke-width="2" opacity="0.8"/>
+<rect x="22" y="22" width="356" height="256" rx="12" fill="none" stroke="#6366f1" stroke-width="0.5" opacity="0.4"/>
+<!-- Screen area -->
+<rect x="28" y="38" width="344" height="200" rx="10" fill="#030012" stroke="#4338ca" stroke-width="1.5"/>
+<!-- Cards row - Royal Flush: 10 J Q K A all hearts -->
+<!-- Card 1: 10 hearts -->
+<g filter="url(#vp-shadow)">
+  <rect x="36" y="50" width="60" height="90" rx="8" fill="url(#vp-card)" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="46" y="70" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#dc2626">10</text>
+  <text x="66" y="110" text-anchor="middle" font-family="Arial,sans-serif" font-size="38" fill="#dc2626">♥</text>
+</g>
+<!-- Card 2: J hearts -->
+<g filter="url(#vp-shadow)">
+  <rect x="105" y="50" width="60" height="90" rx="8" fill="url(#vp-card)" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="116" y="70" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#dc2626">J</text>
+  <text x="135" y="110" text-anchor="middle" font-family="Arial,sans-serif" font-size="38" fill="#dc2626">♥</text>
+</g>
+<!-- Card 3: Q hearts -->
+<g filter="url(#vp-shadow)">
+  <rect x="174" y="45" width="60" height="90" rx="8" fill="url(#vp-card)" stroke="#fca5a5" stroke-width="2.5"/>
+  <text x="185" y="65" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#dc2626">Q</text>
+  <text x="204" y="105" text-anchor="middle" font-family="Arial,sans-serif" font-size="38" fill="#dc2626">♥</text>
+</g>
+<!-- Card 4: K hearts -->
+<g filter="url(#vp-shadow)">
+  <rect x="243" y="50" width="60" height="90" rx="8" fill="url(#vp-card)" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="254" y="70" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#dc2626">K</text>
+  <text x="273" y="110" text-anchor="middle" font-family="Arial,sans-serif" font-size="38" fill="#dc2626">♥</text>
+</g>
+<!-- Card 5: A hearts -->
+<g filter="url(#vp-shadow)">
+  <rect x="312" y="50" width="60" height="90" rx="8" fill="url(#vp-card)" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="323" y="70" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#dc2626">A</text>
+  <text x="342" y="110" text-anchor="middle" font-family="Arial,sans-serif" font-size="38" fill="#dc2626">♥</text>
+</g>
+<!-- HOLD labels -->
+<rect x="36" y="146" width="60" height="18" rx="5" fill="#16a34a" opacity="0.9"/>
+<text x="66" y="159" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" fill="white">HOLD</text>
+<rect x="105" y="146" width="60" height="18" rx="5" fill="#16a34a" opacity="0.9"/>
+<text x="135" y="159" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" fill="white">HOLD</text>
+<rect x="174" y="141" width="60" height="18" rx="5" fill="#16a34a" filter="url(#vp-glow)"/>
+<text x="204" y="154" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" fill="white">HOLD</text>
+<rect x="243" y="146" width="60" height="18" rx="5" fill="#16a34a" opacity="0.9"/>
+<text x="273" y="159" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" fill="white">HOLD</text>
+<rect x="312" y="146" width="60" height="18" rx="5" fill="#16a34a" opacity="0.9"/>
+<text x="342" y="159" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" fill="white">HOLD</text>
+<!-- ROYAL FLUSH label -->
+<rect x="90" y="172" width="220" height="50" rx="12" fill="#030012" stroke="#dc2626" stroke-width="2" filter="url(#vp-glow)"/>
+<text x="200" y="193" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#dc2626" letter-spacing="3">ROYAL FLUSH</text>
+<text x="200" y="214" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#dc2626" filter="url(#vp-jackpot)">JACKPOT 800:1</text>
+<!-- Title bar -->
+<rect x="28" y="242" width="344" height="32" rx="8" fill="#1e1b4b"/>
+<text x="200" y="263" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" letter-spacing="4" fill="#818cf8">VIDEO POKER</text>
+</svg>

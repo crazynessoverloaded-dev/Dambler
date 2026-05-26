@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="g2bg" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#060614"/>
+      <stop offset="100%" stop-color="#020208"/>
+    </radialGradient>
+    <radialGradient id="g2glow" cx="50%" cy="54%" r="48%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="g2ptr">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="g2rim">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#g2bg)"/>
+  <rect width="400" height="300" fill="url(#g2glow)"/>
+
+  <!-- Outer glow -->
+  <circle cx="200" cy="165" r="140" fill="none" stroke="#6366f1" stroke-width="1" stroke-opacity="0.12" filter="url(#g2rim)"/>
+
+  <!-- Dark rim base -->
+  <circle cx="200" cy="165" r="132" fill="#06060f" stroke="#111" stroke-width="2"/>
+
+  <!-- 8 Segments — center (200,165), r=128, 45° each starting at 270° -->
+  <!-- Boundary: (200,37),(291,75),(328,165),(291,255),(200,293),(109,255),(72,165),(109,75) -->
+
+  <!-- Seg1 (270°→315°): JACKPOT — gold -->
+  <path d="M200,165 L200,37 A128,128 0 0 1 291,75 Z" fill="#b45309"/>
+  <!-- Seg2 (315°→0°): 1× — dark navy -->
+  <path d="M200,165 L291,75 A128,128 0 0 1 328,165 Z" fill="#1e3a5f"/>
+  <!-- Seg3 (0°→45°): 2× — forest green -->
+  <path d="M200,165 L328,165 A128,128 0 0 1 291,255 Z" fill="#14532d"/>
+  <!-- Seg4 (45°→90°): 3× — teal -->
+  <path d="M200,165 L291,255 A128,128 0 0 1 200,293 Z" fill="#134e4a"/>
+  <!-- Seg5 (90°→135°): 5× — purple -->
+  <path d="M200,165 L200,293 A128,128 0 0 1 109,255 Z" fill="#5b21b6"/>
+  <!-- Seg6 (135°→180°): 10× — crimson -->
+  <path d="M200,165 L109,255 A128,128 0 0 1 72,165 Z" fill="#9f1239"/>
+  <!-- Seg7 (180°→225°): 20× — dark orange -->
+  <path d="M200,165 L72,165 A128,128 0 0 1 109,75 Z" fill="#9a3412"/>
+  <!-- Seg8 (225°→270°): 50× — deep indigo -->
+  <path d="M200,165 L109,75 A128,128 0 0 1 200,37 Z" fill="#312e81"/>
+
+  <!-- Metallic rim -->
+  <circle cx="200" cy="165" r="128" fill="none" stroke="#999" stroke-width="3.5"/>
+  <circle cx="200" cy="165" r="130" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+  <!-- Divider spokes -->
+  <line x1="200" y1="165" x2="200" y2="37"  stroke="#000" stroke-width="2.2"/>
+  <line x1="200" y1="165" x2="291" y2="75"  stroke="#000" stroke-width="2.2"/>
+  <line x1="200" y1="165" x2="328" y2="165" stroke="#000" stroke-width="2.2"/>
+  <line x1="200" y1="165" x2="291" y2="255" stroke="#000" stroke-width="2.2"/>
+  <line x1="200" y1="165" x2="200" y2="293" stroke="#000" stroke-width="2.2"/>
+  <line x1="200" y1="165" x2="109" y2="255" stroke="#000" stroke-width="2.2"/>
+  <line x1="200" y1="165" x2="72"  y2="165" stroke="#000" stroke-width="2.2"/>
+  <line x1="200" y1="165" x2="109" y2="75"  stroke="#000" stroke-width="2.2"/>
+
+  <!-- Rim pegs -->
+  <circle cx="200" cy="37"  r="5" fill="#fbbf24" opacity="0.9"/>
+  <circle cx="291" cy="75"  r="4" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="328" cy="165" r="4" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="291" cy="255" r="4" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="200" cy="293" r="4" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="109" cy="255" r="4" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="72"  cy="165" r="4" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="109" cy="75"  r="4" fill="rgba(255,255,255,0.45)"/>
+
+  <!-- Labels at r=82 -->
+  <!-- Seg1 mid 292.5°: (231,89) -->
+  <text x="231" y="86" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="9" font-weight="900" fill="#fbbf24">JACK</text>
+  <!-- Seg2 mid 337.5°: (276,134) -->
+  <text x="276" y="131" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#fff">1×</text>
+  <!-- Seg3 mid 22.5°: (276,196) -->
+  <text x="276" y="193" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#fff">2×</text>
+  <!-- Seg4 mid 67.5°: (231,241) -->
+  <text x="231" y="238" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#fff">3×</text>
+  <!-- Seg5 mid 112.5°: (169,241) -->
+  <text x="169" y="238" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="14" font-weight="900" fill="#fff">5×</text>
+  <!-- Seg6 mid 157.5°: (124,196) -->
+  <text x="124" y="193" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="13" font-weight="900" fill="#fff">10×</text>
+  <!-- Seg7 mid 202.5°: (124,134) -->
+  <text x="124" y="131" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="13" font-weight="900" fill="#fff">20×</text>
+  <!-- Seg8 mid 247.5°: (169,89) -->
+  <text x="169" y="86" text-anchor="middle" dominant-baseline="middle" font-family="Arial Black,sans-serif" font-size="13" font-weight="900" fill="#fff">50×</text>
+
+  <!-- Hub -->
+  <circle cx="200" cy="165" r="34" fill="#050510" stroke="#6366f1" stroke-width="2.5" stroke-opacity="0.7"/>
+  <text x="200" y="162" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" font-weight="900" fill="#818cf8">WHEEL</text>
+  <text x="200" y="175" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" font-weight="900" fill="#818cf8">GAME</text>
+
+  <!-- Pointer -->
+  <polygon points="190,20 210,20 200,40" fill="#6366f1" filter="url(#g2ptr)"/>
+  <rect x="196" y="2" width="8" height="20" rx="3" fill="#6366f1" opacity="0.6"/>
+</svg>

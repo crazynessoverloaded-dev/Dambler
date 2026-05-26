@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stopColor="#0a1a10"/>
+      <stop offset="100%" stopColor="#050d08"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- Three choice cards -->
+  <!-- Rock -->
+  <rect x="30" y="60" width="100" height="120" rx="12" fill="none" stroke="#00ff88" stroke-width="1.5" stroke-opacity="0.5"/>
+  <rect x="30" y="60" width="100" height="120" rx="12" fill="#00ff88" fill-opacity="0.04"/>
+  <text x="80" y="130" font-size="44" text-anchor="middle">🪨</text>
+  <text x="80" y="168" fill="#00ff88" font-family="monospace" font-weight="700" font-size="11" text-anchor="middle" letter-spacing="1">ROCK</text>
+
+  <!-- Paper -->
+  <rect x="150" y="40" width="100" height="140" rx="12" fill="#00ff88" fill-opacity="0.08" stroke="#00ff88" stroke-width="2"/>
+  <text x="200" y="118" font-size="50" text-anchor="middle">📄</text>
+  <text x="200" y="168" fill="#00ff88" font-family="monospace" font-weight="700" font-size="12" text-anchor="middle" letter-spacing="1" filter="url(#glow)">PAPER</text>
+
+  <!-- Scissors -->
+  <rect x="270" y="60" width="100" height="120" rx="12" fill="none" stroke="#00ff88" stroke-width="1.5" stroke-opacity="0.5"/>
+  <rect x="270" y="60" width="100" height="120" rx="12" fill="#00ff88" fill-opacity="0.04"/>
+  <text x="320" y="130" font-size="44" text-anchor="middle">✂️</text>
+  <text x="320" y="168" fill="#00ff88" font-family="monospace" font-weight="700" font-size="11" text-anchor="middle" letter-spacing="1">SCISSORS</text>
+
+  <!-- VS in center -->
+  <text x="200" y="228" fill="#00ff88" font-family="monospace" font-weight="900" font-size="14" text-anchor="middle" letter-spacing="3" fill-opacity="0.5">VS HOUSE</text>
+
+  <!-- Title -->
+  <text x="200" y="274" fill="#00ff88" font-family="monospace" font-weight="900" font-size="16" text-anchor="middle" letter-spacing="4" filter="url(#glow)">ROCK PAPER SCISSORS</text>
+</svg>

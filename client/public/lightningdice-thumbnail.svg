@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#0c0c0c"/><stop offset="100%" stop-color="#050505"/></linearGradient>
+    <radialGradient id="flash" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="#ffe000" stop-opacity="0.28"/><stop offset="100%" stop-color="#ffe000" stop-opacity="0"/></radialGradient>
+    <filter id="bold"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="superBold"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <ellipse cx="200" cy="140" rx="180" ry="130" fill="url(#flash)"/>
+  <!-- Storm clouds silhouette -->
+  <ellipse cx="80" cy="40" rx="70" ry="30" fill="#1a1a1a"/>
+  <ellipse cx="50" cy="50" rx="50" ry="25" fill="#1a1a1a"/>
+  <ellipse cx="330" cy="35" rx="80" ry="28" fill="#1a1a1a"/>
+  <ellipse cx="360" cy="48" rx="55" ry="22" fill="#1a1a1a"/>
+  <!-- Main lightning bolt -->
+  <polygon points="210,48 188,138 206,138 178,242 232,148 210,148 240,48" fill="#ffe000" fill-opacity="0.15" filter="url(#superBold)"/>
+  <polygon points="210,48 188,138 206,138 178,242 232,148 210,148 240,48" fill="#ffe000"/>
+  <!-- Side lightning small -->
+  <polygon points="96,70 84,118 93,118 74,168 106,128 96,128 112,70" fill="#ffe000" fill-opacity="0.55"/>
+  <polygon points="302,80 290,122 299,122 280,168 312,128 302,128 318,80" fill="#ffe000" fill-opacity="0.45"/>
+  <!-- Spark dots -->
+  <circle cx="165" cy="88" r="3" fill="#ffe000" fill-opacity="0.7" filter="url(#bold)"/>
+  <circle cx="240" cy="96" r="2.5" fill="#ffe000" fill-opacity="0.65" filter="url(#bold)"/>
+  <circle cx="148" cy="150" r="2" fill="#ffe000" fill-opacity="0.5"/>
+  <circle cx="258" cy="142" r="2" fill="#ffe000" fill-opacity="0.5"/>
+  <!-- Multiplier display -->
+  <rect x="26" y="228" width="116" height="44" rx="7" fill="#ffe000" fill-opacity="0.1" stroke="#ffe000" stroke-width="2" stroke-opacity="0.6"/>
+  <text x="84" y="244" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#ffe000" fill-opacity="0.7" letter-spacing="2">MULTIPLIER</text>
+  <text x="84" y="263" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#ffe000" filter="url(#bold)">x 500</text>
+  <rect x="258" y="228" width="116" height="44" rx="7" fill="#ffe000" fill-opacity="0.08" stroke="#ffe000" stroke-width="1.5" stroke-opacity="0.4"/>
+  <text x="316" y="244" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#ffe000" fill-opacity="0.6" letter-spacing="2">ELECTRIFIED</text>
+  <text x="316" y="263" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#ffe000" fill-opacity="0.8">MULTIPLIERS</text>
+  <text x="200" y="44" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" letter-spacing="3" fill="#ffe000" filter="url(#bold)">LIGHTNING DICE</text>
+  <text x="200" y="60" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#ffe000" fill-opacity="0.55" letter-spacing="3">ELECTRIFIED MULTIPLIERS</text>
+</svg>

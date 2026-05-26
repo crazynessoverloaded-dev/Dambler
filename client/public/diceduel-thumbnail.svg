@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bgL" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1a0000"/><stop offset="100%" stop-color="#0d0000"/></linearGradient>
+    <linearGradient id="bgR" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00001a"/><stop offset="100%" stop-color="#000011"/></linearGradient>
+    <radialGradient id="glowL" cx="25%" cy="50%" r="55%"><stop offset="0%" stop-color="#e53935" stop-opacity="0.3"/><stop offset="100%" stop-color="#e53935" stop-opacity="0"/></radialGradient>
+    <radialGradient id="glowR" cx="75%" cy="50%" r="55%"><stop offset="0%" stop-color="#1565c0" stop-opacity="0.3"/><stop offset="100%" stop-color="#1565c0" stop-opacity="0"/></radialGradient>
+    <filter id="dg"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="dgs"><feGaussianBlur stdDeviation="11" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="0" y="0" width="200" height="300" fill="url(#bgL)"/>
+  <rect x="200" y="0" width="200" height="300" fill="url(#bgR)"/>
+  <ellipse cx="100" cy="150" rx="160" ry="130" fill="url(#glowL)"/>
+  <ellipse cx="300" cy="150" rx="160" ry="130" fill="url(#glowR)"/>
+  <!-- Center split line -->
+  <line x1="200" y1="0" x2="200" y2="300" stroke="#fff" stroke-width="2" stroke-opacity="0.15"/>
+  <!-- Red player die (left) -->
+  <rect x="32" y="90" width="120" height="120" rx="16" fill="#1a0000" stroke="#e53935" stroke-width="3" stroke-opacity="0.9"/>
+  <polygon points="32,90 62,64 182,64 152,90" fill="#2a0000" stroke="#e53935" stroke-width="2" stroke-opacity="0.6"/>
+  <polygon points="152,90 182,64 182,184 152,210" fill="#150000" stroke="#e53935" stroke-width="1.5" stroke-opacity="0.45"/>
+  <!-- 5 pips red -->
+  <circle cx="60" cy="112" r="8.5" fill="#e53935" filter="url(#dg)"/>
+  <circle cx="116" cy="112" r="8.5" fill="#e53935" filter="url(#dg)"/>
+  <circle cx="88" cy="150" r="8.5" fill="#e53935" filter="url(#dg)"/>
+  <circle cx="60" cy="188" r="8.5" fill="#e53935" filter="url(#dg)"/>
+  <circle cx="116" cy="188" r="8.5" fill="#e53935" filter="url(#dg)"/>
+  <!-- VS badge -->
+  <circle cx="200" cy="150" r="28" fill="#111" stroke="#fff" stroke-width="2" stroke-opacity="0.2"/>
+  <text x="200" y="156" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" fill="#fff" fill-opacity="0.9">VS</text>
+  <!-- Blue player die (right) -->
+  <rect x="248" y="90" width="120" height="120" rx="16" fill="#00001a" stroke="#1565c0" stroke-width="3" stroke-opacity="0.9"/>
+  <polygon points="248,90 278,64 398,64 368,90" fill="#00002a" stroke="#1565c0" stroke-width="2" stroke-opacity="0.6"/>
+  <polygon points="368,90 398,64 398,184 368,210" fill="#000015" stroke="#1565c0" stroke-width="1.5" stroke-opacity="0.45"/>
+  <!-- 6 pips blue -->
+  <circle cx="272" cy="112" r="8.5" fill="#1e88e5" filter="url(#dg)"/>
+  <circle cx="316" cy="112" r="8.5" fill="#1e88e5" filter="url(#dg)"/>
+  <circle cx="272" cy="150" r="8.5" fill="#1e88e5" filter="url(#dg)"/>
+  <circle cx="316" cy="150" r="8.5" fill="#1e88e5" filter="url(#dg)"/>
+  <circle cx="272" cy="188" r="8.5" fill="#1e88e5" filter="url(#dg)"/>
+  <circle cx="316" cy="188" r="8.5" fill="#1e88e5" filter="url(#dg)"/>
+  <!-- Player labels -->
+  <text x="92" y="240" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" fill="#e53935" fill-opacity="0.9" letter-spacing="2">PLAYER 1</text>
+  <text x="310" y="240" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" fill="#1e88e5" fill-opacity="0.9" letter-spacing="2">PLAYER 2</text>
+  <text x="92" y="260" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="22" font-weight="900" fill="#e53935" filter="url(#dg)">5</text>
+  <text x="310" y="260" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="22" font-weight="900" fill="#1e88e5" filter="url(#dg)">6</text>
+  <text x="200" y="44" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="26" font-weight="900" letter-spacing="4" fill="#fff" fill-opacity="0.9" filter="url(#dg)">DICE DUEL</text>
+  <text x="200" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#fff" fill-opacity="0.4" letter-spacing="3">HEAD TO HEAD BATTLE</text>
+</svg>

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#100828"/>
+      <stop offset="100%" stop-color="#060314"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cageBar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c4b5fd"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <filter id="cg">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="cgs">
+      <feGaussianBlur stdDeviation="11" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="diceGlow">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#a78bfa" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <ellipse cx="200" cy="155" rx="185" ry="140" fill="url(#glow)"/>
+
+  <!-- ── Birdcage ─────────────────────────────────────────────────────── -->
+  <!-- Outer cage ellipse -->
+  <ellipse cx="195" cy="162" rx="112" ry="128" fill="#7c3aed" fill-opacity="0.05" stroke="#a78bfa" stroke-width="2.5" stroke-opacity="0.85"/>
+
+  <!-- Vertical ribs (fan from top pivot to bottom pivot) -->
+  <line x1="195" y1="34" x2="195" y2="290" stroke="#a78bfa" stroke-width="1.8" stroke-opacity="0.55"/>
+  <line x1="195" y1="34" x2="135" y2="288" stroke="#a78bfa" stroke-width="1.3" stroke-opacity="0.45"/>
+  <line x1="195" y1="34" x2="255" y2="288" stroke="#a78bfa" stroke-width="1.3" stroke-opacity="0.45"/>
+  <line x1="195" y1="34" x2="93"  y2="264" stroke="#a78bfa" stroke-width="1"   stroke-opacity="0.32"/>
+  <line x1="195" y1="34" x2="297" y2="264" stroke="#a78bfa" stroke-width="1"   stroke-opacity="0.32"/>
+  <line x1="195" y1="34" x2="83"  y2="228" stroke="#a78bfa" stroke-width="0.8" stroke-opacity="0.22"/>
+  <line x1="195" y1="34" x2="307" y2="228" stroke="#a78bfa" stroke-width="0.8" stroke-opacity="0.22"/>
+
+  <!-- Horizontal rings -->
+  <ellipse cx="195" cy="88"  rx="72"  ry="20" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-opacity="0.6"/>
+  <ellipse cx="195" cy="150" rx="108" ry="30" fill="none" stroke="#a78bfa" stroke-width="2"   stroke-opacity="0.65"/>
+  <ellipse cx="195" cy="212" rx="86"  ry="24" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-opacity="0.58"/>
+  <ellipse cx="195" cy="262" rx="48"  ry="14" fill="none" stroke="#a78bfa" stroke-width="1.4" stroke-opacity="0.45"/>
+
+  <!-- Top pivot pin -->
+  <ellipse cx="195" cy="34" rx="28" ry="9" fill="#4c1d95" stroke="#a78bfa" stroke-width="2.2" stroke-opacity="0.9"/>
+  <line x1="195" y1="25" x2="195" y2="9" stroke="#a78bfa" stroke-width="2.8"/>
+  <circle cx="195" cy="7" r="6" fill="#a78bfa" filter="url(#cg)"/>
+
+  <!-- Bottom pivot -->
+  <ellipse cx="195" cy="290" rx="28" ry="9" fill="#4c1d95" stroke="#a78bfa" stroke-width="2" stroke-opacity="0.85"/>
+
+  <!-- ── Three dice tumbling inside ─────────────────────────────────── -->
+  <!-- Die 1 — showing 3, tilted left -->
+  <g transform="rotate(-14 162 130)" filter="url(#diceGlow)">
+    <rect x="140" y="108" width="44" height="44" rx="7" fill="#1e0b40" stroke="#c4b5fd" stroke-width="2.2" stroke-opacity="0.95"/>
+    <circle cx="152" cy="120" r="4.5" fill="#c4b5fd"/>
+    <circle cx="162" cy="130" r="4.5" fill="#c4b5fd"/>
+    <circle cx="172" cy="140" r="4.5" fill="#c4b5fd"/>
+  </g>
+
+  <!-- Die 2 — showing 5, upright centre -->
+  <g filter="url(#diceGlow)">
+    <rect x="172" y="148" width="48" height="48" rx="8" fill="#1e0b40" stroke="#c4b5fd" stroke-width="2.5" stroke-opacity="1"/>
+    <circle cx="184" cy="160" r="4.5" fill="#c4b5fd"/>
+    <circle cx="208" cy="160" r="4.5" fill="#c4b5fd"/>
+    <circle cx="196" cy="172" r="4.5" fill="#c4b5fd"/>
+    <circle cx="184" cy="184" r="4.5" fill="#c4b5fd"/>
+    <circle cx="208" cy="184" r="4.5" fill="#c4b5fd"/>
+  </g>
+
+  <!-- Die 3 — showing 4, tilted right -->
+  <g transform="rotate(16 218 208)" filter="url(#diceGlow)">
+    <rect x="196" y="194" width="44" height="44" rx="7" fill="#1e0b40" stroke="#c4b5fd" stroke-width="2.2" stroke-opacity="0.9"/>
+    <circle cx="209" cy="206" r="4"   fill="#c4b5fd"/>
+    <circle cx="228" cy="206" r="4"   fill="#c4b5fd"/>
+    <circle cx="209" cy="226" r="4"   fill="#c4b5fd"/>
+    <circle cx="228" cy="226" r="4"   fill="#c4b5fd"/>
+  </g>
+
+  <!-- ── Payout panel (right side) ─────────────────────────────────── -->
+  <rect x="316" y="102" width="76" height="110" rx="7" fill="#0a0420" fill-opacity="0.96" stroke="#7c3aed" stroke-width="1.5" stroke-opacity="0.65"/>
+  <text x="354" y="119" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="8.5" fill="#c4b5fd" fill-opacity="0.8" letter-spacing="1">PAYOUT</text>
+  <line x1="322" y1="124" x2="386" y2="124" stroke="#7c3aed" stroke-width="0.8" stroke-opacity="0.5"/>
+  <text x="324" y="138" font-family="Arial,sans-serif" font-size="8" fill="#e9d5ff">1 match</text>
+  <text x="384" y="138" text-anchor="end" font-family="Arial Black,sans-serif" font-size="8" fill="#a78bfa">×1</text>
+  <text x="324" y="154" font-family="Arial,sans-serif" font-size="8" fill="#e9d5ff">2 match</text>
+  <text x="384" y="154" text-anchor="end" font-family="Arial Black,sans-serif" font-size="8" fill="#a78bfa">×2</text>
+  <text x="324" y="170" font-family="Arial,sans-serif" font-size="8" fill="#e9d5ff">3 match</text>
+  <text x="384" y="170" text-anchor="end" font-family="Arial Black,sans-serif" font-size="8" fill="#a78bfa">×3</text>
+  <line x1="322" y1="178" x2="386" y2="178" stroke="#7c3aed" stroke-width="0.8" stroke-opacity="0.5"/>
+  <text x="324" y="192" font-family="Arial,sans-serif" font-size="8" fill="#e9d5ff">Triple</text>
+  <text x="384" y="192" text-anchor="end" font-family="Arial Black,sans-serif" font-size="9" fill="#f0abfc">×30</text>
+
+  <!-- ── Title ──────────────────────────────────────────────────────── -->
+  <text x="195" y="44" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="22" font-weight="900" letter-spacing="2" fill="#c4b5fd" filter="url(#cgs)">CHUCK-A-LUCK</text>
+  <text x="195" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#7c3aed" fill-opacity="0.75" letter-spacing="3">BIRDCAGE DICE GAME</text>
+</svg>

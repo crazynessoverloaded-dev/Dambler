@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<defs>
+  <radialGradient id="pt-bg" cx="50%" cy="50%" r="70%">
+    <stop offset="0%" stop-color="#0a1a0e"/><stop offset="100%" stop-color="#040905"/>
+  </radialGradient>
+  <radialGradient id="pt-glow" cx="50%" cy="45%" r="65%">
+    <stop offset="0%" stop-color="#00ff88" stop-opacity="0.22"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="pt-card" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#f0fdf4"/>
+  </linearGradient>
+  <linearGradient id="pt-back" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#064e3b"/><stop offset="100%" stop-color="#022c22"/>
+  </linearGradient>
+  <filter id="pt-shadow"><feDropShadow dx="4" dy="7" stdDeviation="10" flood-color="#000" flood-opacity="0.85"/></filter>
+  <filter id="pt-glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="pt-big"><feGaussianBlur stdDeviation="16" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="400" height="300" fill="url(#pt-bg)"/>
+<ellipse cx="200" cy="148" rx="195" ry="130" fill="url(#pt-glow)"/>
+<!-- Dealer cards (face-down, top) -->
+<text x="200" y="32" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" letter-spacing="3" fill="#00ff8870">DEALER — FACE DOWN</text>
+<g transform="rotate(-5,152,60)" filter="url(#pt-shadow)">
+  <rect x="124" y="40" width="54" height="40" rx="6" fill="url(#pt-back)" stroke="#10b981" stroke-width="1"/>
+  <rect x="130" y="46" width="42" height="28" rx="4" fill="none" stroke="#34d399" stroke-width="0.8"/>
+</g>
+<g transform="rotate(5,248,60)" filter="url(#pt-shadow)">
+  <rect x="222" y="40" width="54" height="40" rx="6" fill="url(#pt-back)" stroke="#10b981" stroke-width="1"/>
+  <rect x="228" y="46" width="42" height="28" rx="4" fill="none" stroke="#34d399" stroke-width="0.8"/>
+</g>
+<!-- Crown above the player hand -->
+<text x="200" y="102" text-anchor="middle" font-family="Arial,sans-serif" font-size="26" fill="#fbbf24" filter="url(#pt-glow)">♛</text>
+<!-- Player cards: ACE + KING = PONTOON! -->
+<g transform="rotate(-12,147,185)" filter="url(#pt-shadow)">
+  <rect x="72" y="108" width="112" height="158" rx="13" fill="url(#pt-card)" stroke="#00ff88" stroke-width="2.5" filter="url(#pt-glow)"/>
+  <text x="88" y="140" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#111">A</text>
+  <text x="88" y="162" font-family="Arial,sans-serif" font-size="20" fill="#111">♣</text>
+  <text x="128" y="234" text-anchor="middle" font-family="Arial,sans-serif" font-size="80" fill="#111">♣</text>
+  <text x="168" y="260" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#111" transform="rotate(180,168,250)">A</text>
+</g>
+<g transform="rotate(12,253,185)" filter="url(#pt-shadow)">
+  <rect x="216" y="108" width="112" height="158" rx="13" fill="url(#pt-card)" stroke="#00ff88" stroke-width="2.5" filter="url(#pt-glow)"/>
+  <text x="232" y="140" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#dc2626">K</text>
+  <text x="232" y="162" font-family="Arial,sans-serif" font-size="20" fill="#dc2626">♥</text>
+  <text x="272" y="234" text-anchor="middle" font-family="Arial,sans-serif" font-size="80" fill="#dc2626">♥</text>
+  <text x="312" y="260" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#dc2626" transform="rotate(180,312,250)">K</text>
+</g>
+<!-- PONTOON! banner -->
+<rect x="104" y="255" width="192" height="38" rx="14" fill="#001a08" stroke="#00ff88" stroke-width="3" filter="url(#pt-glow)"/>
+<text x="200" y="269" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" letter-spacing="2" fill="#00ff88">PONTOON!</text>
+<text x="200" y="286" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="17" font-weight="900" fill="#00ff88" filter="url(#pt-big)">PAYS 2 : 1</text>
+</svg>

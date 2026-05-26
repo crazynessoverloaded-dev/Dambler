@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+<defs>
+  <radialGradient id="hl-bg" cx="50%" cy="50%" r="70%">
+    <stop offset="0%" stop-color="#0a0a1a"/><stop offset="100%" stop-color="#040408"/>
+  </radialGradient>
+  <radialGradient id="hl-glow" cx="50%" cy="50%" r="55%">
+    <stop offset="0%" stop-color="#00ff88" stop-opacity="0.18"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="hl-card" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#f8f9fa"/><stop offset="100%" stop-color="#e9ecef"/>
+  </linearGradient>
+  <linearGradient id="hl-fade" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#1a2040"/><stop offset="100%" stop-color="#0d1430"/>
+  </linearGradient>
+  <filter id="hl-shadow"><feDropShadow dx="4" dy="7" stdDeviation="10" flood-color="#000" flood-opacity="0.85"/></filter>
+  <filter id="hl-glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="hl-big"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="400" height="300" fill="url(#hl-bg)"/>
+<ellipse cx="185" cy="155" rx="175" ry="125" fill="url(#hl-glow)"/>
+<!-- Previous card (faded, background) -->
+<g transform="rotate(-12,92,148)" filter="url(#hl-shadow)">
+  <rect x="28" y="82" width="90" height="132" rx="11" fill="url(#hl-fade)" stroke="#2a3a6a" stroke-width="1.5" opacity="0.7"/>
+  <text x="74" y="155" text-anchor="middle" font-family="serif" font-size="32" fill="#334488" opacity="0.5">♦</text>
+  <text x="74" y="135" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" fill="#334488" opacity="0.35">7</text>
+</g>
+<!-- Current card: ACE OF SPADES -->
+<g filter="url(#hl-shadow)">
+  <rect x="124" y="62" width="120" height="172" rx="14" fill="url(#hl-card)" stroke="#00ff88" stroke-width="2" filter="url(#hl-glow)"/>
+  <text x="142" y="100" font-family="Arial Black,sans-serif" font-size="30" font-weight="900" fill="#111">A</text>
+  <text x="142" y="124" font-family="Arial,sans-serif" font-size="22" fill="#111">♠</text>
+  <text x="184" y="208" text-anchor="middle" font-family="Arial,sans-serif" font-size="88" fill="#111">♠</text>
+  <text x="226" y="228" font-family="Arial Black,sans-serif" font-size="30" font-weight="900" fill="#111" transform="rotate(180,226,216)">A</text>
+</g>
+<!-- HIGHER button -->
+<rect x="265" y="78" width="118" height="50" rx="12" fill="#00aa4435" stroke="#00ff88" stroke-width="2" filter="url(#hl-glow)"/>
+<text x="324" y="99" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" fill="#00ff88">▲ HIGHER</text>
+<text x="324" y="118" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#00ff88" filter="url(#hl-big)">1.03×</text>
+<!-- LOWER button -->
+<rect x="265" y="138" width="118" height="50" rx="12" fill="#cc000035" stroke="#ff4444" stroke-width="2" filter="url(#hl-glow)"/>
+<text x="324" y="159" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" fill="#ff4444">▼ LOWER</text>
+<text x="324" y="178" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="20" font-weight="900" fill="#ff4444" filter="url(#hl-big)">50×</text>
+<!-- Streak badge -->
+<rect x="265" y="200" width="118" height="52" rx="12" fill="#00ff8810" stroke="#00ff8850" stroke-width="1.5"/>
+<text x="324" y="220" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" fill="#00ff8880">STREAK</text>
+<text x="324" y="246" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#00ff88" filter="url(#hl-glow)">7🔥</text>
+<!-- Title -->
+<text x="104" y="42" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="30" font-weight="900" letter-spacing="5" fill="#00ff88" filter="url(#hl-glow)">HI-LO</text>
+<text x="104" y="58" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#00ff8870" letter-spacing="3">HIGHER OR LOWER?</text>
+<!-- Next card face-down preview -->
+<g transform="translate(264,62)">
+  <rect x="0" y="22" width="120" height="172" rx="14" fill="#0a0820" stroke="#1a1a40" stroke-width="1.5" opacity="0.4"/>
+  <text x="60" y="115" text-anchor="middle" font-family="serif" font-size="36" fill="#1a2050" opacity="0.5">?</text>
+</g>
+</svg>
