@@ -34,7 +34,9 @@ function generateReferralCode(): string {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = path.resolve(__dirname, "../../dambler.db");
 
-const client = createClient({ url: `file:${DB_PATH}` });
+const client = process.env.DATABASE_URL
+  ? createClient({ url: process.env.DATABASE_URL, authToken: process.env.DATABASE_AUTH_TOKEN })
+  : createClient({ url: `file:${DB_PATH}` });
 export const db = drizzle(client);
 
 /** Creates all tables on first run. Safe to call every startup — uses IF NOT EXISTS. */
@@ -91,7 +93,7 @@ export async function initDb() {
   try {
     await client.execute(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_referralCode ON users(referralCode)`);
   } catch { /* already exists */ }
-  console.log("[Database] SQLite ready →", DB_PATH);
+  console.log("[Database] ready →", process.env.DATABASE_URL ? "Turso (cloud)" : DB_PATH);
 }
 
 // ---------------------------------------------------------------------------
