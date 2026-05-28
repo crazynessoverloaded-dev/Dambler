@@ -34,6 +34,12 @@ function generateReferralCode(): string {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = path.resolve(__dirname, "../../dambler.db");
 
+if (process.env.DATABASE_URL) {
+  console.log(`[DB] Connecting to Turso: ${process.env.DATABASE_URL.slice(0, 40)}...`);
+} else {
+  console.log(`[DB] No DATABASE_URL set — using local SQLite file: ${DB_PATH}`);
+}
+
 const client = process.env.DATABASE_URL
   ? createClient({ url: process.env.DATABASE_URL, authToken: process.env.DATABASE_AUTH_TOKEN })
   : createClient({ url: `file:${DB_PATH}` });
