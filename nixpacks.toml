@@ -1,2 +1,5 @@
 [phases.setup]
 aptPkgs = ["libatomic1"]
+
+[variables]
+NODE_VERSION = "22"
