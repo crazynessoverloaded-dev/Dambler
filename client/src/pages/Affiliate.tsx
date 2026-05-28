@@ -69,39 +69,29 @@ export default function Affiliate() {
           </motion.div>
 
           {!isAuthenticated ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              style={{ ...card, padding: '56px 32px', textAlign: 'center', maxWidth: 480, margin: '0 auto' }}>
-              <div style={{
-                width: 64, height: 64, borderRadius: '50%',
-                background: 'rgba(245,158,11,0.1)',
-                border: '1.5px solid rgba(245,158,11,0.28)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 20px',
-                boxShadow: '0 0 32px rgba(245,158,11,0.12)',
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              style={{
+                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 16, padding: '36px 40px',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32,
               }}>
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#f59e0b" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
-                  <rect x="3" y="11" width="18" height="11" rx="3" stroke="#f59e0b" strokeWidth="1.75"/>
-                  <circle cx="12" cy="16.5" r="1.4" fill="#f59e0b"/>
-                  <line x1="12" y1="17.9" x2="12" y2="19.2" stroke="#f59e0b" strokeWidth="1.75" strokeLinecap="round"/>
-                </svg>
+              <div>
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: 10 }}>Members Only</p>
+                <h3 style={{ fontSize: 22, fontWeight: 800, color: '#fff', marginBottom: 8, letterSpacing: -0.3 }}>Sign in to access your dashboard</h3>
+                <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, margin: 0 }}>
+                  Log in to see your referral code, track commissions, and start earning.
+                </p>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 10 }}>Sign in to Access</h3>
-              <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.38)', marginBottom: 28, lineHeight: 1.65 }}>
-                Log in to see your referral code, track<br />commissions, and start earning.
-              </p>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                 <Link href="/login" style={{
-                  padding: '13px 28px', borderRadius: 12,
-                  background: '#ffffff',
-                  color: '#0a0a0f', fontWeight: 800, fontSize: 14, textDecoration: 'none',
-                  boxShadow: '0 4px 16px rgba(255,255,255,0.1)',
-                }}>Login</Link>
+                  padding: '12px 26px', borderRadius: 9,
+                  background: '#fff', color: '#111',
+                  fontWeight: 800, fontSize: 13.5, textDecoration: 'none', whiteSpace: 'nowrap',
+                }}>Sign In</Link>
                 <Link href="/register" style={{
-                  padding: '13px 28px', borderRadius: 12,
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  color: 'rgba(255,255,255,0.7)', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+                  padding: '12px 26px', borderRadius: 9,
+                  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'rgba(255,255,255,0.6)', fontWeight: 700, fontSize: 13.5, textDecoration: 'none', whiteSpace: 'nowrap',
                 }}>Create Account</Link>
               </div>
             </motion.div>

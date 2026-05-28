@@ -3,7 +3,6 @@ import MainLayout from '@/components/MainLayout';
 import { Shield } from 'lucide-react';
 
 const LAST_UPDATED = 'May 17, 2026';
-const ACCENT = '#00FF88';
 
 const card: React.CSSProperties = {
   background: 'rgba(255,255,255,0.03)',
@@ -18,7 +17,7 @@ function Section({ num, title, children }: SectionProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: num * 0.04 }} style={card}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-        <span style={{ fontSize: 10, fontWeight: 800, color: ACCENT, background: 'rgba(0,255,136,0.1)', border: '1px solid rgba(0,255,136,0.2)', borderRadius: 6, padding: '2px 7px', fontFamily: 'monospace' }}>{num}</span>
+        <span style={{ fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '2px 7px', fontFamily: 'monospace' }}>{num}</span>
         <h2 style={{ fontSize: 14, fontWeight: 800, color: '#fff', margin: 0 }}>{title}</h2>
       </div>
       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.54)', lineHeight: 1.72, display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -31,15 +30,13 @@ function Section({ num, title, children }: SectionProps) {
 export default function PrivacyPolicy() {
   return (
     <MainLayout>
-      <div style={{ background: '#0f1118', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 360, background: 'radial-gradient(ellipse at 50% 0%, rgba(0,255,136,0.09) 0%, transparent 65%)', pointerEvents: 'none' }} />
-
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '48px 24px 80px', position: 'relative' }}>
+      <div style={{ background: '#0f1118', minHeight: '100vh' }}>
+        <div style={{ maxWidth: 800, margin: '0 auto', padding: '48px 24px 80px' }}>
 
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 }}>
-            <div style={{ background: 'rgba(0,255,136,0.09)', border: '1px solid rgba(0,255,136,0.18)', borderRadius: 10, padding: 10, display: 'flex' }}>
-              <Shield style={{ width: 18, height: 18, color: ACCENT }} />
+            <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: 10, display: 'flex' }}>
+              <Shield style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.6)' }} />
             </div>
             <div>
               <h1 style={{ fontSize: 28, fontWeight: 800, color: '#fff', margin: 0, letterSpacing: -0.4 }}>Privacy Policy</h1>
@@ -58,7 +55,7 @@ export default function PrivacyPolicy() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 
             <Section num={1} title="Who We Are">
-              <p>Dambler is operated by Dambler Ltd, a company incorporated under the laws of [Jurisdiction]. Our registered address is [Registered Address]. For data protection enquiries, contact our Data Protection Officer at <span style={{ color: ACCENT }}>privacy@dambler.com</span>.</p>
+              <p>Dambler is operated by Dambler Ltd, a company incorporated under the laws of [Jurisdiction]. Our registered address is [Registered Address]. For data protection enquiries, contact our Data Protection Officer at <span style={{ color: 'rgba(255,255,255,0.7)' }}>privacy@dambler.com</span>.</p>
             </Section>
 
             <Section num={2} title="Information We Collect">
@@ -92,7 +89,7 @@ export default function PrivacyPolicy() {
 
             <Section num={7} title="Your Rights">
               <p>Depending on your location, you may have the following rights: <strong style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>Access</strong>, <strong style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>Rectification</strong>, <strong style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>Erasure</strong>, <strong style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>Restriction</strong>, <strong style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>Portability</strong>, and <strong style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>Objection</strong> to processing.</p>
-              <p>To exercise any right, email <span style={{ color: ACCENT }}>privacy@dambler.com</span>. We will respond within 30 days. We may need to verify your identity before fulfilling the request.</p>
+              <p>To exercise any right, email <span style={{ color: 'rgba(255,255,255,0.7)' }}>privacy@dambler.com</span>. We will respond within 30 days. We may need to verify your identity before fulfilling the request.</p>
             </Section>
 
             <Section num={8} title="Security">
@@ -100,15 +97,15 @@ export default function PrivacyPolicy() {
             </Section>
 
             <Section num={9} title="Children's Privacy">
-              <p>Dambler is strictly for adults aged 18 and over. We do not knowingly collect personal data from anyone under 18. If we discover an account belongs to a minor, we will immediately close it and delete associated data. If you believe a minor has registered, contact us at <span style={{ color: ACCENT }}>security@dambler.com</span>.</p>
+              <p>Dambler is strictly for adults aged 18 and over. We do not knowingly collect personal data from anyone under 18. If we discover an account belongs to a minor, we will immediately close it and delete associated data. If you believe a minor has registered, contact us at <span style={{ color: 'rgba(255,255,255,0.7)' }}>security@dambler.com</span>.</p>
             </Section>
 
             <Section num={10} title="Changes to This Policy">
-              <p>We may update this Privacy Policy from time to time. Material changes will be notified by email or a prominent notice on the platform at least 14 days before they take effect. The current version is always available at <span style={{ color: ACCENT }}>dambler.com/privacy</span>.</p>
+              <p>We may update this Privacy Policy from time to time. Material changes will be notified by email or a prominent notice on the platform at least 14 days before they take effect. The current version is always available at <span style={{ color: 'rgba(255,255,255,0.7)' }}>dambler.com/privacy</span>.</p>
             </Section>
 
             <Section num={11} title="Contact">
-              <p>For privacy questions or to exercise your rights, contact our Data Protection Officer at <span style={{ color: ACCENT }}>privacy@dambler.com</span>. If you are unsatisfied with our response, you have the right to lodge a complaint with your local data protection supervisory authority.</p>
+              <p>For privacy questions or to exercise your rights, contact our Data Protection Officer at <span style={{ color: 'rgba(255,255,255,0.7)' }}>privacy@dambler.com</span>. If you are unsatisfied with our response, you have the right to lodge a complaint with your local data protection supervisory authority.</p>
             </Section>
           </div>
         </div>

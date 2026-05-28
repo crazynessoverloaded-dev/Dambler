@@ -4,7 +4,7 @@ import { and, desc, eq, ne, sql, gt, lt, or } from "drizzle-orm";
 import path from "path";
 import { fileURLToPath } from "url";
 import { randomBytes } from "crypto";
-import { bugReports, chatMessages, contactSubmissions, suspiciousActivity, transactions, users, wallets } from "../drizzle/schema";
+import { adminLogs, bugReports, chatMessages, contactSubmissions, gameToggles, siteConfig, suspiciousActivity, transactions, userNotes, users, wallets } from "../drizzle/schema";
 
 // Commission % per referrer XP tier (matches TIERS in client/src/lib/tiers.ts)
 const COMMISSION_RATES: Record<string, number> = {
@@ -145,7 +145,44 @@ export async function initDb() {
       createdAt INTEGER NOT NULL DEFAULT (unixepoch())
     );
     CREATE INDEX IF NOT EXISTS idx_contact_status ON contact_submissions(status);
+    CREATE TABLE IF NOT EXISTS admin_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      adminId INTEGER NOT NULL,
+      adminUsername TEXT NOT NULL,
+      action TEXT NOT NULL,
+      details TEXT NOT NULL DEFAULT '',
+      targetUserId INTEGER,
+      targetUsername TEXT,
+      createdAt INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    CREATE INDEX IF NOT EXISTS idx_admin_logs_created ON admin_logs(createdAt DESC);
+    CREATE TABLE IF NOT EXISTS site_config (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updatedAt INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    CREATE TABLE IF NOT EXISTS game_toggles (
+      gameId TEXT PRIMARY KEY,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      updatedAt INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    CREATE TABLE IF NOT EXISTS user_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
+      adminId INTEGER NOT NULL,
+      adminUsername TEXT NOT NULL,
+      note TEXT NOT NULL,
+      createdAt INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    CREATE INDEX IF NOT EXISTS idx_user_notes_userId ON user_notes(userId);
   `);
+  for (const stmt of [
+    `ALTER TABLE users ADD COLUMN chatMuted INTEGER NOT NULL DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN chatMutedUntil INTEGER`,
+    `ALTER TABLE chat_messages ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0`,
+  ]) {
+    try { await client.execute(stmt); } catch { /* already exists */ }
+  }
   // Unique index for referralCode (can't be done via ALTER TABLE in SQLite)
   try {
     await client.execute(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_referralCode ON users(referralCode)`);
@@ -1071,7 +1108,8 @@ export async function getChatMessages(limit = 60) {
 }
 
 export async function sendChatMessage(userId: number, username: string, text: string) {
-  // Rate limit: max 1 message per 2 seconds
+  const muted = await isUserChatMuted(userId);
+  if (muted) throw new Error("You are muted from chat.");
   const twoSecsAgo = new Date(Date.now() - 2000);
   const recent = await db.select({ id: chatMessages.id }).from(chatMessages)
     .where(and(eq(chatMessages.userId, userId), gt(chatMessages.createdAt, twoSecsAgo)))
@@ -1108,4 +1146,137 @@ export async function adminBugAwardXp(id: number, xpAmount: number) {
   if (report[0].xpAwarded > 0) throw new Error("XP already awarded for this report");
   await adminAwardXp(report[0].userId, xpAmount);
   await db.update(bugReports).set({ xpAwarded: xpAmount }).where(eq(bugReports.id, id));
+}
+
+// ── Audit Log ────────────────────────────────────────────────────────────────
+
+export async function adminLog(adminId: number, adminUsername: string, action: string, details: string, targetUserId?: number, targetUsername?: string) {
+  await db.insert(adminLogs).values({ adminId, adminUsername, action, details, targetUserId: targetUserId ?? null, targetUsername: targetUsername ?? null });
+}
+
+export async function adminGetLogs(opts: { page?: number; limit?: number }) {
+  const { page = 1, limit = 50 } = opts;
+  const offset = (page - 1) * limit;
+  const rows = await db.select().from(adminLogs).orderBy(desc(adminLogs.createdAt)).limit(limit).offset(offset);
+  const countRows = await db.select({ count: sql<number>`COUNT(*)` }).from(adminLogs);
+  return { rows, total: Number(countRows[0]?.count ?? 0) };
+}
+
+// ── Site Config ──────────────────────────────────────────────────────────────
+
+export async function getSiteConfig(): Promise<Record<string, string>> {
+  const rows = await db.select().from(siteConfig);
+  return Object.fromEntries(rows.map(r => [r.key, r.value]));
+}
+
+export async function setSiteConfig(key: string, value: string) {
+  await db.insert(siteConfig).values({ key, value })
+    .onConflictDoUpdate({ target: siteConfig.key, set: { value, updatedAt: new Date() } });
+}
+
+// ── Game Toggles ─────────────────────────────────────────────────────────────
+
+export async function getGameToggles(): Promise<Record<string, boolean>> {
+  const rows = await db.select().from(gameToggles);
+  return Object.fromEntries(rows.map(r => [r.gameId, r.enabled === 1]));
+}
+
+export async function setGameToggle(gameId: string, enabled: boolean) {
+  await db.insert(gameToggles).values({ gameId, enabled: enabled ? 1 : 0 })
+    .onConflictDoUpdate({ target: gameToggles.gameId, set: { enabled: enabled ? 1 : 0, updatedAt: new Date() } });
+}
+
+// ── User Notes ───────────────────────────────────────────────────────────────
+
+export async function adminAddUserNote(userId: number, adminId: number, adminUsername: string, note: string) {
+  await db.insert(userNotes).values({ userId, adminId, adminUsername, note });
+}
+
+export async function adminGetUserNotes(userId: number) {
+  return db.select().from(userNotes).where(eq(userNotes.userId, userId)).orderBy(desc(userNotes.createdAt));
+}
+
+export async function adminDeleteUserNote(id: number) {
+  await db.delete(userNotes).where(eq(userNotes.id, id));
+}
+
+// ── Chat Moderation ──────────────────────────────────────────────────────────
+
+export async function adminGetAllChatMessages(opts: { page?: number; limit?: number }) {
+  const { page = 1, limit = 50 } = opts;
+  const offset = (page - 1) * limit;
+  const rows = await db.select().from(chatMessages).orderBy(desc(chatMessages.createdAt)).limit(limit).offset(offset);
+  const countRows = await db.select({ count: sql<number>`COUNT(*)` }).from(chatMessages);
+  return { rows, total: Number(countRows[0]?.count ?? 0) };
+}
+
+export async function adminDeleteChatMessage(id: number) {
+  await db.delete(chatMessages).where(eq(chatMessages.id, id));
+}
+
+export async function adminMuteUser(userId: number, hours: number) {
+  const until = hours > 0 ? Math.floor(Date.now() / 1000) + hours * 3600 : null;
+  await db.update(users).set({ chatMuted: 1, chatMutedUntil: until } as any).where(eq(users.id, userId));
+}
+
+export async function adminUnmuteUser(userId: number) {
+  await db.update(users).set({ chatMuted: 0, chatMutedUntil: null } as any).where(eq(users.id, userId));
+}
+
+export async function isUserChatMuted(userId: number): Promise<boolean> {
+  const row = await db.select({ chatMuted: sql<number>`chatMuted`, chatMutedUntil: sql<number>`chatMutedUntil` })
+    .from(users).where(eq(users.id, userId)).limit(1);
+  if (!row[0]) return false;
+  const { chatMuted, chatMutedUntil } = row[0];
+  if (!chatMuted) return false;
+  if (chatMutedUntil && chatMutedUntil < Math.floor(Date.now() / 1000)) {
+    await adminUnmuteUser(userId);
+    return false;
+  }
+  return true;
+}
+
+// ── Financial Stats ──────────────────────────────────────────────────────────
+
+export async function adminGetFinancialStats() {
+  // Per-game profit breakdown
+  const gameRows = await db.select({
+    game: transactions.game,
+    wagered: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.type}='bet' THEN ${transactions.amount} ELSE 0 END),0)`,
+    won: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.type}='win' THEN ${transactions.amount} ELSE 0 END),0)`,
+    bets: sql<number>`COUNT(CASE WHEN ${transactions.type}='bet' THEN 1 END)`,
+  }).from(transactions)
+    .where(sql`${transactions.game} IS NOT NULL`)
+    .groupBy(transactions.game)
+    .orderBy(sql`wagered DESC`)
+    .limit(50);
+
+  const games = gameRows.map(r => ({
+    game: r.game ?? "unknown",
+    wagered: parseFloat(Number(r.wagered).toFixed(2)),
+    won: parseFloat(Number(r.won).toFixed(2)),
+    profit: parseFloat((Number(r.wagered) - Number(r.won)).toFixed(2)),
+    bets: Number(r.bets),
+    edge: Number(r.wagered) > 0 ? parseFloat(((1 - Number(r.won) / Number(r.wagered)) * 100).toFixed(1)) : 0,
+  }));
+
+  // Daily profit for last 30 days
+  const thirtyDaysAgo = Math.floor(Date.now() / 1000) - 30 * 86400;
+  const dailyRows = await db.select({
+    day: sql<string>`date(datetime(${transactions.createdAt}, 'unixepoch'))`,
+    wagered: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.type}='bet' THEN ${transactions.amount} ELSE 0 END),0)`,
+    won: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.type}='win' THEN ${transactions.amount} ELSE 0 END),0)`,
+  }).from(transactions)
+    .where(sql`${transactions.createdAt} >= ${thirtyDaysAgo}`)
+    .groupBy(sql`day`)
+    .orderBy(sql`day ASC`);
+
+  const daily = dailyRows.map(r => ({
+    day: r.day,
+    wagered: parseFloat(Number(r.wagered).toFixed(2)),
+    won: parseFloat(Number(r.won).toFixed(2)),
+    profit: parseFloat((Number(r.wagered) - Number(r.won)).toFixed(2)),
+  }));
+
+  return { games, daily };
 }

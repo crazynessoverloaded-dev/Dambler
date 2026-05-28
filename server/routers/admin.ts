@@ -20,6 +20,20 @@ import {
   adminBugAwardXp,
   adminGetContactSubmissions,
   adminUpdateContactStatus,
+  adminLog,
+  adminGetLogs,
+  getSiteConfig,
+  setSiteConfig,
+  getGameToggles,
+  setGameToggle,
+  adminAddUserNote,
+  adminGetUserNotes,
+  adminDeleteUserNote,
+  adminGetAllChatMessages,
+  adminDeleteChatMessage,
+  adminMuteUser,
+  adminUnmuteUser,
+  adminGetFinancialStats,
   db,
 } from "../db";
 import { users } from "../../drizzle/schema";
@@ -66,38 +80,43 @@ export const adminRouter = router({
     }),
 
   banUser: adminProcedure
-    .input(z.object({ userId: z.number().int(), reason: z.string().min(1) }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ userId: z.number().int(), username: z.string().default(""), reason: z.string().min(1) }))
+    .mutation(async ({ input, ctx }) => {
       await adminBanUser(input.userId, input.reason);
+      await adminLog(ctx.user.id, ctx.user.username, "BAN_USER", input.reason, input.userId, input.username);
       return { success: true };
     }),
 
   unbanUser: adminProcedure
-    .input(z.object({ userId: z.number().int() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ userId: z.number().int(), username: z.string().default("") }))
+    .mutation(async ({ input, ctx }) => {
       await adminUnbanUser(input.userId);
+      await adminLog(ctx.user.id, ctx.user.username, "UNBAN_USER", "", input.userId, input.username);
       return { success: true };
     }),
 
   resetPassword: adminProcedure
-    .input(z.object({ userId: z.number().int(), newPassword: z.string().min(6) }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ userId: z.number().int(), username: z.string().default(""), newPassword: z.string().min(6) }))
+    .mutation(async ({ input, ctx }) => {
       const hash = await bcrypt.hash(input.newPassword, 10);
       await adminSetPassword(input.userId, hash);
+      await adminLog(ctx.user.id, ctx.user.username, "RESET_PASSWORD", "", input.userId, input.username);
       return { success: true };
     }),
 
   awardXp: adminProcedure
-    .input(z.object({ userId: z.number().int(), amount: z.number().int() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ userId: z.number().int(), username: z.string().default(""), amount: z.number().int() }))
+    .mutation(async ({ input, ctx }) => {
       await adminAwardXp(input.userId, input.amount);
+      await adminLog(ctx.user.id, ctx.user.username, "ADJUST_XP", `${input.amount > 0 ? "+" : ""}${input.amount}`, input.userId, input.username);
       return { success: true };
     }),
 
   adjustBalance: adminProcedure
-    .input(z.object({ userId: z.number().int(), amount: z.number(), note: z.string().default("Admin adjustment") }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ userId: z.number().int(), username: z.string().default(""), amount: z.number(), note: z.string().default("Admin adjustment") }))
+    .mutation(async ({ input, ctx }) => {
       await adminAdjustBalance(input.userId, input.amount, input.note);
+      await adminLog(ctx.user.id, ctx.user.username, "ADJUST_BALANCE", `${input.amount > 0 ? "+" : ""}${input.amount} DMB — ${input.note}`, input.userId, input.username);
       return { success: true };
     }),
 
@@ -211,4 +230,84 @@ export const adminRouter = router({
       await adminUpdateContactStatus(input.id, input.status);
       return { success: true };
     }),
+
+  // ── Audit Log ──────────────────────────────────────────────────────────────
+  getAuditLog: adminProcedure
+    .input(z.object({ page: z.number().int().min(1).default(1), limit: z.number().int().min(1).max(100).default(50) }))
+    .query(async ({ input }) => adminGetLogs(input)),
+
+  // ── Site Config ────────────────────────────────────────────────────────────
+  getSiteConfig: adminProcedure.query(async () => getSiteConfig()),
+
+  setSiteConfig: adminProcedure
+    .input(z.object({ key: z.string().min(1), value: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      await setSiteConfig(input.key, input.value);
+      await adminLog(ctx.user.id, ctx.user.username, "SET_CONFIG", `${input.key} = ${input.value}`);
+      return { success: true };
+    }),
+
+  // ── Game Toggles ───────────────────────────────────────────────────────────
+  getGameToggles: adminProcedure.query(async () => getGameToggles()),
+
+  setGameToggle: adminProcedure
+    .input(z.object({ gameId: z.string().min(1), enabled: z.boolean() }))
+    .mutation(async ({ input, ctx }) => {
+      await setGameToggle(input.gameId, input.enabled);
+      await adminLog(ctx.user.id, ctx.user.username, "GAME_TOGGLE", `${input.gameId} → ${input.enabled ? "ON" : "OFF"}`);
+      return { success: true };
+    }),
+
+  // ── User Notes ─────────────────────────────────────────────────────────────
+  getUserNotes: adminProcedure
+    .input(z.object({ userId: z.number().int() }))
+    .query(async ({ input }) => adminGetUserNotes(input.userId)),
+
+  addUserNote: adminProcedure
+    .input(z.object({ userId: z.number().int(), targetUsername: z.string(), note: z.string().min(1).max(500) }))
+    .mutation(async ({ input, ctx }) => {
+      await adminAddUserNote(input.userId, ctx.user.id, ctx.user.username, input.note);
+      await adminLog(ctx.user.id, ctx.user.username, "ADD_NOTE", input.note, input.userId, input.targetUsername);
+      return { success: true };
+    }),
+
+  deleteUserNote: adminProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ input, ctx }) => {
+      await adminDeleteUserNote(input.id);
+      await adminLog(ctx.user.id, ctx.user.username, "DELETE_NOTE", `Note #${input.id}`);
+      return { success: true };
+    }),
+
+  // ── Chat Moderation ────────────────────────────────────────────────────────
+  getChatMessages: adminProcedure
+    .input(z.object({ page: z.number().int().min(1).default(1), limit: z.number().int().min(1).max(100).default(50) }))
+    .query(async ({ input }) => adminGetAllChatMessages(input)),
+
+  deleteChatMessage: adminProcedure
+    .input(z.object({ id: z.number().int(), username: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      await adminDeleteChatMessage(input.id);
+      await adminLog(ctx.user.id, ctx.user.username, "DELETE_MSG", `Message #${input.id} from ${input.username}`);
+      return { success: true };
+    }),
+
+  muteUser: adminProcedure
+    .input(z.object({ userId: z.number().int(), username: z.string(), hours: z.number().int().min(0).max(720) }))
+    .mutation(async ({ input, ctx }) => {
+      await adminMuteUser(input.userId, input.hours);
+      await adminLog(ctx.user.id, ctx.user.username, "MUTE_USER", `${input.hours}h`, input.userId, input.username);
+      return { success: true };
+    }),
+
+  unmuteUser: adminProcedure
+    .input(z.object({ userId: z.number().int(), username: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      await adminUnmuteUser(input.userId);
+      await adminLog(ctx.user.id, ctx.user.username, "UNMUTE_USER", "", input.userId, input.username);
+      return { success: true };
+    }),
+
+  // ── Financial Stats ────────────────────────────────────────────────────────
+  getFinancialStats: adminProcedure.query(async () => adminGetFinancialStats()),
 });

@@ -51,9 +51,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
           onClick={() => setDismissed(true)}
           style={{
             position: 'fixed', inset: 0, zIndex: 200,
-            background: 'rgba(0,0,0,0.82)',
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
+            background: 'rgba(0,0,0,0.75)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '16px',
           }}
@@ -62,103 +62,64 @@ export default function MainLayout({ children }: MainLayoutProps) {
             onClick={(e) => e.stopPropagation()}
             style={{
               position: 'relative',
-              background: 'linear-gradient(170deg, #111118 0%, #09090f 100%)',
-              borderRadius: 28,
-              padding: '44px 40px 36px',
-              maxWidth: 400,
+              background: '#161616',
+              border: '1px solid #222',
+              borderRadius: 18,
+              padding: '40px 36px 32px',
+              maxWidth: 380,
               width: '100%',
               textAlign: 'center',
-              boxShadow: '0 0 0 1px rgba(251,191,36,0.18), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 32px 80px rgba(0,0,0,0.9)',
-              overflow: 'hidden',
+              boxShadow: '0 40px 100px rgba(0,0,0,0.8)',
             }}
           >
-            {/* Top ambient glow */}
-            <div style={{
-              position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)',
-              width: 240, height: 100,
-              background: 'radial-gradient(ellipse, rgba(245,158,11,0.18) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }} />
-
             {/* Close button */}
             <button
               onClick={() => setDismissed(true)}
               style={{
                 position: 'absolute', top: 14, right: 14,
-                width: 30, height: 30, borderRadius: '50%',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: 'rgba(255,255,255,0.35)', fontSize: 18, lineHeight: '28px',
+                width: 28, height: 28, borderRadius: '50%',
+                background: '#222', border: '1px solid #2e2e2e',
+                color: '#555', fontSize: 16, lineHeight: 1,
                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'background 0.2s',
               }}
             >
               ×
             </button>
 
-            {/* Icon */}
-            <div style={{
-              width: 68, height: 68, borderRadius: '50%',
-              background: 'linear-gradient(145deg, rgba(245,158,11,0.14), rgba(245,158,11,0.06))',
-              border: '1.5px solid rgba(245,158,11,0.32)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 22px',
-              boxShadow: '0 0 36px rgba(245,158,11,0.18)',
-            }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#f59e0b" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
-                <rect x="3" y="11" width="18" height="11" rx="3" stroke="#f59e0b" strokeWidth="1.75"/>
-                <circle cx="12" cy="16.5" r="1.4" fill="#f59e0b"/>
-                <line x1="12" y1="17.9" x2="12" y2="19.2" stroke="#f59e0b" strokeWidth="1.75" strokeLinecap="round"/>
-              </svg>
-            </div>
-
-            {/* Label */}
             <p style={{
-              fontSize: 9.5, fontWeight: 800, letterSpacing: 3, color: '#f59e0b',
-              textTransform: 'uppercase', marginBottom: 10, opacity: 0.65,
+              fontSize: 10, fontWeight: 700, letterSpacing: 2.5,
+              color: '#444', textTransform: 'uppercase', marginBottom: 16,
             }}>
               Members Only
             </p>
 
             <h2 style={{
-              fontSize: 27, fontWeight: 900, color: '#ffffff',
-              letterSpacing: -0.5, marginBottom: 10, lineHeight: 1.15,
+              fontSize: 22, fontWeight: 800, color: '#fff',
+              letterSpacing: -0.3, marginBottom: 8, lineHeight: 1.2,
             }}>
-              Login to Play
+              Sign in to play
             </h2>
 
             <p style={{
-              fontSize: 13.5, color: 'rgba(255,255,255,0.36)',
-              marginBottom: 30, lineHeight: 1.7,
+              fontSize: 13, color: '#555',
+              marginBottom: 28, lineHeight: 1.65,
             }}>
-              Create a free account to bet with real money,<br />
-              track your stats, and unlock rewards.
+              Create a free account to bet, track your<br />stats, and unlock rewards.
             </p>
 
-            {/* Divider */}
-            <div style={{
-              height: 1,
-              background: 'linear-gradient(90deg, transparent, rgba(245,158,11,0.2), transparent)',
-              marginBottom: 24,
-            }} />
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
               <Link href="/login" style={{
-                display: 'block', padding: '15px 0', borderRadius: 14,
-                background: '#ffffff',
-                color: '#0a0a0f', fontWeight: 900, fontSize: 15, textDecoration: 'none',
-                letterSpacing: 0.3,
-                boxShadow: '0 4px 20px rgba(255,255,255,0.12)',
+                display: 'block', padding: '13px 0', borderRadius: 9,
+                background: '#fff', color: '#111',
+                fontWeight: 800, fontSize: 14, textDecoration: 'none',
               }}>
-                Login
+                Sign In
               </Link>
 
               <Link href="/register" style={{
-                display: 'block', padding: '15px 0', borderRadius: 14,
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                color: 'rgba(255,255,255,0.72)', fontWeight: 700, fontSize: 14,
+                display: 'block', padding: '13px 0', borderRadius: 9,
+                background: '#1e1e1e', border: '1px solid #2a2a2a',
+                color: '#888', fontWeight: 700, fontSize: 13,
                 textDecoration: 'none',
               }}>
                 Create Free Account

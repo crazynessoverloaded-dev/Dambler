@@ -22,6 +22,7 @@ type ActionModal =
   | { type: "xp"; userId: number; username: string }
   | { type: "balance"; userId: number; username: string }
   | { type: "password"; userId: number; username: string }
+  | { type: "notes"; userId: number; username: string }
   | null;
 
 export default function Users() {
@@ -33,23 +34,36 @@ export default function Users() {
   const [balanceAmount, setBalanceAmount] = useState("");
   const [balanceNote, setBalanceNote] = useState("Admin credit");
   const [newPassword, setNewPassword] = useState("");
+  const [newNote, setNewNote] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const utils = trpc.useUtils();
   const { data, isLoading } = trpc.admin.getUsers.useQuery({ search: search || undefined, page, limit: 50 },
     { keepPreviousData: true });
 
+  const notesUserId = modal?.type === "notes" ? modal.userId : 0;
+  const { data: notesData, refetch: refetchNotes } = trpc.admin.getUserNotes.useQuery(
+    { userId: notesUserId },
+    { enabled: modal?.type === "notes" },
+  );
+
   const banMutation = trpc.admin.banUser.useMutation({
     onSuccess: () => { utils.admin.getUsers.invalidate(); setModal(null); setFeedback("User banned."); },
   });
   const xpMutation = trpc.admin.awardXp.useMutation({
-    onSuccess: () => { utils.admin.getUsers.invalidate(); setModal(null); setFeedback("XP awarded."); },
+    onSuccess: () => { utils.admin.getUsers.invalidate(); setModal(null); setFeedback("XP adjusted."); },
   });
   const balanceMutation = trpc.admin.adjustBalance.useMutation({
     onSuccess: () => { utils.admin.getUsers.invalidate(); setModal(null); setFeedback("Balance adjusted."); },
   });
   const passwordMutation = trpc.admin.resetPassword.useMutation({
     onSuccess: () => { setModal(null); setFeedback("Password updated."); },
+  });
+  const addNoteMutation = trpc.admin.addUserNote.useMutation({
+    onSuccess: () => { setNewNote(""); refetchNotes(); },
+  });
+  const deleteNoteMutation = trpc.admin.deleteUserNote.useMutation({
+    onSuccess: () => refetchNotes(),
   });
 
   const totalPages = Math.ceil((data?.total ?? 0) / 50);
@@ -122,6 +136,8 @@ export default function Users() {
                           onClick={() => { setBalanceAmount(""); setModal({ type: "balance", userId: u.id, username: u.username }); }} />
                         <ActionBtn label="Reset PW" color="#888" bg="#1a1a1a"
                           onClick={() => { setNewPassword(""); setModal({ type: "password", userId: u.id, username: u.username }); }} />
+                        <ActionBtn label="Notes" color="#fbbf24" bg="#1a1000"
+                          onClick={() => { setNewNote(""); setModal({ type: "notes", userId: u.id, username: u.username }); }} />
                       </div>
                     </td>
                   </tr>
@@ -154,7 +170,7 @@ export default function Users() {
                   placeholder="Reason for ban…"
                   style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} />
                 <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-                  <button onClick={() => banMutation.mutate({ userId: modal.userId, reason: banReason })}
+                  <button onClick={() => banMutation.mutate({ userId: modal.userId, username: modal.username, reason: banReason })}
                     style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#dc2626", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
                     Confirm Ban
                   </button>
@@ -168,7 +184,7 @@ export default function Users() {
                 <p style={{ fontSize: 12, color: "#555", marginBottom: 14 }}>Positive to award, negative to remove. XP cannot go below 0.</p>
                 <input type="number" value={xpAmount} onChange={e => setXpAmount(e.target.value)} style={inputStyle} placeholder="e.g. 500 or -200" />
                 <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-                  <button onClick={() => xpMutation.mutate({ userId: modal.userId, amount: parseInt(xpAmount) })}
+                  <button onClick={() => xpMutation.mutate({ userId: modal.userId, username: modal.username, amount: parseInt(xpAmount) })}
                     style={{ flex: 1, padding: "10px", borderRadius: 8, background: parseInt(xpAmount) < 0 ? "#dc2626" : "#7c3aed", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
                     {parseInt(xpAmount) < 0 ? `Remove ${Math.abs(parseInt(xpAmount) || 0)} XP` : `Award ${parseInt(xpAmount) || 0} XP`}
                   </button>
@@ -184,7 +200,7 @@ export default function Users() {
                   style={{ ...inputStyle, marginBottom: 8 }} />
                 <input type="text" value={balanceNote} onChange={e => setBalanceNote(e.target.value)} placeholder="Note" style={inputStyle} />
                 <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-                  <button onClick={() => balanceMutation.mutate({ userId: modal.userId, amount: parseFloat(balanceAmount), note: balanceNote })}
+                  <button onClick={() => balanceMutation.mutate({ userId: modal.userId, username: modal.username, amount: parseFloat(balanceAmount), note: balanceNote })}
                     style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#1d4ed8", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
                     Apply
                   </button>
@@ -203,6 +219,48 @@ export default function Users() {
                   </button>
                   <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#222", color: "#888", fontWeight: 600, fontSize: 13, border: "1px solid #333", cursor: "pointer" }}>Cancel</button>
                 </div>
+              </>
+            )}
+            {modal.type === "notes" && (
+              <>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: "#f0f0f0", margin: 0 }}>Notes — {modal.username}</h3>
+                  <button onClick={() => setModal(null)} style={{ background: "none", border: "none", color: "#555", fontSize: 18, cursor: "pointer", lineHeight: 1 }}>×</button>
+                </div>
+
+                <div style={{ maxHeight: 220, overflowY: "auto", marginBottom: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                  {notesData && notesData.length === 0 && (
+                    <p style={{ fontSize: 12, color: "#444", textAlign: "center", padding: "16px 0" }}>No notes yet.</p>
+                  )}
+                  {notesData?.map(n => (
+                    <div key={n.id} style={{ background: "#111", border: "1px solid #252525", borderRadius: 8, padding: "9px 12px" }}>
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                        <p style={{ fontSize: 13, color: "#e0e0e0", margin: 0, flex: 1, lineHeight: 1.5 }}>{n.note}</p>
+                        <button
+                          onClick={() => deleteNoteMutation.mutate({ id: n.id })}
+                          style={{ background: "none", border: "none", color: "#555", fontSize: 14, cursor: "pointer", flexShrink: 0, padding: 0, lineHeight: 1 }}>
+                          ×
+                        </button>
+                      </div>
+                      <p style={{ fontSize: 11, color: "#444", margin: "5px 0 0" }}>
+                        {n.adminUsername} · {new Date(n.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <textarea
+                  value={newNote}
+                  onChange={e => setNewNote(e.target.value)}
+                  placeholder="Add a note…"
+                  style={{ ...inputStyle, minHeight: 72, resize: "vertical" }}
+                />
+                <button
+                  onClick={() => addNoteMutation.mutate({ userId: modal.userId, targetUsername: modal.username, note: newNote })}
+                  disabled={!newNote.trim() || addNoteMutation.isPending}
+                  style={{ marginTop: 10, width: "100%", padding: "10px", borderRadius: 8, background: newNote.trim() ? "#fbbf24" : "#1a1000", color: newNote.trim() ? "#000" : "#555", fontWeight: 700, fontSize: 13, border: "none", cursor: newNote.trim() ? "pointer" : "not-allowed" }}>
+                  Add Note
+                </button>
               </>
             )}
           </div>

@@ -4,6 +4,7 @@ import { Route, Switch, useLocation } from "wouter";
 import { useEffect } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import SplashScreen from "./components/SplashScreen";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -48,6 +49,10 @@ import AdminGameStats from "./pages/admin/GameStats";
 import AdminAccounts from "./pages/admin/AdminAccounts";
 import AdminBugReports from "./pages/admin/BugReports";
 import AdminContactMessages from "./pages/admin/ContactMessages";
+import AdminFinancial from "./pages/admin/FinancialControls";
+import AdminChat from "./pages/admin/ChatModeration";
+import AdminSiteConfig from "./pages/admin/SiteConfig";
+import AdminAuditLog from "./pages/admin/AuditLog";
 
 // Game pages
 import Plinko from "./pages/Plinko";
@@ -185,6 +190,10 @@ function Router() {
       <Route path="/admin/accounts" component={() => <AdminGuard><AdminAccounts /></AdminGuard>} />
       <Route path="/admin/bug-reports" component={() => <AdminGuard><AdminBugReports /></AdminGuard>} />
       <Route path="/admin/contact" component={() => <AdminGuard><AdminContactMessages /></AdminGuard>} />
+      <Route path="/admin/financial" component={() => <AdminGuard><AdminFinancial /></AdminGuard>} />
+      <Route path="/admin/chat" component={() => <AdminGuard><AdminChat /></AdminGuard>} />
+      <Route path="/admin/site-config" component={() => <AdminGuard><AdminSiteConfig /></AdminGuard>} />
+      <Route path="/admin/audit-log" component={() => <AdminGuard><AdminAuditLog /></AdminGuard>} />
 
       {/* 404 */}
       <Route component={NotFound} />
@@ -203,6 +212,7 @@ export default function App() {
        */}
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
+          <SplashScreen />
           <Toaster />
           <Router />
         </TooltipProvider>

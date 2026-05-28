@@ -3,7 +3,6 @@ import MainLayout from '@/components/MainLayout';
 import { FileText, AlertTriangle } from 'lucide-react';
 
 const LAST_UPDATED = 'May 17, 2026';
-const ACCENT = '#00FF88';
 
 const card: React.CSSProperties = {
   background: 'rgba(255,255,255,0.03)',
@@ -18,7 +17,7 @@ function Section({ num, title, children }: SectionProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: num * 0.04 }} style={card}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-        <span style={{ fontSize: 10, fontWeight: 800, color: ACCENT, background: 'rgba(0,255,136,0.1)', border: '1px solid rgba(0,255,136,0.2)', borderRadius: 6, padding: '2px 7px', fontFamily: 'monospace' }}>{num}</span>
+        <span style={{ fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '2px 7px', fontFamily: 'monospace' }}>{num}</span>
         <h2 style={{ fontSize: 14, fontWeight: 800, color: '#fff', margin: 0 }}>{title}</h2>
       </div>
       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.54)', lineHeight: 1.72, display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -31,15 +30,13 @@ function Section({ num, title, children }: SectionProps) {
 export default function TermsOfService() {
   return (
     <MainLayout>
-      <div style={{ background: '#0f1118', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 360, background: 'radial-gradient(ellipse at 50% 0%, rgba(0,255,136,0.09) 0%, transparent 65%)', pointerEvents: 'none' }} />
-
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '48px 24px 80px', position: 'relative' }}>
+      <div style={{ background: '#0f1118', minHeight: '100vh' }}>
+        <div style={{ maxWidth: 800, margin: '0 auto', padding: '48px 24px 80px' }}>
 
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 }}>
-            <div style={{ background: 'rgba(0,255,136,0.09)', border: '1px solid rgba(0,255,136,0.18)', borderRadius: 10, padding: 10, display: 'flex' }}>
-              <FileText style={{ width: 18, height: 18, color: ACCENT }} />
+            <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: 10, display: 'flex' }}>
+              <FileText style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.6)' }} />
             </div>
             <div>
               <h1 style={{ fontSize: 28, fontWeight: 800, color: '#fff', margin: 0, letterSpacing: -0.4 }}>Terms of Service</h1>
@@ -49,10 +46,10 @@ export default function TermsOfService() {
 
           {/* Important notice */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.08 }}
-            style={{ background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 14, padding: '16px 20px', marginTop: 28, marginBottom: 16, display: 'flex', gap: 12 }}>
-            <AlertTriangle style={{ width: 16, height: 16, color: '#f59e0b', flexShrink: 0, marginTop: 1 }} />
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.65, margin: 0 }}>
-              <strong style={{ color: '#f59e0b', fontWeight: 700 }}>IMPORTANT:</strong> Please read these Terms carefully before using Dambler. By registering an account or placing any bet you agree to be legally bound by these terms. If you do not agree, do not use Dambler.
+            style={{ ...card, marginTop: 28, marginBottom: 16, display: 'flex', gap: 12 }}>
+            <AlertTriangle style={{ width: 16, height: 16, color: 'rgba(255,255,255,0.45)', flexShrink: 0, marginTop: 1 }} />
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.65, margin: 0 }}>
+              <strong style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 700 }}>IMPORTANT:</strong> Please read these Terms carefully before using Dambler. By registering an account or placing any bet you agree to be legally bound by these terms. If you do not agree, do not use Dambler.
             </p>
           </motion.div>
 
@@ -72,7 +69,7 @@ export default function TermsOfService() {
             </Section>
 
             <Section num={4} title="Account Registration & Security">
-              <p>You may hold only one account on Dambler. Multiple accounts are prohibited and may result in all accounts being closed and balances forfeited. You are responsible for maintaining the confidentiality of your login credentials and for all activity on your account. Notify us immediately at <span style={{ color: ACCENT }}>security@dambler.com</span> if you suspect unauthorised access.</p>
+              <p>You may hold only one account on Dambler. Multiple accounts are prohibited and may result in all accounts being closed and balances forfeited. You are responsible for maintaining the confidentiality of your login credentials and for all activity on your account. Notify us immediately at <span style={{ color: 'rgba(255,255,255,0.7)' }}>security@dambler.com</span> if you suspect unauthorised access.</p>
               <p>We reserve the right to close accounts where: (a) we suspect fraud or collusion; (b) inaccurate registration information was provided; (c) the account holder is ineligible; or (d) the account has been inactive for more than 24 months. Dormant account fees may apply after 12 months of inactivity.</p>
             </Section>
 
@@ -94,7 +91,7 @@ export default function TermsOfService() {
 
             <Section num={8} title="Responsible Gambling">
               <p>Dambler is committed to responsible gambling. We offer deposit limits, loss limits, session time limits, and self-exclusion tools. We encourage you to use these tools if gambling is negatively affecting your life. Access responsible gambling settings from your account Settings page at any time.</p>
-              <p>If you self-exclude, you may not attempt to circumvent the exclusion by opening new accounts. Any winnings accumulated on an account opened in breach of a self-exclusion will be forfeited. For immediate help, contact the National Problem Gambling Helpline: <span style={{ color: ACCENT }}>1-800-522-4700</span>.</p>
+              <p>If you self-exclude, you may not attempt to circumvent the exclusion by opening new accounts. Any winnings accumulated on an account opened in breach of a self-exclusion will be forfeited. For immediate help, contact the National Problem Gambling Helpline: <span style={{ color: 'rgba(255,255,255,0.7)' }}>1-800-522-4700</span>.</p>
             </Section>
 
             <Section num={9} title="Prohibited Conduct">
@@ -113,7 +110,7 @@ export default function TermsOfService() {
 
             <Section num={12} title="Governing Law & Disputes">
               <p>These Terms are governed by the laws of [Jurisdiction]. Any dispute that cannot be resolved by our support team will be submitted to binding arbitration under the rules of [Arbitration Body]. You waive any right to participate in a class action lawsuit or class-wide arbitration.</p>
-              <p>Before initiating formal proceedings, you must contact us at <span style={{ color: ACCENT }}>legal@dambler.com</span> and allow 30 days for us to resolve the dispute informally.</p>
+              <p>Before initiating formal proceedings, you must contact us at <span style={{ color: 'rgba(255,255,255,0.7)' }}>legal@dambler.com</span> and allow 30 days for us to resolve the dispute informally.</p>
             </Section>
 
             <Section num={13} title="Amendments">
@@ -122,9 +119,9 @@ export default function TermsOfService() {
 
             <Section num={14} title="Contact">
               <p>
-                Legal enquiries: <span style={{ color: ACCENT }}>legal@dambler.com</span> &nbsp;·&nbsp;
-                General support: <span style={{ color: ACCENT }}>support@dambler.com</span> &nbsp;·&nbsp;
-                Responsible gambling: <span style={{ color: ACCENT }}>rg@dambler.com</span>
+                Legal enquiries: <span style={{ color: 'rgba(255,255,255,0.7)' }}>legal@dambler.com</span> &nbsp;·&nbsp;
+                General support: <span style={{ color: 'rgba(255,255,255,0.7)' }}>support@dambler.com</span> &nbsp;·&nbsp;
+                Responsible gambling: <span style={{ color: 'rgba(255,255,255,0.7)' }}>rg@dambler.com</span>
               </p>
             </Section>
           </div>

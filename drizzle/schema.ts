@@ -98,3 +98,35 @@ export const contactSubmissions = sqliteTable("contact_submissions", {
   status: text("status", { enum: ["new", "read", "resolved"] }).notNull().default("new"),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
+
+export const adminLogs = sqliteTable("admin_logs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  adminId: integer("adminId").notNull(),
+  adminUsername: text("adminUsername").notNull(),
+  action: text("action").notNull(),
+  details: text("details").notNull().default(""),
+  targetUserId: integer("targetUserId"),
+  targetUsername: text("targetUsername"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export const siteConfig = sqliteTable("site_config", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export const gameToggles = sqliteTable("game_toggles", {
+  gameId: text("gameId").primaryKey(),
+  enabled: integer("enabled").notNull().default(1),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export const userNotes = sqliteTable("user_notes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  adminId: integer("adminId").notNull(),
+  adminUsername: text("adminUsername").notNull(),
+  note: text("note").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});

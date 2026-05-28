@@ -156,11 +156,11 @@ export default function FloatingBalance() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all 0.3s',
         }}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="7" stroke={amountColor} strokeWidth="1.5" opacity="0.7"/>
-          <text x="8" y="11.5" textAnchor="middle" fontSize="8" fontWeight="900"
-            fill={amountColor} fontFamily="system-ui">$</text>
-        </svg>
+        <span style={{
+          fontSize: 11, fontWeight: 900, color: amountColor,
+          lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: '100%', height: '100%',
+        }}>$</span>
       </motion.div>
 
       {/* Text */}
