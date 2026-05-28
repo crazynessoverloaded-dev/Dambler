@@ -3,3 +3,6 @@ aptPkgs = ["libatomic1"]
 
 [variables]
 NODE_VERSION = "22"
+
+[start]
+cmd = "node dist/server/index.js"
