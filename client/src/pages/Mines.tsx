@@ -22,7 +22,7 @@ function calcMultiplier(mines: number, revealed: number): number {
   for (let i = 0; i < revealed; i++) {
     mult *= (GRID_SIZE - i) / (GRID_SIZE - mines - i);
   }
-  return parseFloat((mult * 0.97).toFixed(2));
+  return parseFloat((mult * 0.95).toFixed(2));
 }
 
 function buildGrid(mines: number): Cell[] {

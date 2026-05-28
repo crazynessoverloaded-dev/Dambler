@@ -17,8 +17,8 @@ const PAD_R = 16;
 
 function generateCrashPoint(): number {
   const r = Math.random();
-  if (r < 0.01) return 1.0;
-  return parseFloat(Math.max(1.01, 0.99 / (1 - r)).toFixed(2));
+  if (r < 0.05) return 1.0;
+  return parseFloat(Math.max(1.01, 0.95 / (1 - r)).toFixed(2));
 }
 
 function multToY(mult: number, maxMult: number): number {

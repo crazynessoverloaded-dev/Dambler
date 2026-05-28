@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -52,12 +52,25 @@ const AUTH_LINKS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
 ];
 
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
+  );
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, [breakpoint]);
+  return isMobile;
+}
+
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
   const [location] = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [seenTs, setSeenTs] = useState(getSeenTs);
+  const isMobile = useIsMobile(768);
 
   // Real active-player count
   const { data: liveStats } = trpc.wallet.liveStats.useQuery(undefined, {
@@ -106,12 +119,16 @@ export default function Navbar() {
           {/* ── Logo ── */}
           <Link href="/">
             <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginRight: 32, flexShrink: 0 }}>
-              <div style={{ fontSize: 16, fontWeight: 900, color: '#fff', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'Plus Jakarta Sans, sans-serif', lineHeight: 1 }}>Dambler</div>
+              <span style={{
+                fontSize: 30, fontWeight: 400,
+                fontFamily: "'Great Vibes', cursive", lineHeight: 1,
+                color: '#ffffff',
+              }}>Dambler</span>
             </div>
           </Link>
 
           {/* ── Desktop Nav Links ── */}
-          <div className="hidden lg:flex" style={{ flex: 1, alignItems: 'center', gap: 2 }}>
+          {!isMobile && <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
             {NAV_LINKS.map(({ label, href, icon: Icon }) => {
               const active = location === href;
               return (
@@ -119,19 +136,20 @@ export default function Navbar() {
                   <motion.div
                     whileHover={{ y: -1 }}
                     style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      padding: '6px 12px', borderRadius: 9, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 5,
+                      padding: '6px 9px', borderRadius: 9, cursor: 'pointer',
                       background: active ? 'rgba(255,255,255,0.09)' : 'transparent',
                       border: active ? '1px solid rgba(255,255,255,0.13)' : '1px solid transparent',
                       transition: 'all 0.18s',
-                      fontSize: 13, fontWeight: active ? 700 : 500,
+                      fontSize: 12, fontWeight: active ? 700 : 500,
                       color: active ? '#fff' : 'rgba(255,255,255,0.5)',
                       fontFamily: 'Plus Jakarta Sans, sans-serif',
+                      whiteSpace: 'nowrap',
                     }}
                     onMouseEnter={e => { if (!active) { e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; } }}
                     onMouseLeave={e => { if (!active) { e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; e.currentTarget.style.background = 'transparent'; } }}
                   >
-                    <Icon style={{ width: 13, height: 13, flexShrink: 0 }} strokeWidth={active ? 2.2 : 1.7} />
+                    <Icon style={{ width: 12, height: 12, flexShrink: 0 }} strokeWidth={active ? 2.2 : 1.7} />
                     {label}
                   </motion.div>
                 </Link>
@@ -164,13 +182,13 @@ export default function Navbar() {
                 </Link>
               );
             })}
-          </div>
+          </div>}
 
           {/* ── Right side ── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
 
             {/* Live active users – desktop only */}
-            <div className="hidden md:flex" style={{ alignItems: 'center', gap: 8, marginRight: 8 }}>
+            {!isMobile && <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '4px 10px', borderRadius: 20,
@@ -187,7 +205,7 @@ export default function Navbar() {
                   </span>{' '}online
                 </span>
               </div>
-            </div>
+            </div>}
 
             {/* Notifications — only visible when authenticated */}
             {isAuthenticated && (
@@ -379,21 +397,20 @@ export default function Navbar() {
               </>
             )}
 
-            {/* Mobile hamburger */}
-            <button
-              className="lg:hidden"
+            {/* Mobile hamburger — only on narrow screens */}
+            {isMobile && <button
               onClick={() => setMobileOpen(v => !v)}
               style={{ padding: 7, borderRadius: 9, background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', transition: 'background 0.18s' }}
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
               {mobileOpen ? <X style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.6)' }} /> : <Menu style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.6)' }} />}
-            </button>
+            </button>}
           </div>
         </div>
 
         {/* ── Mobile menu dropdown ── */}
         <AnimatePresence>
-          {mobileOpen && (
+          {isMobile && mobileOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}

@@ -15,6 +15,7 @@ const FOOTER_LINKS = {
   Legal: [
     { label: "Privacy Policy",   href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
+    { label: "Provably Fair",    href: "/provably-fair" },
   ],
 };
 
@@ -26,9 +27,9 @@ const SOCIAL_LINKS = [
 ];
 
 const TRUST_BADGES = [
-  { icon: Shield,       text: "Licensed · Curaçao eGaming #8048/JAZ" },
-  { icon: CheckCircle2, text: "Provably Fair" },
-  { icon: Lock,         text: "256-bit SSL Encrypted" },
+  { icon: Shield,       text: "Licensed · Curaçao eGaming #8048/JAZ", href: undefined },
+  { icon: CheckCircle2, text: "Provably Fair",                         href: "/provably-fair" },
+  { icon: Lock,         text: "256-bit SSL Encrypted",                 href: undefined },
 ];
 
 const BG = '#0d0d12';
@@ -158,18 +159,26 @@ export default function Footer() {
             18+
           </div>
 
-          {TRUST_BADGES.map(({ icon: Icon, text }) => (
-            <div key={text} style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '4px 11px', borderRadius: 6,
-              border: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(255,255,255,0.03)',
-              fontSize: 11, color: 'rgba(255,255,255,0.3)',
-            }}>
-              <Icon style={{ width: 11, height: 11, color: 'rgba(255,255,255,0.3)', flexShrink: 0 }} />
-              {text}
-            </div>
-          ))}
+          {TRUST_BADGES.map(({ icon: Icon, text, href }) => {
+            const inner = (
+              <div key={text} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '4px 11px', borderRadius: 6,
+                border: '1px solid rgba(255,255,255,0.07)',
+                background: 'rgba(255,255,255,0.03)',
+                fontSize: 11, color: 'rgba(255,255,255,0.3)',
+                cursor: href ? 'pointer' : 'default',
+                transition: 'all 0.15s',
+              }}
+                onMouseEnter={e => { if (href) { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.18)'; (e.currentTarget as HTMLDivElement).style.color = 'rgba(255,255,255,0.6)'; } }}
+                onMouseLeave={e => { if (href) { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLDivElement).style.color = 'rgba(255,255,255,0.3)'; } }}
+              >
+                <Icon style={{ width: 11, height: 11, flexShrink: 0 }} />
+                {text}
+              </div>
+            );
+            return href ? <Link key={text} href={href}>{inner}</Link> : inner;
+          })}
         </div>
 
         {/* Bottom bar */}

@@ -12,35 +12,35 @@ import { trpc } from '@/lib/trpc';
 
 // ─── Game data ────────────────────────────────────────────────────────────────
 const ALL_GAMES = [
-  { id: 'crash',           title: 'Crash',            category: 'Crash Games',      image: '/Crash gemini.png', players: 4200, rtp: '97.0', featured: true  },
-  { id: 'blackjack',       title: 'Blackjack',         category: 'Card Games',       image: '/blackjack gemini.png',      players: 2100, rtp: '99.0', featured: true  },
-  { id: 'roulette',        title: 'Roulette',          category: 'Table Games',      image: '/Roulette GEMINI.png',          players: 2800, rtp: '97.3', featured: false },
-  { id: 'plinko',          title: 'Plinko',            category: 'Crash Games',      image: '/plinko gemini.png',         players: 1250, rtp: '97.0', featured: true  },
-  { id: 'mines',           title: 'Mines',             category: 'Strategy Games',   image: '/mines gemini.png',             players: 1840, rtp: '97.0', featured: false },
-  { id: 'baccarat',        title: 'Baccarat',          category: 'Card Games',       image: '/Baccarat gemini.png',       players: 1650, rtp: '98.9', featured: true  },
-  { id: 'dice',            title: 'Dice',              category: 'Dice Games',       image: '/Dice Game gemini.png',           players: 890,  rtp: '97.0', featured: false },
-  { id: 'hilo',            title: 'Hi-Lo',             category: 'Card Games',       image: '/Hi-Lo gemini.png',           players: 980,  rtp: '97.0', featured: false },
-  { id: 'keno',            title: 'Keno',              category: 'Lottery Games',    image: '/keno gemini.png',              players: 720,  rtp: '95.0', featured: false },
-  { id: 'scratch-cards',   title: 'Scratch Cards',     category: 'Luck Games',       image: '/Scratch cards gemini.png',     players: 1380, rtp: '95.0', featured: false },
-  { id: 'video-poker',     title: 'Video Poker',       category: 'Card Games',       image: '/Video Poker gemini.png',    players: 820,  rtp: '99.5', featured: false },
-  { id: 'craps',           title: 'Craps',             category: 'Dice Games',       image: '/craps gemini.png',          players: 910,  rtp: '98.6', featured: true  },
-  { id: 'sicbo',           title: 'Sic Bo',            category: 'Dice Games',       image: '/SicBo gemini.png',          players: 780,  rtp: '97.2', featured: false },
-  { id: 'limbo',           title: 'Limbo',             category: 'Crash Games',      image: '/Limbo gemini.png',          players: 640,  rtp: '97.0', featured: false },
-  { id: 'tower',           title: 'Tower',             category: 'Strategy Games',   image: '/Tower gemini.png',             players: 560,  rtp: '97.0', featured: false },
-  { id: 'coinflip',        title: 'Coin Flip',         category: 'Luck Games',       image: '/Coin flip gemini.png',         players: 1100, rtp: '97.0', featured: false },
-  { id: 'dragon-tiger',    title: 'Dragon Tiger',      category: 'Card Games',       image: '/Black Tiger.png',    players: 1120, rtp: '96.7', featured: false },
-  { id: 'guess-the-cup',   title: 'Guess The Cup',     category: 'Luck Games',       image: '/guess the cup gemini.png',     players: 650,  rtp: '96.0', featured: false },
-  { id: 'wheel',           title: 'Wheel',             category: 'Wheel Games',      image: '/Wheel gemini.png',             players: 490,  rtp: '97.0', featured: false },
-  { id: 'three-card-poker',title: 'Three Card Poker',  category: 'Card Games',       image: '/Three Cad Poker gemini.png', players: 640, rtp: '97.8', featured: false },
-  { id: 'casino-war',      title: 'Casino War',        category: 'Card Games',       image: '/Casino war gemini.png',     players: 430,  rtp: '97.0', featured: false },
-  { id: 'slot-joker',      title: 'Slot Joker',        category: 'Slot Games',       image: '/slots joker gemini.png',      players: 2400, rtp: '96.5', featured: true  },
-  { id: 'classic-slots',   title: 'Classic Slots',     category: 'Slot Games',       image: '/slots gemini.png',   players: 1760, rtp: '96.0', featured: false },
-  { id: 'lucky-7',         title: 'Lucky 7',           category: 'Dice Games',       image: '/Lucky 7 gemni.png',         players: 870,  rtp: '96.8', featured: false },
-  { id: 'card-flip',       title: 'Card Flip',         category: 'Card Games',       image: '/Card Flip gemini.png',       players: 730,  rtp: '97.0', featured: false },
-  { id: 'penalty',         title: 'Penalty Shoot',     category: 'Luck Games',       image: '/Peanlty Shoot gemini.png',     players: 940,  rtp: '96.0', featured: false },
-  { id: 'jackpot-box',     title: 'Jackpot Box',       category: 'Luck Games',       image: '/Jackpot Box gemini.png',       players: 1050, rtp: '95.5', featured: false },
-  { id: 'parity',          title: 'Parity',            category: 'Prediction Games', image: '/Parity gemini.png',            players: 610,  rtp: '96.0', featured: false },
-  { id: 'color-spin',      title: 'Color Spin',        category: 'Wheel Games',      image: '/color spin gemini.png',        players: 530,  rtp: '96.0', featured: false },
+  { id: 'crash',           title: 'Crash',            category: 'Crash Games',      image: '/Crash gemini.png',             rtp: '97.0', featured: true  },
+  { id: 'blackjack',       title: 'Blackjack',        category: 'Card Games',       image: '/blackjack gemini.png',         rtp: '99.0', featured: true  },
+  { id: 'roulette',        title: 'Roulette',         category: 'Table Games',      image: '/Roulette GEMINI.png',          rtp: '97.3', featured: false },
+  { id: 'plinko',          title: 'Plinko',           category: 'Crash Games',      image: '/plinko gemini.png',            rtp: '97.0', featured: true  },
+  { id: 'mines',           title: 'Mines',            category: 'Strategy Games',   image: '/mines gemini.png',             rtp: '97.0', featured: false },
+  { id: 'baccarat',        title: 'Baccarat',         category: 'Card Games',       image: '/Baccarat gemini.png',          rtp: '98.9', featured: true  },
+  { id: 'dice',            title: 'Dice',             category: 'Dice Games',       image: '/Dice Game gemini.png',         rtp: '97.0', featured: false },
+  { id: 'hilo',            title: 'Hi-Lo',            category: 'Card Games',       image: '/Hi-Lo gemini.png',             rtp: '97.0', featured: false },
+  { id: 'keno',            title: 'Keno',             category: 'Lottery Games',    image: '/keno gemini.png',              rtp: '95.0', featured: false },
+  { id: 'scratch-cards',   title: 'Scratch Cards',    category: 'Luck Games',       image: '/Scratch cards gemini.png',     rtp: '95.0', featured: false },
+  { id: 'video-poker',     title: 'Video Poker',      category: 'Card Games',       image: '/Video Poker gemini.png',       rtp: '99.5', featured: false },
+  { id: 'craps',           title: 'Craps',            category: 'Dice Games',       image: '/craps gemini.png',             rtp: '98.6', featured: true  },
+  { id: 'sicbo',           title: 'Sic Bo',           category: 'Dice Games',       image: '/SicBo gemini.png',             rtp: '97.2', featured: false },
+  { id: 'limbo',           title: 'Limbo',            category: 'Crash Games',      image: '/Limbo gemini.png',             rtp: '97.0', featured: false },
+  { id: 'tower',           title: 'Tower',            category: 'Strategy Games',   image: '/Tower gemini.png',             rtp: '97.0', featured: false },
+  { id: 'coinflip',        title: 'Coin Flip',        category: 'Luck Games',       image: '/Coin flip gemini.png',         rtp: '97.0', featured: false },
+  { id: 'dragon-tiger',    title: 'Dragon Tiger',     category: 'Card Games',       image: '/Black Tiger.png',              rtp: '96.7', featured: false },
+  { id: 'guess-the-cup',   title: 'Guess The Cup',    category: 'Luck Games',       image: '/guess the cup gemini.png',     rtp: '96.0', featured: false },
+  { id: 'wheel',           title: 'Wheel',            category: 'Wheel Games',      image: '/Wheel gemini.png',             rtp: '97.0', featured: false },
+  { id: 'three-card-poker',title: 'Three Card Poker', category: 'Card Games',       image: '/Three Cad Poker gemini.png',   rtp: '97.8', featured: false },
+  { id: 'casino-war',      title: 'Casino War',       category: 'Card Games',       image: '/Casino war gemini.png',        rtp: '97.0', featured: false },
+  { id: 'slot-joker',      title: 'Slot Joker',       category: 'Slot Games',       image: '/slots joker gemini.png',       rtp: '96.5', featured: true  },
+  { id: 'classic-slots',   title: 'Classic Slots',    category: 'Slot Games',       image: '/slots gemini.png',             rtp: '96.0', featured: false },
+  { id: 'lucky-7',         title: 'Lucky 7',          category: 'Dice Games',       image: '/Lucky 7 gemni.png',            rtp: '96.8', featured: false },
+  { id: 'card-flip',       title: 'Card Flip',        category: 'Card Games',       image: '/Card Flip gemini.png',         rtp: '97.0', featured: false },
+  { id: 'penalty',         title: 'Penalty Shoot',    category: 'Luck Games',       image: '/Peanlty Shoot gemini.png',     rtp: '96.0', featured: false },
+  { id: 'jackpot-box',     title: 'Jackpot Box',      category: 'Luck Games',       image: '/Jackpot Box gemini.png',       rtp: '95.5', featured: false },
+  { id: 'parity',          title: 'Parity',           category: 'Prediction Games', image: '/Parity gemini.png',            rtp: '96.0', featured: false },
+  { id: 'color-spin',      title: 'Color Spin',       category: 'Wheel Games',      image: '/color spin gemini.png',        rtp: '96.0', featured: false },
 ];
 
 const TABS = [
@@ -164,7 +164,7 @@ export default function Home() {
 
   const filteredGames = ALL_GAMES
     .filter(g => activeTab === 'all' ? true : activeTab === 'featured' ? g.featured : g.category === activeTab)
-    .sort((a, b) => b.players - a.players)
+    .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a.title.localeCompare(b.title))
     .slice(0, 12);
 
   const pad  = (n: number) => n.toString().padStart(2, '0');
@@ -449,11 +449,11 @@ export default function Home() {
             alignItems: 'center', justifyContent: 'center',
           }}>
             {[
-              { label: 'Players Online',  value: '50,320+', grad: `#fff, rgba(255,255,255,0.7)`  },
-              { label: 'Games Available', value: '45+',     grad: `#f59e0b, #fde68a` },
-              { label: 'Total Wagered',   value: '$2.4M',   grad: `${GOLD}, #fde68a`    },
-              { label: 'Instant Payouts', value: '< 1 min', grad: `#fff, rgba(255,255,255,0.7)`  },
-              { label: 'House Edge',      value: '0.5–3%',  grad: `#fff, rgba(255,255,255,0.7)`  },
+              { label: 'Players Online',  value: activeUsers > 0 ? activeUsers.toLocaleString() + '+' : '—',  grad: `#fff, rgba(255,255,255,0.7)`  },
+              { label: 'Games Available', value: `${ALL_GAMES.length}+`,                                      grad: `#f59e0b, #fde68a` },
+              { label: 'Total Wagered',   value: wageredToday > 0 ? fmtWagered(wageredToday) : '—',           grad: `${GOLD}, #fde68a`    },
+              { label: 'Instant Payouts', value: '< 1 min',                                                   grad: `#fff, rgba(255,255,255,0.7)`  },
+              { label: 'House Edge',      value: '0.5–3%',                                                    grad: `#fff, rgba(255,255,255,0.7)`  },
             ].map(({ label, value, grad }, i, arr) => (
               <div key={label} style={{
                 textAlign: 'center', padding: '0 28px',

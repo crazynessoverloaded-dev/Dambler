@@ -113,7 +113,7 @@ export default function Limbo() {
   const launch = () => {
     if (phase !== 'idle' || bet > balance) return;
     const rand = Math.random();
-    const serverResult = +(0.99 / (1 - rand)).toFixed(2);
+    const serverResult = +(0.95 / (1 - rand)).toFixed(2);
     const finalResult = Math.min(1000, Math.max(1.01, serverResult));
     const playerWon = finalResult >= targetNum;
 

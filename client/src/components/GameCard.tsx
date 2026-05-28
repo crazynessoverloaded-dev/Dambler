@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Play, Users } from "lucide-react";
+import { Play } from "lucide-react";
 
 const CATEGORY_COLORS: Record<string, string> = {
   "Crash Games":      "#00FF88",
@@ -70,22 +70,15 @@ interface GameCardProps {
   title: string;
   image: string;
   category: string;
-  players: number;
   rtp?: string;
   featured?: boolean;
 }
 
-/**
- * GameCard
- * Displays a single game with image, stats, and a hover-reveal play button.
- * Links to the game's route; falls back to /game/:id for unknown games.
- */
 export default function GameCard({
   id,
   title,
   image,
   category,
-  players,
   rtp,
   featured = false,
 }: GameCardProps) {
@@ -134,18 +127,13 @@ export default function GameCard({
 
           {/* Stats row */}
           <div className="px-3 pb-3 space-y-1.5" style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}>
-            {rtp && (
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">RTP</span>
-                <span className="font-bold" style={{ color: catColor }}>{rtp}%</span>
-              </div>
-            )}
-
             <div className="flex justify-between items-center text-xs">
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Users className="h-3 w-3" />
-                <span>{players.toLocaleString()} playing</span>
-              </div>
+              {rtp ? (
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <span>RTP</span>
+                  <span className="font-bold" style={{ color: catColor }}>{rtp}%</span>
+                </div>
+              ) : <span />}
 
               {isHovered && (
                 <div className="flex items-center gap-1 font-bold animate-pulse" style={{ color: catColor }}>

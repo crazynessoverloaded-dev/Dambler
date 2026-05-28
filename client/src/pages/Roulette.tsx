@@ -20,14 +20,14 @@ function numColor(n: number): 'green' | 'red' | 'black' {
 function getPayoutMultiplier(bet: Bet, result: number): number {
   const col = numColor(result);
   switch (bet.type) {
-    case 'red':    return col === 'red'   ? 2 : 0;
-    case 'black':  return col === 'black' ? 2 : 0;
-    case 'odd':    return result !== 0 && result % 2 !== 0 ? 2 : 0;
-    case 'even':   return result !== 0 && result % 2 === 0 ? 2 : 0;
-    case '1-12':   return result >= 1  && result <= 12 ? 3 : 0;
-    case '13-24':  return result >= 13 && result <= 24 ? 3 : 0;
-    case '25-36':  return result >= 25 && result <= 36 ? 3 : 0;
-    case 'number': return bet.value === result ? 36 : 0;
+    case 'red':    return col === 'red'   ? 1.9 : 0;
+    case 'black':  return col === 'black' ? 1.9 : 0;
+    case 'odd':    return result !== 0 && result % 2 !== 0 ? 1.9 : 0;
+    case 'even':   return result !== 0 && result % 2 === 0 ? 1.9 : 0;
+    case '1-12':   return result >= 1  && result <= 12 ? 2.85 : 0;
+    case '13-24':  return result >= 13 && result <= 24 ? 2.85 : 0;
+    case '25-36':  return result >= 25 && result <= 36 ? 2.85 : 0;
+    case 'number': return bet.value === result ? 34 : 0;
     default: return 0;
   }
 }

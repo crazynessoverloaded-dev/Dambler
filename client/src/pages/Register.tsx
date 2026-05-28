@@ -180,7 +180,16 @@ export default function Register() {
 
               <label className="flex items-start gap-2 cursor-pointer">
                 <input type="checkbox" className="mt-1 rounded border-border" required />
-                <span className="text-sm text-muted-foreground">I agree to the Terms of Service and Privacy Policy</span>
+                <span className="text-sm text-muted-foreground">
+                  I agree to the{' '}
+                  <Link href="/terms">
+                    <a className="text-accent hover:text-accent/80 underline underline-offset-2 transition-colors">Terms of Service</a>
+                  </Link>
+                  {' '}and{' '}
+                  <Link href="/privacy">
+                    <a className="text-accent hover:text-accent/80 underline underline-offset-2 transition-colors">Privacy Policy</a>
+                  </Link>
+                </span>
               </label>
 
               <Button

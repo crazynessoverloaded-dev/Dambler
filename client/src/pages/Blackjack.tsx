@@ -115,7 +115,7 @@ export default function Blackjack() {
     const dealerBJ = dH.length === 2 && dV === 21;
     let gameResult: 'win' | 'loss' | 'push' = 'loss', payout = 0, msg = '';
     if (playerBJ && dealerBJ) { gameResult = 'push'; msg = 'Both Blackjack — Push!'; payout = betAmount; }
-    else if (playerBJ) { gameResult = 'win'; msg = '★ Blackjack! Pays 3:2'; payout = betAmount * 2.5; }
+    else if (playerBJ) { gameResult = 'win'; msg = '★ Blackjack! Pays 6:5'; payout = betAmount * 2.2; }
     else if (dealerBJ) { msg = 'Dealer Blackjack'; }
     else if (type === 'loss' || pV > 21) { msg = 'Bust! Over 21'; }
     else if (dV > 21) { gameResult = 'win'; msg = 'Dealer Bust! You Win!'; payout = betAmount * 2; }

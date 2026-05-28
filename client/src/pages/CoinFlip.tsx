@@ -148,7 +148,7 @@ export default function CoinFlip() {
 
     setTimeout(() => {
       const won = outcome === side;
-      const profit = won ? +(bet * 0.98).toFixed(2) : -bet;
+      const profit = won ? +(bet * 0.90).toFixed(2) : -bet;
       setResult(outcome);
       setBalance(prev => +(prev + (won ? bet + profit : 0)).toFixed(2));
       setHistory(prev => [{side:side!,result:outcome,profit},...prev.slice(0,9)]);

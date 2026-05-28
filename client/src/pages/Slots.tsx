@@ -5,13 +5,13 @@ import { Zap } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 const SYMBOLS = [
-  { emoji: '🍒', name: 'cherry',  payout: 2,  weight: 40 },
-  { emoji: '🍋', name: 'lemon',   payout: 3,  weight: 32 },
-  { emoji: '🍇', name: 'grape',   payout: 4,  weight: 24 },
-  { emoji: '🔔', name: 'bell',    payout: 6,  weight: 12 },
-  { emoji: '⭐', name: 'star',    payout: 10, weight: 6  },
-  { emoji: '💎', name: 'diamond', payout: 20, weight: 2  },
-  { emoji: '7️⃣', name: 'seven',   payout: 50, weight: 1  },
+  { emoji: '🍒', name: 'cherry',  payout: 1.5, weight: 40 },
+  { emoji: '🍋', name: 'lemon',   payout: 2,   weight: 32 },
+  { emoji: '🍇', name: 'grape',   payout: 3,   weight: 24 },
+  { emoji: '🔔', name: 'bell',    payout: 5,   weight: 12 },
+  { emoji: '⭐', name: 'star',    payout: 8,   weight: 6  },
+  { emoji: '💎', name: 'diamond', payout: 15,  weight: 2  },
+  { emoji: '7️⃣', name: 'seven',   payout: 35,  weight: 1  },
 ];
 const SCATTER = { emoji: '🎰', name: 'scatter', payout: 0, weight: 1 };
 const ALL_SYMS = [...SYMBOLS, SCATTER];

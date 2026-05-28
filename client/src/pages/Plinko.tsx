@@ -1,14 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type CSSProperties, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import MainLayout from '@/components/MainLayout';
 import { useGameWallet } from '@/_core/hooks/useGameWallet';
 import GameRules from '@/components/GameRules';
 import { Play, Volume2, VolumeX, Square } from 'lucide-react';
-// @ts-ignore
-import * as Matter from 'matter-js';
-
-const { Engine: MatterEngine, World, Bodies, Body, Events, Composite } = Matter;
 
 interface FloatingText {
   id: string;
@@ -18,651 +13,891 @@ interface FloatingText {
   isWin: boolean;
 }
 
-interface BallData {
+interface ActiveBall {
   id: string;
-  body: any;
-  landed: boolean;
+  waypoints: { x: number; y: number }[];
   betAmount: number;
+  bucketIndex: number;
+  multiplier: number;
+  segIdx: number;
+  progress: number;
+  landed: boolean;
+  color: string;
+  speed: number;
 }
 
-// Mirrored layout: 10x 3x 1x 0.7x 0.5x 0.4x | 0.2x | 0.4x 0.5x 0.7x 1x 3x 10x
-const BUCKET_MULTIPLIERS = [10, 3, 1, 0.7, 0.5, 0.4, 0.2, 0.4, 0.5, 0.7, 1, 3, 10];
+const RISK_MULTIPLIERS = {
+  low:    [5,   3,  1.5, 1.2, 1,   0.9, 0.7, 0.9, 1,   1.2, 1.5, 3,  5  ],
+  medium: [25,  10, 2,   1.5, 1,   0.7, 0.5, 0.7, 1,   1.5, 2,   10, 25 ],
+  high:   [100, 30, 5,   2,   0.5, 0.2, 0.1, 0.2, 0.5, 2,   5,   30, 100],
+} as const;
+
+const RISK_THEME = {
+  low:    { primary: '#3B82F6', glow: 'rgba(59,130,246,0.5)',  bg: 'rgba(59,130,246,0.12)',  border: 'rgba(59,130,246,0.4)' },
+  medium: { primary: '#F59E0B', glow: 'rgba(245,158,11,0.5)',  bg: 'rgba(245,158,11,0.12)',  border: 'rgba(245,158,11,0.4)' },
+  high:   { primary: '#EF4444', glow: 'rgba(239,68,68,0.5)',   bg: 'rgba(239,68,68,0.12)',   border: 'rgba(239,68,68,0.4)' },
+} as const;
+
 const BUCKET_COLORS = [
   '#FF1744', '#FF6D00', '#FFAB00', '#76FF03', '#00E676', '#1DE9B6',
   '#00B0FF',
   '#1DE9B6', '#00E676', '#76FF03', '#FFAB00', '#FF6D00', '#FF1744',
 ];
-const CANVAS_WIDTH = 600;
-const CANVAS_HEIGHT = 620;
-const PEG_RADIUS = 5;
-const BALL_RADIUS = 7;
-const NUM_ROWS = 12; // 12 rows → 13 natural landing slots → matches 13 multipliers
 
-const RISK_CONFIGS = {
-  low: { houseBias: 0.65, speedMultiplier: 0.8 },
-  medium: { houseBias: 0.55, speedMultiplier: 1.0 },
-  high: { houseBias: 0.45, speedMultiplier: 1.2 },
-};
+const CANVAS_WIDTH  = 600;
+const CANVAS_HEIGHT = 620;
+const PEG_RADIUS    = 5;
+const BALL_RADIUS   = 7;
+const NUM_ROWS      = 12;
+
+const PEG_SPACING_X = CANVAS_WIDTH / (NUM_ROWS + 1);
+const PEG_SPACING_Y = (CANVAS_HEIGHT - 100) / (NUM_ROWS + 2);
+const NUM_BUCKETS   = 13;
+const BUCKET_WIDTH  = CANVAS_WIDTH / NUM_BUCKETS;
+const RISK_FRAMES   = { low: 14, medium: 11, high: 8 } as const;
+
+const PEGS = (() => {
+  const out: { x: number; y: number }[] = [];
+  for (let row = 0; row < NUM_ROWS; row++) {
+    const n = row + 1;
+    const startX = (CANVAS_WIDTH - n * PEG_SPACING_X) / 2 + PEG_SPACING_X / 2;
+    for (let col = 0; col < n; col++) {
+      out.push({ x: startX + col * PEG_SPACING_X, y: 30 + row * PEG_SPACING_Y });
+    }
+  }
+  return out;
+})();
+
+const BUCKET_WEIGHTS = [
+  0.001, 0.003, 0.016, 0.050, 0.100, 0.200, 0.260,
+  0.200, 0.100, 0.050, 0.016, 0.003, 0.001,
+];
+
+const ODDS_GROUPS = [
+  { buckets: [6],     prob: '26.0%', pct: 26.0 },
+  { buckets: [5, 7],  prob: '40.0%', pct: 40.0 },
+  { buckets: [4, 8],  prob: '20.0%', pct: 20.0 },
+  { buckets: [3, 9],  prob: '10.0%', pct: 10.0 },
+  { buckets: [2, 10], prob: '3.2%',  pct: 3.2  },
+  { buckets: [1, 11], prob: '0.6%',  pct: 0.6  },
+  { buckets: [0, 12], prob: '0.2%',  pct: 0.2  },
+];
+
+function rollBucket(): number {
+  const r = Math.random();
+  let cum = 0;
+  for (let i = 0; i < BUCKET_WEIGHTS.length; i++) {
+    cum += BUCKET_WEIGHTS[i];
+    if (r < cum) return i;
+  }
+  return BUCKET_WEIGHTS.length - 1;
+}
+
+function buildPath(targetBucket: number): boolean[] {
+  const path: boolean[] = [];
+  let rightsLeft = targetBucket;
+  for (let i = 0; i < NUM_ROWS; i++) {
+    const flipsLeft = NUM_ROWS - i;
+    if (Math.random() < rightsLeft / flipsLeft) { path.push(true); rightsLeft--; }
+    else { path.push(false); }
+  }
+  return path;
+}
+
+function rollPath(): { path: boolean[]; bucket: number } {
+  const bucket = rollBucket();
+  return { path: buildPath(bucket), bucket };
+}
+
+function gapX(r: number, g: number): number {
+  return (CANVAS_WIDTH - (r + 2) * PEG_SPACING_X) / 2 + (g + 0.5) * PEG_SPACING_X;
+}
+
+function buildWaypoints(path: boolean[]): { x: number; y: number }[] {
+  const pts: { x: number; y: number }[] = [{ x: CANVAS_WIDTH / 2, y: 8 }];
+  let g = 0;
+  for (let r = 0; r < path.length; r++) {
+    if (path[r]) g++;
+    pts.push({ x: gapX(r, g), y: 30 + r * PEG_SPACING_Y + PEG_SPACING_Y * 0.6 });
+  }
+  pts.push({ x: (g + 0.5) * BUCKET_WIDTH, y: CANVAS_HEIGHT - 44 });
+  return pts;
+}
+
+// ── Web Audio sound engine ────────────────────────────────────────────────────
+let _audioCtx: AudioContext | null = null;
+function getAudioCtx(): AudioContext | null {
+  if (typeof window === 'undefined') return null;
+  if (!_audioCtx) {
+    try { _audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)(); }
+    catch { return null; }
+  }
+  if (_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+function soundPegHit() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  const osc = ctx.createOscillator(); const g = ctx.createGain();
+  osc.connect(g); g.connect(ctx.destination);
+  osc.type = 'sine';
+  const f = 500 + Math.random() * 700;
+  osc.frequency.setValueAtTime(f, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(f * 0.35, ctx.currentTime + 0.045);
+  g.gain.setValueAtTime(0.10, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.05);
+}
+
+function soundDrop() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  const osc = ctx.createOscillator(); const g = ctx.createGain();
+  osc.connect(g); g.connect(ctx.destination);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(880, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.12);
+  g.gain.setValueAtTime(0.14, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.14);
+}
+
+function soundWin(mult: number) {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  const freqs = mult >= 25 ? [523, 659, 784, 1047, 1319]
+              : mult >= 5  ? [440, 554, 659, 880]
+              : mult >= 1  ? [392, 494, 587]
+              :              [330, 277];
+  const vol = mult >= 25 ? 0.32 : mult >= 5 ? 0.22 : 0.14;
+  freqs.forEach((freq, i) => {
+    const osc = ctx.createOscillator(); const g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type = 'sine';
+    const t = ctx.currentTime + i * 0.09;
+    osc.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+    osc.start(t); osc.stop(t + 0.3);
+  });
+}
+
+function soundLoss() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  const osc = ctx.createOscillator(); const g = ctx.createGain();
+  osc.connect(g); g.connect(ctx.destination);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(200, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.28);
+  g.gain.setValueAtTime(0.12, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+function multColor(mult: number): string {
+  if (mult >= 10)  return '#FF6D00';
+  if (mult >= 2)   return '#FFAB00';
+  if (mult >= 1)   return '#00E676';
+  if (mult >= 0.5) return '#64748b';
+  return '#EF4444';
+}
 
 export default function Plinko() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const engineRef = useRef<any>(null);
-  const ballsRef = useRef<BallData[]>([]);
-  const pegsRef = useRef<any[]>([]);
-  const bucketsRef = useRef<any[]>([]);
-  const animationIdRef = useRef<number | null>(null);
-  const isAutoRunningRef = useRef(false);
-  const ballIdCounterRef = useRef(0);
+  const canvasRef       = useRef<HTMLCanvasElement>(null);
+  const animIdRef       = useRef<number | null>(null);
+  const ballsRef        = useRef<ActiveBall[]>([]);
+  const ballIdRef       = useRef(0);
+  const isAutoRef       = useRef(false);
+  const betRef          = useRef(1);
+  const riskRef         = useRef<'low' | 'medium' | 'high'>('medium');
+  const landedBucketRef  = useRef<{ idx: number; startTime: number } | null>(null);
+  const soundEnabledRef  = useRef(true);
 
-  // Refs for dynamic state (so animation loop doesn't recreate)
-  const betAmountRef = useRef(1);
-  const riskLevelRef = useRef<'low' | 'medium' | 'high'>('medium');
-
-  // React State
   const { balance, balanceRef, setBalance } = useGameWallet('Plinko');
-  const [betAmount, setBetAmount] = useState(1);
-  const [riskLevel, setRiskLevel] = useState<'low' | 'medium' | 'high'>('medium');
-  const [isRunning, setIsRunning] = useState(false);
-  const [autoBetCount, setAutoBetCount] = useState(0);
+  const [betAmount,        setBetAmount]        = useState(1);
+  const [riskLevel,        setRiskLevel]        = useState<'low' | 'medium' | 'high'>('medium');
+  const [isRunning,        setIsRunning]        = useState(false);
+  const [autoBetCount,     setAutoBetCount]     = useState(0);
   const [autoBetRemaining, setAutoBetRemaining] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
-  const [history, setHistory] = useState<number[]>([]);
-  const [lastResult, setLastResult] = useState<{ multiplier: number; winAmount: number } | null>(null);
+  const [soundEnabled,     setSoundEnabled]     = useState(true);
+  const [floatingTexts,    setFloatingTexts]    = useState<FloatingText[]>([]);
+  const [history,          setHistory]          = useState<number[]>([]);
+  const [lastResult,       setLastResult]       = useState<{ multiplier: number; winAmount: number } | null>(null);
 
   const betOptions = [0.1, 0.5, 1, 5, 10, 50, 100];
 
-  // Update refs when state changes
-  useEffect(() => {
-    betAmountRef.current = betAmount;
-  }, [betAmount]);
+  useEffect(() => { betRef.current          = betAmount;    }, [betAmount]);
+  useEffect(() => { riskRef.current         = riskLevel;    }, [riskLevel]);
+  useEffect(() => { balanceRef.current      = balance;      }, [balance]);
+  useEffect(() => { soundEnabledRef.current = soundEnabled; }, [soundEnabled]);
 
-  useEffect(() => {
-    riskLevelRef.current = riskLevel;
-  }, [riskLevel]);
-
-  useEffect(() => {
-    balanceRef.current = balance;
-  }, [balance]);
-
-  // Initialize Matter.js - runs ONCE
-  useEffect(() => {
-    const engine = MatterEngine.create();
-    engineRef.current = engine;
-    engine.world.gravity.y = 1;
-
-    // Create pegs
-    const pegs: any[] = [];
-    const pegSpacingX = CANVAS_WIDTH / (NUM_ROWS + 1);
-    const pegSpacingY = (CANVAS_HEIGHT - 100) / (NUM_ROWS + 2);
-
-    for (let row = 0; row < NUM_ROWS; row++) {
-      const pegsInRow = row + 1;
-      const rowWidth = pegsInRow * pegSpacingX;
-      const rowStartX = (CANVAS_WIDTH - rowWidth) / 2 + pegSpacingX / 2;
-
-      for (let col = 0; col < pegsInRow; col++) {
-        const x = rowStartX + col * pegSpacingX;
-        const y = 30 + row * pegSpacingY;
-        const peg = Bodies.circle(x, y, PEG_RADIUS, {
-          isStatic: true,
-          label: 'peg',
-          friction: 0.1,
-          restitution: 0.5,
-        });
-        World.add(engine.world, peg);
-        pegs.push(peg);
-      }
-    }
-    pegsRef.current = pegs;
-
-    // Create buckets
-    const buckets: any[] = [];
-    const bucketWidth = CANVAS_WIDTH / BUCKET_MULTIPLIERS.length;
-    const bucketY = CANVAS_HEIGHT - 30;
-
-    BUCKET_MULTIPLIERS.forEach((mult, index) => {
-      const x = (index + 0.5) * bucketWidth;
-      const bucket = Bodies.rectangle(x, bucketY, bucketWidth - 2, 30, {
-        isStatic: true,
-        label: `bucket-${index}`,
-        isSensor: true,
-      });
-      World.add(engine.world, bucket);
-      buckets.push(bucket);
-    });
-    bucketsRef.current = buckets;
-
-    // Add walls
-    const leftWall = Bodies.rectangle(5, CANVAS_HEIGHT / 2, 10, CANVAS_HEIGHT, {
-      isStatic: true,
-    });
-    const rightWall = Bodies.rectangle(CANVAS_WIDTH - 5, CANVAS_HEIGHT / 2, 10, CANVAS_HEIGHT, {
-      isStatic: true,
-    });
-    World.add(engine.world, [leftWall, rightWall]);
-
-    // Collision detection
-    Events.on(engine, 'collisionStart', (event: any) => {
-      event.pairs.forEach((pair: any) => {
-        const { bodyA, bodyB } = pair;
-
-        // Apply random lateral impulse on peg hits — this creates proper binomial distribution.
-        // Without this, floating-point determinism can bias balls toward the same path repeatedly.
-        const pegBall = bodyA.label === 'peg' ? bodyB : bodyB.label === 'peg' ? bodyA : null;
-        if (pegBall && !pegBall.isStatic) {
-          Body.applyForce(pegBall, pegBall.position, {
-            x: (Math.random() - 0.5) * 0.00025,
-            y: 0,
-          });
-        }
-
-        // Check if ball hit a bucket
-        let ballBody = null;
-        let bucketLabel = null;
-
-        if (bodyA.label?.startsWith('bucket-')) {
-          ballBody = bodyB;
-          bucketLabel = bodyA.label;
-        } else if (bodyB.label?.startsWith('bucket-')) {
-          ballBody = bodyA;
-          bucketLabel = bodyB.label;
-        }
-
-        if (ballBody && bucketLabel) {
-          // Find the ball in our array
-          const ballData = ballsRef.current.find((b) => b.body === ballBody);
-          if (ballData && !ballData.landed) {
-            ballData.landed = true;
-
-            // Extract bucket index from label
-            const bucketIndex = parseInt(bucketLabel.split('-')[1]);
-            const multiplier = BUCKET_MULTIPLIERS[bucketIndex];
-
-            // Calculate winnings: bet amount × multiplier
-            const winAmount = ballData.betAmount * multiplier;
-
-            // Update balance: add the winnings (which includes the original bet if multiplier >= 1)
-            setBalance((prev) => {
-              const newBalance = prev + winAmount;
-              balanceRef.current = newBalance;
-              return newBalance;
-            });
-
-            // Calculate profit/loss for display
-            const profitLoss = winAmount - ballData.betAmount;
-
-            // Add floating text
-            const floatingId = `float-${Date.now()}-${Math.random()}`;
-            setFloatingTexts((prev) => [
-              ...prev,
-              {
-                id: floatingId,
-                x: ballBody.position.x,
-                y: ballBody.position.y,
-                text: `${profitLoss >= 0 ? '+' : ''}${profitLoss.toFixed(2)}`,
-                isWin: profitLoss >= 0,
-              },
-            ]);
-
-            // Remove floating text after 2 seconds
-            setTimeout(() => {
-              setFloatingTexts((prev) => prev.filter((t) => t.id !== floatingId));
-            }, 2000);
-
-            // Update history and last result
-            setHistory((prev) => [multiplier, ...prev.slice(0, 19)]);
-            setLastResult({ multiplier, winAmount: profitLoss });
-
-            // Remove ball from physics world
-            World.remove(engine.world, ballBody);
-          }
-        }
-      });
-    });
-
-    return () => {
-      World.clear(engine.world, false);
-      MatterEngine.clear(engine);
-    };
-  }, []); // Empty dependency array - runs only once
-
-  // Draw function
-  const draw = (ctx: CanvasRenderingContext2D) => {
-    ctx.fillStyle = '#0F1419';
+  const drawFrame = (ctx: CanvasRenderingContext2D) => {
+    // Deep space gradient background
+    const bg = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+    bg.addColorStop(0,   '#050A14');
+    bg.addColorStop(0.5, '#060810');
+    bg.addColorStop(1,   '#080A18');
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Border
-    ctx.strokeStyle = '#00FF88';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(5, 5, CANVAS_WIDTH - 10, CANVAS_HEIGHT - 10);
+    // Subtle grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.018)';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x <= CANVAS_WIDTH; x += 50) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_HEIGHT - 40); ctx.stroke();
+    }
+    for (let y = 0; y <= CANVAS_HEIGHT - 40; y += 50) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_WIDTH, y); ctx.stroke();
+    }
 
-    // Draw pegs
-    ctx.fillStyle = '#FFFFFF';
-    pegsRef.current.forEach((peg) => {
+    // Drop-zone glow at top center
+    const dropGrad = ctx.createRadialGradient(CANVAS_WIDTH / 2, 0, 0, CANVAS_WIDTH / 2, 0, 90);
+    dropGrad.addColorStop(0, 'rgba(0,255,136,0.10)');
+    dropGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = dropGrad;
+    ctx.fillRect(0, 0, CANVAS_WIDTH, 90);
+
+    // Glowing pegs
+    ctx.shadowColor = 'rgba(160,210,255,0.75)';
+    ctx.shadowBlur  = 10;
+    ctx.fillStyle   = 'rgba(255,255,255,0.92)';
+    PEGS.forEach(p => {
       ctx.beginPath();
-      ctx.arc(peg.position.x, peg.position.y, PEG_RADIUS, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, PEG_RADIUS, 0, Math.PI * 2);
       ctx.fill();
     });
+    ctx.shadowBlur = 0;
 
-    // Draw buckets with labels
-    const bucketWidth = CANVAS_WIDTH / BUCKET_MULTIPLIERS.length;
-    const bucketY = CANVAS_HEIGHT - 38;
+    // Buckets
+    const bucketY    = CANVAS_HEIGHT - 40;
+    const currentMults = RISK_MULTIPLIERS[riskRef.current];
+    const landedIdx  = landedBucketRef.current?.idx ?? -1;
+    const landedAge  = landedBucketRef.current ? Date.now() - landedBucketRef.current.startTime : 0;
+    const flashT     = landedBucketRef.current ? Math.max(0, 1 - landedAge / 700) : 0;
 
-    BUCKET_MULTIPLIERS.forEach((mult, index) => {
-      const x = index * bucketWidth;
-      ctx.fillStyle = BUCKET_COLORS[index];
-      ctx.fillRect(x + 1, bucketY, bucketWidth - 2, 34);
-      ctx.fillStyle = '#000000';
-      ctx.font = 'bold 11px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${mult}x`, x + bucketWidth / 2, bucketY + 21);
+    currentMults.forEach((mult, idx) => {
+      const x     = idx * BUCKET_WIDTH;
+      const color = BUCKET_COLORS[idx];
+      const flash = idx === landedIdx && flashT > 0;
+
+      const grad = ctx.createLinearGradient(x, bucketY, x, CANVAS_HEIGHT);
+      grad.addColorStop(0, color + (flash ? 'FF' : 'CC'));
+      grad.addColorStop(1, color + '44');
+      ctx.fillStyle = grad;
+      ctx.fillRect(x + 1, bucketY, BUCKET_WIDTH - 2, 40);
+
+      // Top highlight line
+      ctx.shadowColor = flash ? color : 'transparent';
+      ctx.shadowBlur  = flash ? 18 * flashT : 0;
+      ctx.fillStyle   = flash ? '#FFFFFF' : color;
+      ctx.fillRect(x + 1, bucketY, BUCKET_WIDTH - 2, 2);
+
+      // Label
+      ctx.shadowColor = flash ? color : 'transparent';
+      ctx.shadowBlur  = flash ? 10 * flashT : 0;
+      ctx.fillStyle   = '#FFF';
+      ctx.font        = 'bold 10px Arial';
+      ctx.textAlign   = 'center';
+      ctx.fillText(`${mult}x`, x + BUCKET_WIDTH / 2, bucketY + 25);
+      ctx.shadowBlur  = 0;
     });
 
-    // Draw only non-landed balls
-    ballsRef.current.forEach((ballData) => {
-      if (!ballData.landed) {
-        const ball = ballData.body;
-        ctx.fillStyle = '#00FF88';
-        ctx.beginPath();
-        ctx.arc(ball.position.x, ball.position.y, BALL_RADIUS, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
+    // Balls with neon glow
+    ballsRef.current.forEach(ball => {
+      const from = ball.waypoints[ball.segIdx];
+      const to   = ball.waypoints[ball.segIdx + 1];
+      if (!from || !to) return;
+      const x = from.x + (to.x - from.x) * ball.progress;
+      const y = from.y + (to.y - from.y) * ball.progress;
+
+      ctx.shadowColor = '#00FF88';
+      ctx.shadowBlur  = 22;
+      ctx.fillStyle   = ball.color;
+      ctx.beginPath();
+      ctx.arc(x, y, BALL_RADIUS, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Bright core
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      ctx.beginPath();
+      ctx.arc(x, y, BALL_RADIUS * 0.36, 0, Math.PI * 2);
+      ctx.fill();
     });
   };
 
-  // Animation loop - runs ONCE
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !engineRef.current) return;
-
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const animate = () => {
-      MatterEngine.update(engineRef.current);
-
-      // Clean up landed balls
-      ballsRef.current = ballsRef.current.filter((b) => !b.landed);
-
-      draw(ctx);
-      animationIdRef.current = requestAnimationFrame(animate);
+    const tick = () => {
+      ballsRef.current.forEach(ball => {
+        ball.progress += ball.speed;
+        if (ball.progress >= 1) {
+          ball.progress = 0;
+          ball.segIdx++;
+          if (soundEnabledRef.current) soundPegHit();
+          if (ball.segIdx >= ball.waypoints.length - 1) {
+            ball.landed    = true;
+            const mult     = ball.multiplier;
+            const win      = ball.betAmount * mult;
+            const profit   = win - ball.betAmount;
+            if (soundEnabledRef.current) {
+              if (profit >= 0) soundWin(mult); else soundLoss();
+            }
+            setBalance(prev => { const n = prev + win; balanceRef.current = n; return n; });
+            const pt  = ball.waypoints[ball.waypoints.length - 1];
+            const fid = `f-${Date.now()}-${Math.random()}`;
+            setFloatingTexts(prev => [...prev, {
+              id: fid, x: pt.x, y: pt.y,
+              text: `${profit >= 0 ? '+' : ''}${profit.toFixed(2)}`,
+              isWin: profit >= 0,
+            }]);
+            setTimeout(() => setFloatingTexts(prev => prev.filter(t => t.id !== fid)), 2000);
+            setHistory(prev => [mult, ...prev.slice(0, 19)]);
+            setLastResult({ multiplier: mult, winAmount: profit });
+            landedBucketRef.current = { idx: ball.bucketIndex, startTime: Date.now() };
+          }
+        }
+      });
+      ballsRef.current = ballsRef.current.filter(b => !b.landed);
+      drawFrame(ctx);
+      animIdRef.current = requestAnimationFrame(tick);
     };
 
-    animationIdRef.current = requestAnimationFrame(animate);
+    animIdRef.current = requestAnimationFrame(tick);
+    return () => { if (animIdRef.current) cancelAnimationFrame(animIdRef.current); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    return () => {
-      if (animationIdRef.current) {
-        cancelAnimationFrame(animationIdRef.current);
-      }
-    };
-  }, []); // Empty dependency array - runs only once
-
-  // Drop ball function
   const dropBall = () => {
-    if (!engineRef.current) return;
-
-    const engine = engineRef.current;
-    // Slight random x-offset and velocity at drop. The pegs and random impulse on
-    // each peg collision do the real work of spreading balls into a bell-curve shape.
-    const randomOffset = (Math.random() - 0.5) * 10;
-    const riskConfig = RISK_CONFIGS[riskLevelRef.current];
-
-    const ball = Bodies.circle(CANVAS_WIDTH / 2 + randomOffset, 15, BALL_RADIUS, {
-      friction: 0.1,
-      restitution: 0.5,
-      density: 0.002,
-      frictionAir: 0.008,
-    });
-
-    Body.setVelocity(ball, {
-      x: (Math.random() - 0.5) * 1.5,
-      y: 3 * riskConfig.speedMultiplier,
-    });
-
-    World.add(engine.world, ball);
+    if (balanceRef.current < betRef.current) return;
+    if (soundEnabledRef.current) soundDrop();
+    setBalance(prev => { const n = prev - betRef.current; balanceRef.current = n; return n; });
+    const { path, bucket } = rollPath();
+    const waypoints = buildWaypoints(path);
+    const mult = RISK_MULTIPLIERS[riskRef.current][bucket];
     ballsRef.current.push({
-      id: `ball-${ballIdCounterRef.current++}`,
-      body: ball,
-      landed: false,
-      betAmount: betAmountRef.current,
+      id:          `b-${ballIdRef.current++}`,
+      waypoints,
+      betAmount:   betRef.current,
+      bucketIndex: bucket,
+      multiplier:  mult,
+      segIdx:      0,
+      progress:    0,
+      landed:      false,
+      color:       '#00FF88',
+      speed:       1 / RISK_FRAMES[riskRef.current],
     });
   };
 
-  // Handle BET NOW click
   const handleBetNow = async () => {
-    if (balanceRef.current < betAmountRef.current) {
-      alert('Insufficient balance!');
-      return;
-    }
-
-    // If auto-bet is set, run auto-bet loop
+    if (balanceRef.current < betRef.current) { alert('Insufficient balance!'); return; }
     if (autoBetCount > 0) {
-      isAutoRunningRef.current = true;
+      isAutoRef.current = true;
       setIsRunning(true);
-      let remaining = autoBetCount;
-
-      while (remaining > 0 && isAutoRunningRef.current && balanceRef.current >= betAmountRef.current) {
-        // Deduct bet upfront
-        setBalance((prev) => {
-          const newBalance = prev - betAmountRef.current;
-          balanceRef.current = newBalance;
-          return newBalance;
-        });
-
-        // Drop ball - winnings will be added in collision handler
+      let rem = autoBetCount;
+      while (rem > 0 && isAutoRef.current && balanceRef.current >= betRef.current) {
         dropBall();
-
-        // Wait for ball to land
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-
-        remaining--;
-        setAutoBetRemaining(remaining);
+        await new Promise(r => setTimeout(r, 300));
+        rem--;
+        setAutoBetRemaining(rem);
       }
-
-      isAutoRunningRef.current = false;
+      isAutoRef.current = false;
       setIsRunning(false);
       setAutoBetCount(0);
       setAutoBetRemaining(0);
     } else {
-      // Single bet - deduct bet upfront
-      setBalance((prev) => {
-        const newBalance = prev - betAmountRef.current;
-        balanceRef.current = newBalance;
-        return newBalance;
-      });
-
-      // Drop ball - winnings will be added in collision handler
       dropBall();
     }
   };
 
-  // Handle STOP button
   const handleStop = () => {
-    isAutoRunningRef.current = false;
+    isAutoRef.current = false;
     setIsRunning(false);
     setAutoBetCount(0);
     setAutoBetRemaining(0);
   };
 
+  const theme        = RISK_THEME[riskLevel];
+  const currentMults = RISK_MULTIPLIERS[riskLevel];
+  const maxMult      = Math.max(...currentMults);
+  const edgeLabel    = riskLevel === 'low' ? '~9%' : riskLevel === 'medium' ? '~7%' : '~8%';
+
   return (
     <MainLayout>
-      <section className="bg-gradient-to-b from-background via-background to-background/50 py-6 lg:py-8">
-        <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          {/* Header */}
+      <section className="relative py-4 lg:py-6 overflow-hidden" style={{ background: '#0d0d12', minHeight: '100vh' }}>
+
+        {/* Ambient glow orbs */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div style={{
+            position: 'absolute', top: '5%', left: '28%',
+            width: 520, height: 520, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(0,255,136,0.04) 0%, transparent 65%)',
+            filter: 'blur(60px)',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: '12%', right: '18%',
+            width: 360, height: 360, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 65%)',
+            filter: 'blur(50px)',
+          }} />
+          <div style={{
+            position: 'absolute', top: '45%', left: '4%',
+            width: 200, height: 200, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(245,158,11,0.04) 0%, transparent 65%)',
+            filter: 'blur(40px)',
+          }} />
+        </div>
+
+        <div className="max-w-[1400px] mx-auto px-4 lg:px-6 relative z-10">
+
+          {/* ── Header ───────────────────────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-6"
-            style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}
+            initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
+            style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 20 }}
           >
-            <div>
-              <h1 className="text-4xl font-bold text-foreground mb-1">PLINKO</h1>
-              <p className="text-muted-foreground text-sm">Professional Crypto Gambling with 97% RTP</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{
+                width: 4, height: 50, flexShrink: 0, borderRadius: 2,
+                background: 'linear-gradient(to bottom, #00FF88, rgba(0,255,136,0))',
+              }} />
+              <div>
+                <h1 className="gradient-text" style={{ fontSize: 44, fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1 }}>
+                  PLINKO
+                </h1>
+                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', marginTop: 5 }}>
+                  BINOMIAL RNG · 12 ROWS · 95% RTP
+                </p>
+              </div>
             </div>
-            <div style={{ textAlign: 'right', paddingBottom: 4, flexShrink: 0 }}>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', letterSpacing: 1, marginBottom: 2 }}>BALANCE</div>
-              <div style={{ fontSize: 24, fontWeight: 900, color: '#fbbf24' }}>${balance.toFixed(2)}</div>
+            <div style={{ textAlign: 'right', flexShrink: 0 }}>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', marginBottom: 3 }}>BALANCE</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: '#F59E0B', fontFamily: 'var(--font-mono)', letterSpacing: '-0.02em' }}>
+                ${balance.toFixed(2)}
+              </div>
             </div>
           </motion.div>
 
-          {/* Main Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            {/* Left Sidebar */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="lg:col-span-1 space-y-3 max-h-[700px] overflow-y-auto"
-            >
+          {/* ── 3-col grid ───────────────────────────────────────────── */}
+          <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr_240px] gap-4 items-start">
 
+            {/* ── Left sidebar ─────────────────────────────────────── */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, delay: 0.08 }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+            >
               {/* Risk Level */}
-              <div className="glass-effect rounded-lg border border-accent/20 p-3 space-y-2">
-                <p className="text-xs text-muted-foreground font-semibold uppercase mb-2">Risk Level</p>
-                <div className="space-y-2">
-                  {(['low', 'medium', 'high'] as const).map((level) => (
-                    <button
-                      key={level}
-                      onClick={() => setRiskLevel(level)}
-                      disabled={isRunning}
-                      className={`w-full px-3 py-2 rounded text-xs font-semibold transition-all ${
-                        riskLevel === level
-                          ? 'bg-accent text-primary-foreground'
-                          : 'bg-accent/10 border border-accent/30 text-accent hover:bg-accent/20'
-                      } disabled:opacity-50 capitalize`}
-                    >
-                      {level === 'low' && '🛡️ Low'}
-                      {level === 'medium' && '⚡ Medium'}
-                      {level === 'high' && '🔥 High'}
-                    </button>
-                  ))}
+              <div style={card}>
+                <SectionLabel>RISK LEVEL</SectionLabel>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {(['low', 'medium', 'high'] as const).map(level => {
+                    const th     = RISK_THEME[level];
+                    const active = riskLevel === level;
+                    return (
+                      <motion.button key={level}
+                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                        onClick={() => setRiskLevel(level)} disabled={isRunning}
+                        style={{
+                          width: '100%', padding: '10px 14px', borderRadius: 9,
+                          fontSize: 13, fontWeight: 700, textAlign: 'left',
+                          border: `1px solid ${active ? th.border : 'rgba(255,255,255,0.07)'}`,
+                          background: active ? th.bg : 'rgba(255,255,255,0.03)',
+                          color: active ? th.primary : 'rgba(255,255,255,0.42)',
+                          boxShadow: active ? `0 0 18px ${th.glow}, inset 0 0 10px ${th.bg}` : 'none',
+                          cursor: isRunning ? 'not-allowed' : 'pointer',
+                          opacity: isRunning ? 0.5 : 1,
+                          transition: 'all 0.2s ease',
+                          display: 'flex', alignItems: 'center', gap: 10,
+                        }}
+                      >
+                        <span style={{ fontSize: 17 }}>
+                          {level === 'low' ? '💎' : level === 'medium' ? '⚡' : '🔥'}
+                        </span>
+                        <span>{level.charAt(0).toUpperCase() + level.slice(1)}</span>
+                        {active && (
+                          <span style={{
+                            marginLeft: 'auto', width: 7, height: 7, borderRadius: '50%',
+                            background: th.primary, boxShadow: `0 0 8px ${th.primary}`,
+                          }} />
+                        )}
+                      </motion.button>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Bet Amount */}
-              <div className="glass-effect rounded-lg border border-accent/20 p-3 space-y-2">
-                <p className="text-xs text-muted-foreground font-semibold uppercase mb-2">Bet Amount</p>
-                <div className="grid grid-cols-2 gap-1">
-                  {betOptions.map((amount) => (
-                    <button
-                      key={amount}
-                      onClick={() => setBetAmount(amount)}
-                      disabled={isRunning}
-                      className={`px-2 py-1 rounded text-xs font-semibold transition-all ${
-                        betAmount === amount
-                          ? 'bg-accent text-primary-foreground'
-                          : 'bg-accent/10 border border-accent/30 text-accent hover:bg-accent/20'
-                      } disabled:opacity-50`}
+              <div style={card}>
+                <SectionLabel>BET AMOUNT</SectionLabel>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, marginBottom: 8 }}>
+                  {betOptions.map(amount => (
+                    <button key={amount} onClick={() => setBetAmount(amount)} disabled={isRunning}
+                      style={{
+                        padding: '7px 0', borderRadius: 7, fontSize: 12, fontWeight: 700,
+                        border: `1px solid ${betAmount === amount ? 'rgba(0,255,136,0.45)' : 'rgba(255,255,255,0.07)'}`,
+                        background: betAmount === amount ? 'rgba(0,255,136,0.12)' : 'rgba(255,255,255,0.03)',
+                        color: betAmount === amount ? '#00FF88' : 'rgba(255,255,255,0.45)',
+                        boxShadow: betAmount === amount ? '0 0 12px rgba(0,255,136,0.2)' : 'none',
+                        cursor: isRunning ? 'not-allowed' : 'pointer',
+                        opacity: isRunning ? 0.5 : 1,
+                        transition: 'all 0.15s ease',
+                      }}
                     >
                       ${amount}
                     </button>
                   ))}
                 </div>
-                <input
-                  type="number"
-                  min="0.1"
-                  max="100"
-                  step="0.1"
-                  value={betAmount}
-                  onChange={(e) => setBetAmount(parseFloat(e.target.value))}
-                  disabled={isRunning}
-                  className="w-full px-2 py-2 rounded bg-background/50 border border-accent/30 text-foreground text-xs"
+                <input type="number" min="0.1" max="100" step="0.1" value={betAmount}
+                  onChange={e => setBetAmount(parseFloat(e.target.value))} disabled={isRunning}
+                  style={{
+                    width: '100%', padding: '9px 11px', borderRadius: 7, boxSizing: 'border-box',
+                    background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.09)',
+                    color: '#E8EAED', fontSize: 13, fontFamily: 'var(--font-mono)', outline: 'none',
+                  }}
                 />
               </div>
 
               {/* Auto-Bet */}
-              <div className="glass-effect rounded-lg border border-accent/20 p-3 space-y-2">
-                <p className="text-xs text-muted-foreground font-semibold uppercase mb-2">Auto-Bet</p>
-                <div className="grid grid-cols-2 gap-1">
-                  {[10, 50, 100].map((count) => (
-                    <button
-                      key={count}
-                      onClick={() => setAutoBetCount(count)}
+              <div style={card}>
+                <SectionLabel>AUTO-BET</SectionLabel>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 5 }}>
+                  {[10, 50, 100].map(count => (
+                    <button key={count}
+                      onClick={() => setAutoBetCount(c => c === count ? 0 : count)}
                       disabled={isRunning}
-                      className="px-2 py-1 rounded text-xs font-semibold bg-accent/10 border border-accent/30 text-accent hover:bg-accent/20 disabled:opacity-50"
+                      style={{
+                        padding: '8px 0', borderRadius: 7, fontSize: 12, fontWeight: 700,
+                        border: `1px solid ${autoBetCount === count ? 'rgba(245,158,11,0.5)' : 'rgba(255,255,255,0.07)'}`,
+                        background: autoBetCount === count ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.03)',
+                        color: autoBetCount === count ? '#F59E0B' : 'rgba(255,255,255,0.45)',
+                        cursor: isRunning ? 'not-allowed' : 'pointer',
+                        opacity: isRunning ? 0.5 : 1,
+                        transition: 'all 0.15s ease',
+                      }}
                     >
-                      {count}x
+                      {count}×
                     </button>
                   ))}
                 </div>
                 {autoBetRemaining > 0 && (
-                  <p className="text-xs text-accent font-bold">
-                    Remaining: {autoBetRemaining}
+                  <p style={{ fontSize: 12, color: '#F59E0B', marginTop: 8, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+                    {autoBetRemaining} bets remaining
                   </p>
                 )}
               </div>
 
-              {/* BET NOW Button */}
-              <Button
+              {/* BET NOW */}
+              <motion.button
+                whileHover={{ scale: balance >= betAmount && !isRunning ? 1.02 : 1 }}
+                whileTap={{ scale: balance >= betAmount && !isRunning ? 0.97 : 1 }}
                 onClick={handleBetNow}
                 disabled={balance < betAmount || isRunning}
-                className="w-full bg-accent text-primary-foreground hover:bg-accent/90 h-10 font-bold text-sm gap-2 disabled:opacity-50"
+                className="btn-shimmer"
+                style={{
+                  width: '100%', padding: '15px 0', borderRadius: 11,
+                  fontSize: 15, fontWeight: 900, letterSpacing: '0.08em',
+                  background: balance < betAmount || isRunning
+                    ? 'rgba(0,255,136,0.18)'
+                    : 'linear-gradient(135deg, #00FF88 0%, #00DDAA 100%)',
+                  color: balance < betAmount || isRunning ? 'rgba(255,255,255,0.35)' : '#052e16',
+                  border: 'none',
+                  cursor: balance < betAmount || isRunning ? 'not-allowed' : 'pointer',
+                  boxShadow: balance < betAmount || isRunning ? 'none' : '0 4px 24px rgba(0,255,136,0.38)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  transition: 'all 0.2s ease',
+                }}
               >
-                <Play className="h-4 w-4" />
-                BET NOW
-              </Button>
+                <Play style={{ width: 16, height: 16 }} /> BET NOW
+              </motion.button>
 
-              {/* STOP Button */}
-              {isRunning && (
-                <Button
-                  onClick={handleStop}
-                  variant="destructive"
-                  className="w-full h-10 font-bold text-sm gap-2"
-                >
-                  <Square className="h-4 w-4" />
-                  STOP
-                </Button>
-              )}
-
-              {/* Sound Toggle */}
-              <button
-                onClick={() => setSoundEnabled(!soundEnabled)}
-                className="w-full p-2 rounded-lg bg-accent/10 border border-accent/30 text-accent hover:bg-accent/20 transition-colors flex items-center justify-center gap-2 text-xs"
-              >
-                {soundEnabled ? (
-                  <>
-                    <Volume2 className="h-3 w-3" />
-                    <span>Sound On</span>
-                  </>
-                ) : (
-                  <>
-                    <VolumeX className="h-3 w-3" />
-                    <span>Sound Off</span>
-                  </>
+              <AnimatePresence>
+                {isRunning && (
+                  <motion.button
+                    initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                    onClick={handleStop}
+                    style={{
+                      width: '100%', padding: '12px 0', borderRadius: 11,
+                      fontSize: 14, fontWeight: 800, letterSpacing: '0.06em',
+                      background: 'rgba(239,68,68,0.15)', color: '#EF4444',
+                      border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    }}
+                  >
+                    <Square style={{ width: 14, height: 14 }} /> STOP
+                  </motion.button>
                 )}
+              </AnimatePresence>
+
+              {/* Sound toggle */}
+              <button onClick={() => setSoundEnabled(s => !s)}
+                style={{
+                  width: '100%', padding: '9px 0', borderRadius: 9,
+                  fontSize: 12, background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  color: 'rgba(255,255,255,0.38)', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {soundEnabled
+                  ? <><Volume2 style={{ width: 13, height: 13 }} /> Sound On</>
+                  : <><VolumeX style={{ width: 13, height: 13 }} /> Sound Off</>}
               </button>
 
               {/* Last Result */}
-              {lastResult && (
-                <div className="glass-effect rounded-lg border border-accent/20 p-3">
-                  <p className="text-xs text-muted-foreground mb-2">Last Result</p>
-                  <p className="text-lg font-bold text-accent">{lastResult.multiplier}x</p>
-                  <p className={`text-sm font-bold ${lastResult.winAmount >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {lastResult.winAmount >= 0 ? '+' : ''}{lastResult.winAmount.toFixed(2)} DMB
-                  </p>
-                </div>
-              )}
+              <AnimatePresence mode="wait">
+                {lastResult && (
+                  <motion.div
+                    key={`${lastResult.multiplier}-${lastResult.winAmount.toFixed(2)}`}
+                    initial={{ opacity: 0, scale: 0.88, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.88 }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+                    style={{
+                      borderRadius: 12, overflow: 'hidden',
+                      background: lastResult.winAmount >= 0
+                        ? 'linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,255,136,0.04))'
+                        : 'linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.04))',
+                      border: `1px solid ${lastResult.winAmount >= 0 ? 'rgba(0,255,136,0.32)' : 'rgba(239,68,68,0.32)'}`,
+                      boxShadow: lastResult.winAmount >= 0
+                        ? '0 0 28px rgba(0,255,136,0.12)'
+                        : '0 0 28px rgba(239,68,68,0.12)',
+                      padding: '13px 15px',
+                    }}
+                  >
+                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.32)', letterSpacing: '0.18em', marginBottom: 5 }}>
+                      LAST RESULT
+                    </div>
+                    <div style={{
+                      fontSize: 34, fontWeight: 900, lineHeight: 1,
+                      color: lastResult.winAmount >= 0 ? '#00FF88' : '#EF4444',
+                      fontFamily: 'var(--font-mono)', marginBottom: 5,
+                    }}>
+                      {lastResult.multiplier}x
+                    </div>
+                    <div style={{
+                      fontSize: 14, fontWeight: 700,
+                      color: lastResult.winAmount >= 0 ? '#4ade80' : '#f87171',
+                      fontFamily: 'var(--font-mono)',
+                    }}>
+                      {lastResult.winAmount >= 0 ? '+' : ''}{lastResult.winAmount.toFixed(2)} DMB
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
 
-            {/* Center - Game Canvas */}
+            {/* ── Canvas column ────────────────────────────────────── */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="lg:col-span-3 flex justify-center relative"
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.45, delay: 0.04 }}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}
             >
-              <div className="glass-effect rounded-xl border border-accent/20 p-3 w-full overflow-x-auto">
-                <canvas
-                  ref={canvasRef}
-                  width={CANVAS_WIDTH}
-                  height={CANVAS_HEIGHT}
-                  className="rounded-lg bg-black block mx-auto"
-                  style={{ maxWidth: '100%', width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
-                />
-
-                {/* Floating text overlay */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <AnimatePresence>
-                    {floatingTexts.map((text) => (
-                      <motion.div
-                        key={text.id}
-                        initial={{ opacity: 1, y: 0 }}
-                        animate={{ opacity: 0, y: -50 }}
-                        transition={{ duration: 2 }}
-                        className="absolute text-lg font-bold"
-                        style={{
-                          left: text.x,
-                          top: text.y,
-                          color: text.isWin ? '#00FF88' : '#FF3333',
-                        }}
-                      >
-                        {text.text}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+              {/* Animated glowing border wrapper */}
+              <motion.div
+                animate={{
+                  boxShadow: [
+                    '0 0 30px rgba(0,255,136,0.10), 0 0 0 1px rgba(0,255,136,0.18)',
+                    '0 0 55px rgba(0,255,136,0.22), 0 0 0 1px rgba(0,255,136,0.34)',
+                    '0 0 30px rgba(0,255,136,0.10), 0 0 0 1px rgba(0,255,136,0.18)',
+                  ],
+                }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                style={{
+                  borderRadius: 14, padding: 2, width: '100%', maxWidth: CANVAS_WIDTH + 4,
+                  background: 'linear-gradient(135deg, rgba(0,255,136,0.35), rgba(0,180,255,0.2), rgba(99,102,241,0.3), rgba(0,255,136,0.35))',
+                }}
+              >
+                <div style={{ borderRadius: 12, overflow: 'hidden', background: '#050A14', position: 'relative' }}>
+                  <canvas ref={canvasRef} width={CANVAS_WIDTH} height={CANVAS_HEIGHT}
+                    style={{ display: 'block', width: '100%', maxWidth: CANVAS_WIDTH, height: 'auto' }}
+                  />
+                  {/* Floating text overlay */}
+                  <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+                    <AnimatePresence>
+                      {floatingTexts.map(text => (
+                        <motion.div key={text.id}
+                          initial={{ opacity: 1, y: 0, scale: 1 }}
+                          animate={{ opacity: 0, y: -65, scale: 1.35 }}
+                          transition={{ duration: 1.8, ease: 'easeOut' }}
+                          style={{
+                            position: 'absolute', left: text.x - 32, top: text.y - 18,
+                            fontSize: 18, fontWeight: 900, fontFamily: 'var(--font-mono)',
+                            color: text.isWin ? '#00FF88' : '#FF4444',
+                            textShadow: text.isWin
+                              ? '0 0 12px rgba(0,255,136,0.9)'
+                              : '0 0 12px rgba(255,68,68,0.9)',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {text.text}
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
                 </div>
+              </motion.div>
+
+              {/* Live stats strip */}
+              <div style={{
+                display: 'flex', width: '100%', maxWidth: CANVAS_WIDTH + 4,
+                background: 'rgba(14,17,26,0.85)', border: '1px solid rgba(255,255,255,0.07)',
+                borderRadius: 10, overflow: 'hidden',
+              }}>
+                {[
+                  { label: 'RISK',     value: riskLevel.toUpperCase(), color: theme.primary },
+                  { label: 'BET',      value: `$${betAmount.toFixed(2)}`, color: '#E8EAED' },
+                  { label: 'MAX WIN',  value: `${maxMult}x`,             color: '#F59E0B' },
+                  { label: 'HOUSE EDGE', value: edgeLabel,               color: '#EF4444' },
+                ].map((s, i, arr) => (
+                  <div key={s.label} style={{
+                    flex: 1, padding: '10px 0', textAlign: 'center',
+                    borderRight: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                  }}>
+                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.15em', marginBottom: 4 }}>
+                      {s.label}
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: s.color, fontFamily: 'var(--font-mono)' }}>
+                      {s.value}
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.div>
 
-            {/* Right Sidebar - Info */}
+            {/* ── Right sidebar ────────────────────────────────────── */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="lg:col-span-1 space-y-3 max-h-[700px] overflow-y-auto"
+              initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.45, delay: 0.12 }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
             >
-              {/* Multipliers */}
-              <div className="glass-effect rounded-lg border border-accent/20 p-3 space-y-2">
-                <p className="text-xs text-muted-foreground font-semibold uppercase">Multipliers</p>
-                <div className="space-y-1 text-xs">
-                  {BUCKET_MULTIPLIERS.map((mult, idx) => (
-                    <div key={idx} className="flex justify-between">
-                      <span className="text-muted-foreground">Bucket {idx + 1}</span>
-                      <span className="text-accent font-bold">{mult}x</span>
+              {/* Multipliers — live with risk level */}
+              <div style={card}>
+                <SectionLabel>MULTIPLIERS</SectionLabel>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {currentMults.map((mult, idx) => (
+                    <div key={idx} style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      padding: '4px 8px', borderRadius: 6,
+                      background: `${BUCKET_COLORS[idx]}12`,
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                        <div style={{
+                          width: 7, height: 7, borderRadius: '50%',
+                          background: BUCKET_COLORS[idx],
+                          boxShadow: `0 0 5px ${BUCKET_COLORS[idx]}`,
+                          flexShrink: 0,
+                        }} />
+                        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.38)' }}>B{idx + 1}</span>
+                      </div>
+                      <span style={{
+                        fontSize: 12, fontWeight: 800,
+                        color: multColor(mult), fontFamily: 'var(--font-mono)',
+                      }}>
+                        {mult}x
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* History */}
+              {/* Recent history */}
               {history.length > 0 && (
-                <div className="glass-effect rounded-lg border border-accent/20 p-3 space-y-2">
-                  <p className="text-xs text-muted-foreground font-semibold uppercase">Recent</p>
-                  <div className="flex flex-wrap gap-1">
-                    {history.slice(0, 10).map((mult, idx) => (
-                      <div
-                        key={idx}
-                        className={`px-2 py-1 rounded text-xs font-bold ${
-                          mult >= 1
-                            ? 'bg-green-500/20 border border-green-500/50 text-green-400'
-                            : 'bg-red-500/20 border border-red-500/50 text-red-400'
-                        }`}
+                <div style={card}>
+                  <SectionLabel>RECENT</SectionLabel>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                    {history.slice(0, 12).map((mult, idx) => (
+                      <motion.div key={idx}
+                        initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
+                        style={{
+                          padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 800,
+                          background: mult >= 1 ? 'rgba(0,230,118,0.15)' : 'rgba(239,68,68,0.15)',
+                          border: `1px solid ${mult >= 1 ? 'rgba(0,230,118,0.38)' : 'rgba(239,68,68,0.38)'}`,
+                          color: mult >= 1 ? '#00E676' : '#EF4444',
+                          fontFamily: 'var(--font-mono)',
+                        }}
                       >
                         {mult}x
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Multiplier guide */}
-              <div className="glass-effect rounded-lg border border-accent/20 p-3 space-y-1">
-                <p className="text-xs text-accent font-semibold uppercase mb-2">Bucket Odds</p>
-                {[
-                  { label: '0.2x (centre)', prob: '22.6%', color: '#00B0FF' },
-                  { label: '0.5x (×2)', prob: '38.6%', color: '#1DE9B6' },
-                  { label: '0.5x (×2)', prob: '24.2%', color: '#00E676' },
-                  { label: '1x (×2)', prob: '10.7%', color: '#76FF03' },
-                  { label: '3x (×2)', prob: '3.2%', color: '#FFAB00' },
-                  { label: '5x (×2)', prob: '0.6%', color: '#FF6D00' },
-                  { label: '20x (edges)', prob: '0.05%', color: '#FF1744' },
-                ].map(row => (
-                  <div key={row.label} className="flex justify-between items-center text-xs">
-                    <span style={{ color: row.color }} className="font-bold">{row.label}</span>
-                    <span className="text-muted-foreground">{row.prob}</span>
-                  </div>
-                ))}
+              {/* Bucket odds with bar chart — dynamic per risk */}
+              <div style={card}>
+                <SectionLabel>BUCKET ODDS</SectionLabel>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {ODDS_GROUPS.map((group, gi) => {
+                    const mult  = currentMults[group.buckets[0]];
+                    const label = group.buckets.length === 2 ? `${mult}x (×2)` : `${mult}x (ctr)`;
+                    const color = BUCKET_COLORS[group.buckets[0]];
+                    const barW  = Math.min(100, group.pct * 2.3);
+                    return (
+                      <div key={gi}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color, fontFamily: 'var(--font-mono)' }}>{label}</span>
+                          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-mono)' }}>{group.prob}</span>
+                        </div>
+                        <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
+                          <motion.div
+                            initial={{ width: 0 }} animate={{ width: `${barW}%` }}
+                            transition={{ duration: 0.8, delay: gi * 0.05, ease: 'easeOut' }}
+                            style={{ height: '100%', borderRadius: 2, background: color, boxShadow: `0 0 5px ${color}` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* Info */}
-              <div className="glass-effect rounded-lg border border-accent/20 p-3 space-y-2">
-                <p className="text-xs text-accent font-semibold uppercase">Game Info</p>
-                <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• 12 rows of pegs</li>
-                  <li>• 13 multiplier buckets</li>
-                  <li>• Bell-curve distribution</li>
-                  <li>• Edges are very rare</li>
-                </ul>
+              {/* How it works */}
+              <div style={card}>
+                <SectionLabel style={{ color: '#4ade80' }}>HOW IT WORKS</SectionLabel>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {[
+                    '12 independent coin flips',
+                    'Bucket = count of rights',
+                    'P(k) = C(12,k) / 4096',
+                    'Guaranteed bell curve',
+                    'Pure RNG — no physics',
+                  ].map((line, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgba(0,255,136,0.5)', flexShrink: 0 }} />
+                      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)' }}>{line}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </motion.div>
+
           </div>
         </div>
-      <GameRules gameId="plinko" />
+
+        <GameRules gameId="plinko" />
       </section>
     </MainLayout>
+  );
+}
+
+// ── Shared style helpers ────────────────────────────────────────────────────
+
+const card: CSSProperties = {
+  background: 'rgba(14,17,26,0.85)',
+  border: '1px solid rgba(255,255,255,0.07)',
+  borderRadius: 12,
+  padding: '13px',
+  backdropFilter: 'blur(12px)',
+};
+
+function SectionLabel({ children, style }: { children: ReactNode; style?: CSSProperties }) {
+  return (
+    <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.32)', letterSpacing: '0.18em', marginBottom: 10, ...style }}>
+      {children}
+    </p>
   );
 }

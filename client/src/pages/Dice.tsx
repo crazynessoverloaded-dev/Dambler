@@ -13,14 +13,14 @@ interface GameResult {
   profit: number;
 }
 
-// Each level targets 99% RTP: payout = 0.99 / winChance
-// LOW:  75% win chance → 1.32× payout (easy wins, small payouts)
-// MED:  50% win chance → 1.98× payout (coin-flip)
-// HIGH: 25% win chance → 3.96× payout (hard wins, big payouts)
+// Each level targets 95% RTP: payout = 0.95 / winChance
+// LOW:  75% win chance → 1.27× payout (easy wins, small payouts)
+// MED:  50% win chance → 1.90× payout (coin-flip)
+// HIGH: 25% win chance → 3.80× payout (hard wins, big payouts)
 const RISK_CONFIG = {
-  low:    { payout: 1.32, winChance: 75, overThreshold: 25,  underThreshold: 75,  label: '75% win chance' },
-  medium: { payout: 1.98, winChance: 50, overThreshold: 50,  underThreshold: 50,  label: '50% win chance' },
-  high:   { payout: 3.96, winChance: 25, overThreshold: 75,  underThreshold: 25,  label: '25% win chance' },
+  low:    { payout: 1.27, winChance: 75, overThreshold: 25,  underThreshold: 75,  label: '75% win chance' },
+  medium: { payout: 1.90, winChance: 50, overThreshold: 50,  underThreshold: 50,  label: '50% win chance' },
+  high:   { payout: 3.80, winChance: 25, overThreshold: 75,  underThreshold: 25,  label: '25% win chance' },
 } as const;
 const RISK_COLORS = { low: '#10b981', medium: '#06b6d4', high: '#f97316' };
 
