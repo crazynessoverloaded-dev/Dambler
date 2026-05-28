@@ -20,10 +20,10 @@ export default function FloatingBalance() {
 
   const serverBalance = balanceQuery.data?.balance;
 
-  const [balance, setBalance] = useState<number>(serverBalance ?? 1000);
-  const [displayed, setDisplayed] = useState<number>(serverBalance ?? 1000);
+  const [balance, setBalance] = useState<number>(serverBalance ?? 0);
+  const [displayed, setDisplayed] = useState<number>(serverBalance ?? 0);
   const [flash, setFlash] = useState<'up' | 'down' | null>(null);
-  const prevRef = useRef<number>(serverBalance ?? 1000);
+  const prevRef = useRef<number>(serverBalance ?? 0);
   const rafRef = useRef<number | null>(null);
 
   // Sync authenticated server balance on initial load

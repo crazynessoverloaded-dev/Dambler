@@ -26,8 +26,8 @@ export function useGameWallet(gameName: string) {
     staleTime: 0,
   });
 
-  const [balance, setLocalBalance] = useState(1000);
-  const balanceRef = useRef(1000);
+  const [balance, setLocalBalance] = useState(0);
+  const balanceRef = useRef(0);
 
   // Sync from server when authenticated balance arrives
   useEffect(() => {
