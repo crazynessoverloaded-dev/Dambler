@@ -39,8 +39,23 @@ const ALL_GAMES = [
   { id: 'card-flip',       title: 'Card Flip',        category: 'Card Games',       image: '/Card Flip gemini.png',         rtp: '97.0', featured: false },
   { id: 'penalty',         title: 'Penalty Shoot',    category: 'Luck Games',       image: '/Peanlty Shoot gemini.png',     rtp: '96.0', featured: false },
   { id: 'jackpot-box',     title: 'Jackpot Box',      category: 'Luck Games',       image: '/Jackpot Box gemini.png',       rtp: '95.5', featured: false },
-  { id: 'parity',          title: 'Parity',           category: 'Prediction Games', image: '/Parity gemini.png',            rtp: '96.0', featured: false },
-  { id: 'color-spin',      title: 'Color Spin',       category: 'Wheel Games',      image: '/color spin gemini.png',        rtp: '96.0', featured: false },
+  { id: 'parity',          title: 'Parity',           category: 'Prediction Games', image: '/Parity gemini.png',                rtp: '96.0', featured: false },
+  { id: 'color-spin',      title: 'Color Spin',       category: 'Wheel Games',      image: '/color spin gemini.png',            rtp: '96.0', featured: false },
+  { id: 'bigsix',          title: 'Big Six',          category: 'Wheel Games',      image: '/Big six gemini.png',               rtp: '96.5', featured: false },
+  { id: 'red-dog',         title: 'Red Dog',          category: 'Card Games',       image: '/Red Dog gemini.png',               rtp: '97.0', featured: false },
+  { id: 'chuck-a-luck',    title: 'Chuck-a-Luck',     category: 'Dice Games',       image: '/chuck-a-lick gemini.png',          rtp: '96.0', featured: false },
+  { id: 'andar-bahar',     title: 'Andar Bahar',      category: 'Card Games',       image: '/Andar Bahar gemini.png',           rtp: '97.0', featured: false },
+  { id: 'pontoon',         title: 'Pontoon',          category: 'Card Games',       image: '/Pontoon gemini.png',               rtp: '99.0', featured: false },
+  { id: 'caribbean-stud',  title: 'Caribbean Stud',   category: 'Card Games',       image: '/Caribbean stud gemini.png',        rtp: '97.8', featured: false },
+  { id: 'casino-holdem',   title: "Casino Hold'em",   category: 'Card Games',       image: "/CASINO HOLD'EM gemini.png",        rtp: '97.8', featured: false },
+  { id: 'lightning-dice',  title: 'Lightning Dice',   category: 'Dice Games',       image: '/lightning dice gemini.png',        rtp: '96.2', featured: false },
+  { id: 'bingo',           title: 'Bingo',            category: 'Lottery Games',    image: '/bingo gemini.png',                 rtp: '95.0', featured: false },
+  { id: 'rps',             title: 'Rock Paper Scissors', category: 'Luck Games',   image: '/Rock paper sissors gemini.png',    rtp: '96.0', featured: false },
+  { id: 'dice-21',         title: 'Dice 21',          category: 'Dice Games',       image: '/Dice 21 gemini.png',               rtp: '97.0', featured: false },
+  { id: 'dice-duel',       title: 'Dice Duel',        category: 'Dice Games',       image: '/dice duel gemini.png',             rtp: '96.5', featured: false },
+  { id: 'hot-dice',        title: 'Hot Dice',         category: 'Dice Games',       image: '/hot dice gemini.png',              rtp: '96.0', featured: false },
+  { id: 'number-match',    title: 'Number Match',     category: 'Prediction Games', image: '/number match.png',                 rtp: '96.0', featured: false },
+  { id: 'rapid-roulette',  title: 'Rapid Roulette',   category: 'Table Games',      image: '/rapid roulette gemini.png',        rtp: '97.3', featured: false },
 ];
 
 const TABS = [
@@ -292,7 +307,7 @@ export default function Home() {
                 <motion.p
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                   style={{ fontSize: 13, color: 'rgba(255,255,255,0.42)', marginBottom: 18, maxWidth: 430, lineHeight: 1.6 }}>
-                  Provably fair crypto gambling. 45+ in-house games. Instant payouts, no KYC, no compromises.
+                  Provably fair crypto gambling. 44+ in-house games. Instant payouts, no KYC, no compromises.
                 </motion.p>
 
                 {/* CTA row */}

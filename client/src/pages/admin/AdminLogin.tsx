@@ -10,7 +10,7 @@ export default function AdminLogin() {
   const utils = trpc.useUtils();
 
   const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: async (data) => {
+    onSuccess: async () => {
       await utils.auth.me.invalidate();
       const me = await utils.auth.me.fetch();
       if (me?.role === "admin") {
@@ -32,37 +32,33 @@ export default function AdminLogin() {
 
   return (
     <div style={{
-      minHeight: "100vh", background: "#f1f5f9",
+      minHeight: "100vh", background: "#0d0d0d",
       display: "flex", alignItems: "center", justifyContent: "center",
       fontFamily: "'Inter', system-ui, sans-serif",
     }}>
       <div style={{
-        background: "#ffffff", borderRadius: 16, padding: "40px 36px",
+        background: "#111", borderRadius: 16, padding: "40px 36px",
         width: "100%", maxWidth: 380,
-        boxShadow: "0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)",
+        border: "1px solid #222",
+        boxShadow: "0 8px 40px rgba(0,0,0,0.6)",
       }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: 12,
-            background: "linear-gradient(135deg, #1e293b, #334155)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 22, color: "#f59e0b", fontWeight: 900, margin: "0 auto 12px",
-          }}>D</div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: "#1e293b" }}>Admin Panel</div>
-          <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>Sign in to your admin account</div>
+          <div style={{ fontSize: 42, fontWeight: 400, fontFamily: "'Great Vibes', cursive", color: "#fff", lineHeight: 1, marginBottom: 6 }}>Dambler</div>
+          <div style={{ fontSize: 11, color: "#555", letterSpacing: 2, fontWeight: 600, marginBottom: 16 }}>ADMIN PANEL</div>
+          <div style={{ fontSize: 13, color: "#555" }}>Sign in to your admin account</div>
         </div>
 
         {error && (
           <div style={{
-            background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8,
-            padding: "10px 14px", marginBottom: 18, fontSize: 13, color: "#dc2626",
+            background: "#1a0000", border: "1px solid #3a0000", borderRadius: 8,
+            padding: "10px 14px", marginBottom: 18, fontSize: 13, color: "#f87171",
           }}>{error}</div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 14 }}>
-            <label style={{ display: "block", fontSize: 12.5, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
+            <label style={{ display: "block", fontSize: 12.5, fontWeight: 600, color: "#888", marginBottom: 6 }}>
               Email
             </label>
             <input
@@ -70,15 +66,15 @@ export default function AdminLogin() {
               placeholder="admin@dambler.com"
               style={{
                 width: "100%", padding: "10px 12px", borderRadius: 8,
-                border: "1.5px solid #d1d5db", fontSize: 14, color: "#1e293b",
+                border: "1.5px solid #252525", fontSize: 14, color: "#f0f0f0",
                 outline: "none", boxSizing: "border-box",
-                background: "#f9fafb",
+                background: "#1a1a1a",
               }}
             />
           </div>
 
           <div style={{ marginBottom: 22 }}>
-            <label style={{ display: "block", fontSize: 12.5, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
+            <label style={{ display: "block", fontSize: 12.5, fontWeight: 600, color: "#888", marginBottom: 6 }}>
               Password
             </label>
             <input
@@ -86,9 +82,9 @@ export default function AdminLogin() {
               placeholder="••••••••"
               style={{
                 width: "100%", padding: "10px 12px", borderRadius: 8,
-                border: "1.5px solid #d1d5db", fontSize: 14, color: "#1e293b",
+                border: "1.5px solid #252525", fontSize: 14, color: "#f0f0f0",
                 outline: "none", boxSizing: "border-box",
-                background: "#f9fafb",
+                background: "#1a1a1a",
               }}
             />
           </div>
@@ -97,7 +93,7 @@ export default function AdminLogin() {
             type="submit" disabled={loginMutation.isPending}
             style={{
               width: "100%", padding: "11px", borderRadius: 9,
-              background: "#1e293b", color: "#fff",
+              background: "#fff", color: "#000",
               fontWeight: 700, fontSize: 14, border: "none", cursor: "pointer",
               opacity: loginMutation.isPending ? 0.6 : 1,
             }}>

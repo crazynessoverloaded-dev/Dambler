@@ -46,6 +46,8 @@ import AdminTransactions from "./pages/admin/Transactions";
 import AdminSuspicious from "./pages/admin/SuspiciousActivity";
 import AdminGameStats from "./pages/admin/GameStats";
 import AdminAccounts from "./pages/admin/AdminAccounts";
+import AdminBugReports from "./pages/admin/BugReports";
+import AdminContactMessages from "./pages/admin/ContactMessages";
 
 // Game pages
 import Plinko from "./pages/Plinko";
@@ -181,6 +183,8 @@ function Router() {
       <Route path="/admin/suspicious" component={() => <AdminGuard><AdminSuspicious /></AdminGuard>} />
       <Route path="/admin/game-stats" component={() => <AdminGuard><AdminGameStats /></AdminGuard>} />
       <Route path="/admin/accounts" component={() => <AdminGuard><AdminAccounts /></AdminGuard>} />
+      <Route path="/admin/bug-reports" component={() => <AdminGuard><AdminBugReports /></AdminGuard>} />
+      <Route path="/admin/contact" component={() => <AdminGuard><AdminContactMessages /></AdminGuard>} />
 
       {/* 404 */}
       <Route component={NotFound} />

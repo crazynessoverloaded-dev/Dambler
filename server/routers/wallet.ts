@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { adjustBalance, awardRoundXp, collectCommission, getAffiliateStats, getJackpotAmount, getLeaderboard, getLiveFeed, getLiveStats, getRecentWins, getTopWagerersSince, getTransactionHistory, getUserStats, getWallet, getXpLeaderboard } from "../db";
+import { adjustBalance, awardRoundXp, collectCommission, getAffiliateStats, getJackpotAmount, getLeaderboard, getLiveFeed, getLiveStats, getPublicStats, getRecentWins, getTopWagerersSince, getTransactionHistory, getUserStats, getWallet, getXpLeaderboard } from "../db";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 
 export const walletRouter = router({
@@ -89,6 +89,10 @@ export const walletRouter = router({
 
   liveStats: publicProcedure.query(async () => {
     return getLiveStats();
+  }),
+
+  publicStats: publicProcedure.query(async () => {
+    return getPublicStats();
   }),
 
   xpLeaderboard: publicProcedure

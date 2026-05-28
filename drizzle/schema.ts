@@ -61,3 +61,40 @@ export const suspiciousActivity = sqliteTable("suspicious_activity", {
 });
 
 export type SuspiciousActivity = typeof suspiciousActivity.$inferSelect;
+
+export const bugReports = sqliteTable("bug_reports", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  username: text("username").notNull(),
+  email: text("email").notNull(),
+  title: text("title").notNull(),
+  category: text("category").notNull().default("bug"),
+  description: text("description").notNull(),
+  attachments: text("attachments").notNull().default("[]"), // JSON array of base64 data URLs
+  videoUrl: text("videoUrl"),
+  status: text("status", { enum: ["open", "reviewing", "resolved", "dismissed"] }).notNull().default("open"),
+  adminNote: text("adminNote"),
+  xpAwarded: integer("xpAwarded").notNull().default(0),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export type BugReport = typeof bugReports.$inferSelect;
+
+export const chatMessages = sqliteTable("chat_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  username: text("username").notNull(),
+  text: text("text").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export const contactSubmissions = sqliteTable("contact_submissions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  firstName: text("firstName").notNull(),
+  lastName: text("lastName").notNull(),
+  email: text("email").notNull(),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  status: text("status", { enum: ["new", "read", "resolved"] }).notNull().default("new"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});

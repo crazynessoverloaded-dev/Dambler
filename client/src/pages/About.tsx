@@ -2,16 +2,37 @@ import { motion } from 'framer-motion';
 import { Link } from 'wouter';
 import MainLayout from '@/components/MainLayout';
 import { Zap, Shield, Rocket, Globe, Users, TrendingUp } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
 const card: React.CSSProperties = { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '22px 24px' };
 const iconBox: React.CSSProperties = { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: 8, display: 'flex', flexShrink: 0 };
 const ol: React.CSSProperties = { fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 12 };
 
-const STATS   = [{ value: '50K+', label: 'Active Players' }, { value: '45+', label: 'Casino Games' }, { value: '$2.4M', label: 'Daily Volume' }, { value: '150+', label: 'Countries' }];
 const VALUES  = [{ icon: Zap, title: 'Lightning Fast', body: 'Instant settlements and real-time game updates. No waiting.' }, { icon: Shield, title: 'Provably Fair', body: "Every outcome is verifiable on-chain. Inspect any bet's seed." }, { icon: Rocket, title: 'Innovation First', body: 'We ship games every week. New mechanics, not recycled slots.' }, { icon: Globe, title: 'Global & Remote', body: 'Players from 150+ countries. Our team spans 15 time zones.' }];
 const PILLARS = [{ icon: Users, label: 'Community Driven', desc: 'Built by gamers, for gamers — your feedback shapes the platform.' }, { icon: TrendingUp, label: 'Transparent Odds', desc: 'Every game shows its RTP upfront. No surprises.' }, { icon: Shield, label: 'Secure by Default', desc: 'TLS everywhere, 2FA support, and regular third-party pen tests.' }];
 
+function fmtNumber(n: number): string {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M+';
+  if (n >= 1_000)     return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K+';
+  return n.toLocaleString();
+}
+
+function fmtDmb(n: number): string {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M DMB';
+  if (n >= 1_000)     return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K DMB';
+  return n.toLocaleString() + ' DMB';
+}
+
 export default function About() {
+  const { data: stats } = trpc.wallet.publicStats.useQuery(undefined, { refetchInterval: 60_000 });
+
+  const STATS = [
+    { value: stats ? fmtNumber(stats.totalUsers) : '—', label: 'Registered Players' },
+    { value: '44+', label: 'Casino Games' },
+    { value: stats ? fmtDmb(stats.wageredToday) : '—', label: 'Wagered Today' },
+    { value: stats ? stats.activeUsers.toLocaleString() : '—', label: 'Active Now' },
+  ];
+
   return (
     <MainLayout>
       <div style={{ background: '#0f1118', minHeight: '100vh' }}>
@@ -64,7 +85,7 @@ export default function About() {
             style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '36px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
             <div>
               <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', margin: '0 0 6px', letterSpacing: -0.3, fontFamily: 'Plus Jakarta Sans, sans-serif' }}>Ready to play?</h3>
-              <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.4)', margin: 0 }}>Join thousands of players. Your first 1,000 DMB are on us.</p>
+              <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.4)', margin: 0 }}>Join {stats ? fmtNumber(stats.totalUsers) : 'thousands of'} players. Your first 1,000 DMB are on us.</p>
             </div>
             <Link href="/register"><button style={{ background: '#fff', color: '#0c0e14', fontWeight: 800, fontSize: 13, padding: '12px 28px', borderRadius: 10, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>Create Account</button></Link>
           </motion.div>

@@ -2,59 +2,39 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, Users } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { Link } from 'wouter';
 
-interface Msg { id: number; user: string; text: string; self?: boolean; time: string; }
-
-const USERS = [
-  'CryptoKing_99','LuckyPlayer42','HighRoller_X','DiamondHands7','MoonShot88',
-  'PlinkoPro','CrashKing_21','StakeLord','NightOwl_222','DMBwhale',
-  'SatoshiG','BasedChad','GigaBrain','RetailTrader','CoinFlipPro',
-];
-
-const POOL = [
-  'just hit 15x on Crash 🔥','anyone playing Plinko rn?','Blackjack is hitting different today',
-  'lost 3 in a row on roulette 😭','DMB to the moon 🌙','this site is so clean ngl',
-  'just deposited, time to grind','Mines got me again lmao','got the 20x bucket on Plinko!!!',
-  'daily spin gave me $25!','who else is up rn?','baccarat is underrated fr',
-  'going all in on crash, wish me luck','😱 JUST HIT $500 on slots','cashed out at 2.5x, playing safe',
-  'these odds are actually fair tho','checking provably fair — legit!','hi from aus 👋',
-  'anyone know good Blackjack strategy?','wagering for the weekly leaderboard grind',
-  'VIP gold grind is real 💎','DMB pumping again let\'s gooo','this crash game is addicting',
-  'bro i just got 200 DMB from the daily spin','down bad on roulette rn ngl',
-];
-
-function rndUser() { return USERS[Math.floor(Math.random() * USERS.length)]; }
-function rndMsg()  { return POOL[Math.floor(Math.random() * POOL.length)]; }
-function nowTime() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
-
-const INITIAL: Msg[] = Array.from({ length: 12 }, (_, i) => ({
-  id: i, user: rndUser(), text: rndMsg(), time: nowTime(),
-}));
-
-// Navbar height — keep in sync with Navbar.tsx
 const NAV_H = 56;
+
+function nowTime(d: Date | string) {
+  return new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
 export default function CommunityChat() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>(INITIAL);
   const [input, setInput] = useState('');
+  const [sendError, setSendError] = useState('');
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated, user } = useAuth();
+
   const { data: statsData } = trpc.wallet.liveStats.useQuery(undefined, { refetchInterval: 60_000 });
   const online = statsData?.activeUsers ?? 0;
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const idRef = useRef(100);
 
-  useEffect(() => {
-    const schedule = () => {
-      const delay = 3000 + Math.random() * 5000;
-      return setTimeout(() => {
-        const msg: Msg = { id: idRef.current++, user: rndUser(), text: rndMsg(), time: nowTime() };
-        setMessages(prev => [...prev.slice(-49), msg]);
-        timerRef.current = schedule();
-      }, delay);
-    };
-    const timerRef = { current: schedule() };
-    return () => clearTimeout(timerRef.current);
-  }, []);
+  const { data: messages = [] } = trpc.chat.getMessages.useQuery(undefined, {
+    refetchInterval: open ? 2500 : 10_000,
+    staleTime: 0,
+  });
+
+  const utils = trpc.useUtils();
+  const sendMutation = trpc.chat.send.useMutation({
+    onSuccess: () => {
+      utils.chat.getMessages.invalidate();
+      setInput('');
+      setSendError('');
+    },
+    onError: (err) => setSendError(err.message),
+  });
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -62,14 +42,12 @@ export default function CommunityChat() {
 
   const send = () => {
     const text = input.trim();
-    if (!text) return;
-    setMessages(prev => [...prev.slice(-49), { id: idRef.current++, user: 'You', text, self: true, time: nowTime() }]);
-    setInput('');
+    if (!text || sendMutation.isPending) return;
+    sendMutation.mutate({ text });
   };
 
   return (
     <>
-      {/* Pull-out tab — left edge, vertically centered below navbar */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
@@ -81,7 +59,6 @@ export default function CommunityChat() {
         </button>
       )}
 
-      {/* Mobile backdrop */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -93,7 +70,6 @@ export default function CommunityChat() {
         )}
       </AnimatePresence>
 
-      {/* Panel — slides in from left, starts below navbar */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -122,45 +98,70 @@ export default function CommunityChat() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 scrollbar-thin">
-              {messages.map(msg => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-                  className={`flex flex-col gap-0.5 ${msg.self ? 'items-end' : 'items-start'}`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-bold text-accent">{msg.self ? 'You' : msg.user}</span>
-                    <span className="text-[9px] text-muted-foreground">{msg.time}</span>
-                  </div>
-                  <div className={`px-3 py-1.5 rounded-xl text-xs max-w-[85%] leading-relaxed ${
-                    msg.self
-                      ? 'bg-accent text-background rounded-tr-sm'
-                      : 'bg-accent/10 text-foreground border border-accent/10 rounded-tl-sm'
-                  }`}>
-                    {msg.text}
-                  </div>
-                </motion.div>
-              ))}
+              {messages.length === 0 && (
+                <div className="text-center text-xs text-muted-foreground py-8">
+                  No messages yet — be the first!
+                </div>
+              )}
+              {messages.map(msg => {
+                const isSelf = isAuthenticated && user?.username === msg.username;
+                return (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                    className={`flex flex-col gap-0.5 ${isSelf ? 'items-end' : 'items-start'}`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-bold text-accent">{msg.username}</span>
+                      <span className="text-[9px] text-muted-foreground">{nowTime(msg.createdAt)}</span>
+                    </div>
+                    <div className={`px-3 py-1.5 rounded-xl text-xs max-w-[85%] leading-relaxed ${
+                      isSelf
+                        ? 'bg-accent text-background rounded-tr-sm'
+                        : 'bg-accent/10 text-foreground border border-accent/10 rounded-tl-sm'
+                    }`}>
+                      {msg.text}
+                    </div>
+                  </motion.div>
+                );
+              })}
               <div ref={bottomRef} />
             </div>
 
             {/* Input */}
             <div className="border-t border-border p-3 flex-shrink-0">
-              <div className="flex items-center gap-2 bg-background/60 border border-accent/20 rounded-xl px-3 py-2 focus-within:border-accent/50 transition-colors">
-                <input
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && send()}
-                  placeholder="Say something…"
-                  maxLength={200}
-                  className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
-                />
-                <button onClick={send} disabled={!input.trim()}
-                  className="p-1.5 rounded-lg bg-accent text-background disabled:opacity-40 hover:bg-accent/90 transition-colors flex-shrink-0">
-                  <Send className="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <p className="text-[9px] text-muted-foreground mt-1.5 text-center">Be respectful · No spam · English only</p>
+              {!isAuthenticated ? (
+                <div className="text-center py-2">
+                  <p className="text-[11px] text-muted-foreground mb-2">Login to chat</p>
+                  <div className="flex gap-2 justify-center">
+                    <Link href="/login">
+                      <button className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-accent text-background">Login</button>
+                    </Link>
+                    <Link href="/register">
+                      <button className="text-[11px] font-bold px-3 py-1.5 rounded-lg border border-border text-muted-foreground">Register</button>
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 bg-background/60 border border-accent/20 rounded-xl px-3 py-2 focus-within:border-accent/50 transition-colors">
+                    <input
+                      value={input}
+                      onChange={e => { setInput(e.target.value); setSendError(''); }}
+                      onKeyDown={e => e.key === 'Enter' && send()}
+                      placeholder="Say something…"
+                      maxLength={200}
+                      className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
+                    />
+                    <button onClick={send} disabled={!input.trim() || sendMutation.isPending}
+                      className="p-1.5 rounded-lg bg-accent text-background disabled:opacity-40 hover:bg-accent/90 transition-colors flex-shrink-0">
+                      <Send className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  {sendError && <p className="text-[10px] text-red-400 mt-1">{sendError}</p>}
+                  <p className="text-[9px] text-muted-foreground mt-1.5 text-center">Be respectful · No spam · English only</p>
+                </>
+              )}
             </div>
           </motion.div>
         )}

@@ -15,6 +15,11 @@ import {
   adminAdjustBalance,
   getUserById,
   createUser,
+  adminGetBugReports,
+  adminResolveBugReport,
+  adminBugAwardXp,
+  adminGetContactSubmissions,
+  adminUpdateContactStatus,
   db,
 } from "../db";
 import { users } from "../../drizzle/schema";
@@ -83,7 +88,7 @@ export const adminRouter = router({
     }),
 
   awardXp: adminProcedure
-    .input(z.object({ userId: z.number().int(), amount: z.number().int().min(1) }))
+    .input(z.object({ userId: z.number().int(), amount: z.number().int() }))
     .mutation(async ({ input }) => {
       await adminAwardXp(input.userId, input.amount);
       return { success: true };
@@ -156,6 +161,54 @@ export const adminRouter = router({
     .mutation(async ({ input, ctx }) => {
       if (ctx.user.id === input.userId) throw new Error("Cannot remove yourself");
       await db.update(users).set({ role: "user" }).where(eq(users.id, input.userId));
+      return { success: true };
+    }),
+
+  getBugReports: adminProcedure
+    .input(z.object({
+      page: z.number().int().min(1).default(1),
+      limit: z.number().int().min(1).max(100).default(50),
+      status: z.string().optional(),
+    }))
+    .query(async ({ input }) => {
+      return adminGetBugReports(input);
+    }),
+
+  resolveBugReport: adminProcedure
+    .input(z.object({
+      id: z.number().int(),
+      status: z.enum(["open", "reviewing", "resolved", "dismissed"]),
+      adminNote: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      await adminResolveBugReport(input.id, input.status, input.adminNote);
+      return { success: true };
+    }),
+
+  awardBugXp: adminProcedure
+    .input(z.object({ id: z.number().int(), xpAmount: z.number().int().min(1) }))
+    .mutation(async ({ input }) => {
+      await adminBugAwardXp(input.id, input.xpAmount);
+      return { success: true };
+    }),
+
+  getContactSubmissions: adminProcedure
+    .input(z.object({
+      page: z.number().int().min(1).default(1),
+      limit: z.number().int().min(1).max(100).default(50),
+      status: z.string().optional(),
+    }))
+    .query(async ({ input }) => {
+      return adminGetContactSubmissions(input);
+    }),
+
+  updateContactStatus: adminProcedure
+    .input(z.object({
+      id: z.number().int(),
+      status: z.enum(["new", "read", "resolved"]),
+    }))
+    .mutation(async ({ input }) => {
+      await adminUpdateContactStatus(input.id, input.status);
       return { success: true };
     }),
 });

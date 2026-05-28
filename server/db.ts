@@ -4,7 +4,7 @@ import { and, desc, eq, ne, sql, gt, lt, or } from "drizzle-orm";
 import path from "path";
 import { fileURLToPath } from "url";
 import { randomBytes } from "crypto";
-import { suspiciousActivity, transactions, users, wallets } from "../drizzle/schema";
+import { bugReports, chatMessages, contactSubmissions, suspiciousActivity, transactions, users, wallets } from "../drizzle/schema";
 
 // Commission % per referrer XP tier (matches TIERS in client/src/lib/tiers.ts)
 const COMMISSION_RATES: Record<string, number> = {
@@ -110,6 +110,41 @@ export async function initDb() {
     );
     CREATE INDEX IF NOT EXISTS idx_sus_userId ON suspicious_activity(userId);
     CREATE INDEX IF NOT EXISTS idx_sus_dismissed ON suspicious_activity(dismissed);
+    CREATE TABLE IF NOT EXISTS bug_reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
+      username TEXT NOT NULL,
+      email TEXT NOT NULL,
+      title TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'bug',
+      description TEXT NOT NULL,
+      attachments TEXT NOT NULL DEFAULT '[]',
+      videoUrl TEXT,
+      status TEXT NOT NULL DEFAULT 'open',
+      adminNote TEXT,
+      xpAwarded INTEGER NOT NULL DEFAULT 0,
+      createdAt INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    CREATE INDEX IF NOT EXISTS idx_bug_userId ON bug_reports(userId);
+    CREATE INDEX IF NOT EXISTS idx_bug_status ON bug_reports(status);
+    CREATE TABLE IF NOT EXISTS chat_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
+      username TEXT NOT NULL,
+      text TEXT NOT NULL,
+      createdAt INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    CREATE TABLE IF NOT EXISTS contact_submissions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      firstName TEXT NOT NULL,
+      lastName TEXT NOT NULL,
+      email TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      message TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'new',
+      createdAt INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    CREATE INDEX IF NOT EXISTS idx_contact_status ON contact_submissions(status);
   `);
   // Unique index for referralCode (can't be done via ALTER TABLE in SQLite)
   try {
@@ -545,6 +580,32 @@ export async function getLiveStats() {
   };
 }
 
+export async function getPublicStats() {
+  const oneHourAgo = Math.floor(Date.now() / 1000) - 3600;
+  const todayStart = new Date(); todayStart.setUTCHours(0, 0, 0, 0);
+  const todayTs    = Math.floor(todayStart.getTime() / 1000);
+
+  const [totalUsersRows, activeRows, todayRows, allTimeRows] = await Promise.all([
+    db.select({ count: sql<number>`COUNT(*)` }).from(users).where(ne(users.role, 'admin')),
+    db.select({ count: sql<number>`COUNT(DISTINCT ${transactions.userId})` })
+      .from(transactions)
+      .where(and(eq(transactions.type, "bet"), sql`${transactions.createdAt} >= ${oneHourAgo}`)),
+    db.select({ total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)` })
+      .from(transactions)
+      .where(and(eq(transactions.type, "bet"), sql`${transactions.createdAt} >= ${todayTs}`)),
+    db.select({ total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)` })
+      .from(transactions)
+      .where(eq(transactions.type, "bet")),
+  ]);
+
+  return {
+    totalUsers:    Number(totalUsersRows[0]?.count ?? 0),
+    activeUsers:   Number(activeRows[0]?.count ?? 0),
+    wageredToday:  Number(todayRows[0]?.total ?? 0),
+    wageredAllTime: Number(allTimeRows[0]?.total ?? 0),
+  };
+}
+
 export async function getLiveFeed(limit = 20) {
   // Fetch recent bet + win transactions together
   const rows = await db.select({
@@ -696,8 +757,9 @@ export async function adminSetPassword(userId: number, newPasswordHash: string) 
 export async function adminAwardXp(userId: number, amount: number) {
   const wallet = await getWallet(userId);
   if (!wallet) throw new Error("Wallet not found");
+  const newXp = Math.max(0, (wallet.xp ?? 0) + amount);
   await db.update(wallets)
-    .set({ xp: (wallet.xp ?? 0) + amount })
+    .set({ xp: newXp })
     .where(eq(wallets.userId, userId));
 }
 
@@ -955,4 +1017,95 @@ export async function checkMultiAccount(ip: string, userId: number) {
 
 export async function setUserLastIp(userId: number, ip: string) {
   await db.update(users).set({ lastIp: ip }).where(eq(users.id, userId));
+}
+
+export async function submitBugReport(data: {
+  userId: number; username: string; email: string;
+  title: string; category: string; description: string;
+  attachments: string[]; videoUrl?: string;
+}) {
+  const result = await db.insert(bugReports).values({
+    userId: data.userId,
+    username: data.username,
+    email: data.email,
+    title: data.title,
+    category: data.category,
+    description: data.description,
+    attachments: JSON.stringify(data.attachments),
+    videoUrl: data.videoUrl ?? null,
+  }).returning({ id: bugReports.id });
+  return result[0].id;
+}
+
+export async function adminGetBugReports(opts: { page?: number; limit?: number; status?: string }) {
+  const { page = 1, limit = 50, status } = opts;
+  const offset = (page - 1) * limit;
+
+  const where = status && status !== "all" ? eq(bugReports.status, status as any) : undefined;
+
+  const rows = await db.select().from(bugReports)
+    .where(where)
+    .orderBy(desc(bugReports.createdAt))
+    .limit(limit).offset(offset);
+
+  const countRows = await db.select({ count: sql<number>`COUNT(*)` }).from(bugReports).where(where);
+
+  return {
+    rows: rows.map(r => ({ ...r, attachments: JSON.parse(r.attachments ?? "[]") as string[] })),
+    total: Number(countRows[0]?.count ?? 0),
+  };
+}
+
+export async function adminResolveBugReport(id: number, status: string, adminNote?: string) {
+  await db.update(bugReports)
+    .set({ status: status as any, adminNote: adminNote ?? null })
+    .where(eq(bugReports.id, id));
+}
+
+// ── Chat ────────────────────────────────────────────────────────────────────
+
+export async function getChatMessages(limit = 60) {
+  const rows = await db.select().from(chatMessages)
+    .orderBy(desc(chatMessages.id)).limit(limit);
+  return rows.reverse();
+}
+
+export async function sendChatMessage(userId: number, username: string, text: string) {
+  // Rate limit: max 1 message per 2 seconds
+  const twoSecsAgo = new Date(Date.now() - 2000);
+  const recent = await db.select({ id: chatMessages.id }).from(chatMessages)
+    .where(and(eq(chatMessages.userId, userId), gt(chatMessages.createdAt, twoSecsAgo)))
+    .limit(1);
+  if (recent.length > 0) throw new Error("Slow down — 1 message every 2 seconds.");
+  await db.insert(chatMessages).values({ userId, username, text });
+}
+
+// ── Contact submissions ──────────────────────────────────────────────────────
+
+export async function submitContact(data: {
+  firstName: string; lastName: string; email: string; subject: string; message: string;
+}) {
+  await db.insert(contactSubmissions).values(data);
+}
+
+export async function adminGetContactSubmissions(opts: { page?: number; limit?: number; status?: string }) {
+  const { page = 1, limit = 50, status } = opts;
+  const offset = (page - 1) * limit;
+  const where = status && status !== "all" ? eq(contactSubmissions.status, status as any) : undefined;
+  const rows = await db.select().from(contactSubmissions).where(where)
+    .orderBy(desc(contactSubmissions.createdAt)).limit(limit).offset(offset);
+  const countRows = await db.select({ count: sql<number>`COUNT(*)` }).from(contactSubmissions).where(where);
+  return { rows, total: Number(countRows[0]?.count ?? 0) };
+}
+
+export async function adminUpdateContactStatus(id: number, status: string) {
+  await db.update(contactSubmissions).set({ status: status as any }).where(eq(contactSubmissions.id, id));
+}
+
+export async function adminBugAwardXp(id: number, xpAmount: number) {
+  const report = await db.select().from(bugReports).where(eq(bugReports.id, id)).limit(1);
+  if (!report[0]) throw new Error("Report not found");
+  if (report[0].xpAwarded > 0) throw new Error("XP already awarded for this report");
+  await adminAwardXp(report[0].userId, xpAmount);
+  await db.update(bugReports).set({ xpAwarded: xpAmount }).where(eq(bugReports.id, id));
 }

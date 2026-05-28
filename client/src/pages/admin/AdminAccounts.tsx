@@ -35,30 +35,35 @@ export default function AdminAccounts() {
     createMutation.mutate(form);
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "9px 11px", borderRadius: 7,
+    border: "1.5px solid #252525", fontSize: 13, color: "#f0f0f0",
+    outline: "none", boxSizing: "border-box", background: "#1a1a1a",
+  };
+
   return (
     <AdminLayout>
       <div style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", margin: 0 }}>Admin Accounts</h1>
-          <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>{data?.length ?? 0} admin accounts</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#f0f0f0", margin: 0 }}>Admin Accounts</h1>
+          <p style={{ fontSize: 13, color: "#555", marginTop: 4 }}>{data?.length ?? 0} admin accounts</p>
         </div>
         <button onClick={() => setShowForm(!showForm)}
-          style={{ padding: "9px 18px", borderRadius: 8, border: "none", background: "#1e293b", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+          style={{ padding: "9px 18px", borderRadius: 8, border: "none", background: "#fff", color: "#000", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
           + New Admin
         </button>
       </div>
 
       {(error || success) && (
-        <div style={{ background: error ? "#fef2f2" : "#f0fdf4", border: `1px solid ${error ? "#fecaca" : "#bbf7d0"}`, borderRadius: 8, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: error ? "#dc2626" : "#16a34a" }}>
+        <div style={{ background: error ? "#1a0000" : "#052e16", border: `1px solid ${error ? "#3a0000" : "#14532d"}`, borderRadius: 8, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: error ? "#f87171" : "#4ade80" }}>
           {error || success}
           <button onClick={() => { setError(""); setSuccess(""); }} style={{ float: "right", background: "none", border: "none", cursor: "pointer", color: "inherit" }}>×</button>
         </div>
       )}
 
-      {/* Create form */}
       {showForm && (
-        <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e2e8f0", padding: "22px 24px", marginBottom: 20 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 700, color: "#1e293b", margin: "0 0 16px" }}>Create Admin Account</h3>
+        <div style={{ background: "#161616", borderRadius: 12, border: "1px solid #222", padding: "22px 24px", marginBottom: 20 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: "#f0f0f0", margin: "0 0 16px" }}>Create Admin Account</h3>
           <form onSubmit={handleCreate} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 10, alignItems: "end" }}>
             {[
               { label: "Username", key: "username", type: "text", placeholder: "admin_name" },
@@ -66,50 +71,50 @@ export default function AdminAccounts() {
               { label: "Password", key: "password", type: "password", placeholder: "Min 8 chars" },
             ].map(f => (
               <div key={f.key}>
-                <label style={{ display: "block", fontSize: 11.5, fontWeight: 600, color: "#374151", marginBottom: 5 }}>{f.label}</label>
+                <label style={{ display: "block", fontSize: 11.5, fontWeight: 600, color: "#555", marginBottom: 5 }}>{f.label}</label>
                 <input type={f.type} placeholder={f.placeholder}
                   value={(form as any)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                  style={{ width: "100%", padding: "9px 11px", borderRadius: 7, border: "1.5px solid #d1d5db", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+                  style={inputStyle} />
               </div>
             ))}
             <button type="submit" disabled={createMutation.isPending}
-              style={{ padding: "9px 18px", borderRadius: 7, border: "none", background: "#1e293b", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", height: 38 }}>
+              style={{ padding: "9px 18px", borderRadius: 7, border: "none", background: "#fff", color: "#000", fontWeight: 700, fontSize: 13, cursor: "pointer", height: 38 }}>
               Create
             </button>
           </form>
         </div>
       )}
 
-      <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e2e8f0", overflow: "hidden" }}>
+      <div style={{ background: "#161616", borderRadius: 12, border: "1px solid #222", overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
-            <tr style={{ background: "#f8fafc" }}>
+            <tr style={{ background: "#111" }}>
               {["ID", "Username", "Email", "Created", "Last Sign In", "Actions"].map(h => (
-                <th key={h} style={{ padding: "11px 14px", textAlign: "left", fontWeight: 600, color: "#64748b", fontSize: 12 }}>{h}</th>
+                <th key={h} style={{ padding: "11px 14px", textAlign: "left", fontWeight: 600, color: "#555", fontSize: 12 }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan={6} style={{ padding: 28, textAlign: "center", color: "#94a3b8" }}>Loading…</td></tr>}
+            {isLoading && <tr><td colSpan={6} style={{ padding: 28, textAlign: "center", color: "#555" }}>Loading…</td></tr>}
             {data?.map((admin, i) => {
               const isMe = admin.id === meQuery.data?.id;
               return (
-                <tr key={admin.id} style={{ borderTop: "1px solid #f1f5f9", background: isMe ? "#f0f9ff" : i % 2 === 0 ? "#fff" : "#fafafa" }}>
-                  <td style={{ padding: "9px 14px", color: "#94a3b8" }}>{admin.id}</td>
-                  <td style={{ padding: "9px 14px", fontWeight: 700, color: "#1e293b" }}>
-                    {admin.username} {isMe && <span style={{ fontSize: 10, color: "#0369a1", fontWeight: 600 }}>(you)</span>}
+                <tr key={admin.id} style={{ borderTop: "1px solid #1e1e1e", background: isMe ? "#0a1929" : i % 2 === 0 ? "#161616" : "#1a1a1a" }}>
+                  <td style={{ padding: "9px 14px", color: "#555" }}>{admin.id}</td>
+                  <td style={{ padding: "9px 14px", fontWeight: 700, color: "#f0f0f0" }}>
+                    {admin.username} {isMe && <span style={{ fontSize: 10, color: "#60a5fa", fontWeight: 600 }}>(you)</span>}
                   </td>
-                  <td style={{ padding: "9px 14px", color: "#475569" }}>{admin.email}</td>
-                  <td style={{ padding: "9px 14px", color: "#94a3b8" }}>
+                  <td style={{ padding: "9px 14px", color: "#888" }}>{admin.email}</td>
+                  <td style={{ padding: "9px 14px", color: "#555" }}>
                     {admin.createdAt ? new Date(admin.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "—"}
                   </td>
-                  <td style={{ padding: "9px 14px", color: "#94a3b8" }}>
+                  <td style={{ padding: "9px 14px", color: "#555" }}>
                     {admin.lastSignedIn ? new Date(admin.lastSignedIn).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "—"}
                   </td>
                   <td style={{ padding: "9px 14px" }}>
                     {!isMe && (
                       <button onClick={() => { if (confirm(`Remove admin access from ${admin.username}?`)) removeMutation.mutate({ userId: admin.id }); }}
-                        style={{ padding: "4px 10px", borderRadius: 6, border: "none", cursor: "pointer", background: "#fee2e2", color: "#dc2626", fontWeight: 700, fontSize: 11 }}>
+                        style={{ padding: "4px 10px", borderRadius: 6, border: "none", cursor: "pointer", background: "#1a0000", color: "#f87171", fontWeight: 700, fontSize: 11 }}>
                         Remove Access
                       </button>
                     )}

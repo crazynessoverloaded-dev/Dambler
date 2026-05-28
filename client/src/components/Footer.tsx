@@ -56,10 +56,9 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div style={{
-              fontSize: 18, fontWeight: 900,
-              letterSpacing: -0.4, marginBottom: 10,
-              fontFamily: 'Plus Jakarta Sans, sans-serif',
-              color: '#ffffff',
+              fontSize: 32, fontWeight: 400,
+              fontFamily: "'Great Vibes', cursive",
+              color: '#ffffff', marginBottom: 10, lineHeight: 1,
             }}>
               Dambler
             </div>

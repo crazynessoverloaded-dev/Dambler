@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useSearch } from 'wouter';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, CheckCircle, Tag } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { Link } from 'wouter';
 import { trpc } from '@/lib/trpc';
 
@@ -40,173 +39,138 @@ export default function Register() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
-
     if (!formData.username) newErrors.username = 'Username is required';
     else if (formData.username.length < 3) newErrors.username = 'Username must be at least 3 characters';
     else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) newErrors.username = 'Letters, numbers and underscores only';
-
     if (!formData.email) newErrors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Please enter a valid email';
-
     if (!formData.password) newErrors.password = 'Password is required';
     else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-
     if (!formData.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
     else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
+    registerMutation.mutate({ username: formData.username, email: formData.email, password: formData.password, referralCode: formData.referralCode.trim() || undefined });
+  };
 
-    registerMutation.mutate({
-      username: formData.username,
-      email: formData.email,
-      password: formData.password,
-      referralCode: formData.referralCode.trim() || undefined,
-    });
+  const inputStyle = (hasError?: boolean): React.CSSProperties => ({
+    width: '100%', padding: '10px 14px', borderRadius: 8, border: `1px solid ${hasError ? '#ef4444' : '#ddd'}`,
+    background: '#f5f5f5', color: '#111', fontSize: 13.5, outline: 'none', boxSizing: 'border-box',
+  });
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: 12, fontWeight: 600, color: '#888', marginBottom: 5, letterSpacing: 0.2,
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
-
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px' }}>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md relative z-10"
+        transition={{ duration: 0.4 }}
+        style={{ width: '100%', maxWidth: 420 }}
       >
-        <div className="mb-8">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="gap-2 mb-6">
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </Link>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Create Account</h1>
-          <p className="text-muted-foreground">Join Dambler — get 1,000 DMB free on signup</p>
-        </div>
+        <div style={{ background: '#161616', border: '1px solid #222', borderRadius: 18, padding: '36px 32px' }}>
 
-        <div className="glass-effect rounded-2xl p-8 border border-accent/20 backdrop-blur-xl">
+          {/* Logo */}
+          <div style={{ textAlign: 'center', marginBottom: 24 }}>
+            <div style={{ fontSize: 42, fontWeight: 400, fontFamily: "'Great Vibes', cursive", color: '#fff', lineHeight: 1 }}>Dambler</div>
+            <div style={{ fontSize: 10, color: '#555', letterSpacing: 2.5, fontWeight: 700, marginTop: 4, textTransform: 'uppercase' }}>Create Account</div>
+            <p style={{ fontSize: 12.5, color: '#555', marginTop: 8 }}>Get 1,000 DMB free on signup</p>
+          </div>
+
           {registerSuccess ? (
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-              <div className="w-16 h-16 rounded-full bg-accent/20 border border-accent/50 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-accent" />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '24px 0' }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <CheckCircle size={24} color="#fff" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Account Created!</h2>
-              <p className="text-accent font-bold mb-1">🎉 1,000 DMB added to your wallet!</p>
-              <p className="text-muted-foreground">Welcome to Dambler. Redirecting...</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: '#fff', marginBottom: 4 }}>Account Created!</p>
+              <p style={{ fontSize: 13, color: '#4ade80', fontWeight: 700, marginBottom: 4 }}>🎉 1,000 DMB added to your wallet!</p>
+              <p style={{ fontSize: 13, color: '#555' }}>Welcome to Dambler. Redirecting…</p>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit}>
               {errors.general && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30">
-                  <p className="text-red-400 text-sm">{errors.general}</p>
+                <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)' }}>
+                  <p style={{ fontSize: 12.5, color: '#f87171', margin: 0 }}>{errors.general}</p>
                 </div>
               )}
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Username</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type="text" name="username" value={formData.username} onChange={handleChange}
-                    placeholder="gambler123"
-                    className={`w-full pl-10 pr-4 py-3 rounded-lg bg-background border transition-all ${errors.username ? 'border-red-500/50' : 'border-border focus:border-accent/50'} text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent/20`}
-                  />
-                </div>
-                {errors.username && <p className="text-red-400 text-sm mt-1">{errors.username}</p>}
+              <div style={{ marginBottom: 12 }}>
+                <label style={labelStyle}>Username</label>
+                <input type="text" name="username" value={formData.username} placeholder="gambler123"
+                  onChange={handleChange} style={inputStyle(!!errors.username)} />
+                {errors.username && <p style={{ fontSize: 11.5, color: '#f87171', marginTop: 4 }}>{errors.username}</p>}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type="email" name="email" value={formData.email} onChange={handleChange}
-                    placeholder="you@example.com"
-                    className={`w-full pl-10 pr-4 py-3 rounded-lg bg-background border transition-all ${errors.email ? 'border-red-500/50' : 'border-border focus:border-accent/50'} text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent/20`}
-                  />
-                </div>
-                {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
+              <div style={{ marginBottom: 12 }}>
+                <label style={labelStyle}>Email Address</label>
+                <input type="email" name="email" value={formData.email} placeholder="you@example.com"
+                  onChange={handleChange} style={inputStyle(!!errors.email)} />
+                {errors.email && <p style={{ fontSize: 11.5, color: '#f87171', marginTop: 4 }}>{errors.email}</p>}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange}
-                    placeholder="••••••••"
-                    className={`w-full pl-10 pr-10 py-3 rounded-lg bg-background border transition-all ${errors.password ? 'border-red-500/50' : 'border-border focus:border-accent/50'} text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent/20`}
-                  />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3 text-muted-foreground hover:text-foreground">
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              <div style={{ marginBottom: 12 }}>
+                <label style={labelStyle}>Password</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} placeholder="Min. 8 characters"
+                    onChange={handleChange} style={{ ...inputStyle(!!errors.password), paddingRight: 40 }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#999', padding: 0, display: 'flex' }}>
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password}</p>}
+                {errors.password && <p style={{ fontSize: 11.5, color: '#f87171', marginTop: 4 }}>{errors.password}</p>}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Confirm Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange}
-                    placeholder="••••••••"
-                    className={`w-full pl-10 pr-10 py-3 rounded-lg bg-background border transition-all ${errors.confirmPassword ? 'border-red-500/50' : 'border-border focus:border-accent/50'} text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent/20`}
-                  />
-                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-3 text-muted-foreground hover:text-foreground">
-                    {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              <div style={{ marginBottom: 12 }}>
+                <label style={labelStyle}>Confirm Password</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} placeholder="••••••••"
+                    onChange={handleChange} style={{ ...inputStyle(!!errors.confirmPassword), paddingRight: 40 }} />
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#999', padding: 0, display: 'flex' }}>
+                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                {errors.confirmPassword && <p className="text-red-400 text-sm mt-1">{errors.confirmPassword}</p>}
+                {errors.confirmPassword && <p style={{ fontSize: 11.5, color: '#f87171', marginTop: 4 }}>{errors.confirmPassword}</p>}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Referral Code <span className="text-muted-foreground font-normal">(optional)</span>
+              <div style={{ marginBottom: 16 }}>
+                <label style={labelStyle}>
+                  Referral Code <span style={{ color: '#3a3a3a', fontWeight: 400 }}>(optional)</span>
                 </label>
-                <div className="relative">
-                  <Tag className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type="text" name="referralCode" value={formData.referralCode} onChange={handleChange}
-                    placeholder="e.g. A3F9C2B1"
-                    className="w-full pl-10 pr-4 py-3 rounded-lg bg-background border border-border focus:border-accent/50 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent/20 uppercase transition-all"
-                    maxLength={8}
-                  />
-                </div>
+                <input type="text" name="referralCode" value={formData.referralCode} placeholder="e.g. A3F9C2B1"
+                  onChange={handleChange} maxLength={8}
+                  style={{ ...inputStyle(), textTransform: 'uppercase' }} />
               </div>
 
-              <label className="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" className="mt-1 rounded border-border" required />
-                <span className="text-sm text-muted-foreground">
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', marginBottom: 18 }}>
+                <input type="checkbox" required style={{ marginTop: 2, accentColor: '#fff', cursor: 'pointer' }} />
+                <span style={{ fontSize: 12, color: '#555', lineHeight: 1.5 }}>
                   I agree to the{' '}
-                  <Link href="/terms">
-                    <a className="text-accent hover:text-accent/80 underline underline-offset-2 transition-colors">Terms of Service</a>
-                  </Link>
+                  <Link href="/terms"><span style={{ color: '#888', textDecoration: 'underline', cursor: 'pointer' }}>Terms of Service</span></Link>
                   {' '}and{' '}
-                  <Link href="/privacy">
-                    <a className="text-accent hover:text-accent/80 underline underline-offset-2 transition-colors">Privacy Policy</a>
-                  </Link>
+                  <Link href="/privacy"><span style={{ color: '#888', textDecoration: 'underline', cursor: 'pointer' }}>Privacy Policy</span></Link>
                 </span>
               </label>
 
-              <Button
-                type="submit"
-                disabled={registerMutation.isPending}
-                className="w-full bg-accent text-primary-foreground hover:bg-accent/90 h-11 font-semibold shadow-lg neon-glow-hover disabled:opacity-50"
-              >
-                {registerMutation.isPending ? 'Creating Account...' : 'Create Account — Get 1,000 DMB Free'}
-              </Button>
+              <button type="submit" disabled={registerMutation.isPending}
+                style={{
+                  width: '100%', padding: '12px', borderRadius: 9, border: 'none',
+                  background: registerMutation.isPending ? '#333' : '#fff',
+                  color: registerMutation.isPending ? '#777' : '#111',
+                  fontSize: 13.5, fontWeight: 800, cursor: registerMutation.isPending ? 'not-allowed' : 'pointer',
+                  transition: 'background 0.15s',
+                }}>
+                {registerMutation.isPending ? 'Creating Account…' : 'Create Account — Get 1,000 DMB Free'}
+              </button>
 
-              <div className="text-center pt-4 border-t border-border">
-                <p className="text-muted-foreground">
+              <div style={{ marginTop: 18, paddingTop: 16, borderTop: '1px solid #1e1e1e', textAlign: 'center' }}>
+                <p style={{ fontSize: 12.5, color: '#555', margin: 0 }}>
                   Already have an account?{' '}
                   <Link href="/login">
-                    <a className="text-accent hover:text-accent/80 font-semibold transition-colors">Sign in</a>
+                    <span style={{ color: '#aaa', fontWeight: 700, cursor: 'pointer' }}>Sign in</span>
                   </Link>
                 </p>
               </div>
@@ -214,7 +178,12 @@ export default function Register() {
           )}
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">
+        <div style={{ marginTop: 16, textAlign: 'center' }}>
+          <Link href="/">
+            <span style={{ fontSize: 12, color: '#444', cursor: 'pointer' }}>← Back to site</span>
+          </Link>
+        </div>
+        <p style={{ textAlign: 'center', fontSize: 11, color: '#333', marginTop: 10 }}>
           18+ only. Please gamble responsibly.
         </p>
       </motion.div>

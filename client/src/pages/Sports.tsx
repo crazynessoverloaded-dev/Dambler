@@ -122,7 +122,7 @@ export default function Sports() {
                 <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>Get notified at launch</span>
               </div>
               <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', margin: '0 0 5px', letterSpacing: -0.3, fontFamily: 'Plus Jakarta Sans, sans-serif' }}>In the meantime, try our casino.</h3>
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', margin: 0 }}>45+ provably fair games. Instant DMB payouts. No KYC.</p>
+              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', margin: 0 }}>44+ provably fair games. Instant DMB payouts. No KYC.</p>
             </div>
             <Link href="/casino">
               <button style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#fff', color: '#0c0e14', fontWeight: 800, fontSize: 13, padding: '12px 24px', borderRadius: 10, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>

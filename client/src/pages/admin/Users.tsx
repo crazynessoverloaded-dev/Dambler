@@ -54,70 +54,73 @@ export default function Users() {
 
   const totalPages = Math.ceil((data?.total ?? 0) / 50);
 
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "9px 12px", borderRadius: 8,
+    border: "1.5px solid #252525", fontSize: 13, color: "#f0f0f0",
+    outline: "none", boxSizing: "border-box", background: "#1a1a1a",
+  };
+
   return (
     <AdminLayout>
       <div style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", margin: 0 }}>Users</h1>
-          <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>{data?.total ?? 0} total users</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#f0f0f0", margin: 0 }}>Users</h1>
+          <p style={{ fontSize: 13, color: "#555", marginTop: 4 }}>{data?.total ?? 0} total users</p>
         </div>
         <input
           value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search username or email…"
-          style={{
-            padding: "9px 14px", borderRadius: 8, border: "1.5px solid #d1d5db",
-            fontSize: 13, width: 260, outline: "none", background: "#fff",
-          }}
+          style={{ padding: "9px 14px", borderRadius: 8, border: "1.5px solid #252525", fontSize: 13, width: 260, outline: "none", background: "#161616", color: "#f0f0f0" }}
         />
       </div>
 
       {feedback && (
-        <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 8, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "#16a34a" }}>
-          {feedback} <button onClick={() => setFeedback(null)} style={{ float: "right", background: "none", border: "none", cursor: "pointer", color: "#16a34a" }}>×</button>
+        <div style={{ background: "#052e16", border: "1px solid #14532d", borderRadius: 8, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "#4ade80" }}>
+          {feedback} <button onClick={() => setFeedback(null)} style={{ float: "right", background: "none", border: "none", cursor: "pointer", color: "#4ade80" }}>×</button>
         </div>
       )}
 
-      <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e2e8f0", overflow: "hidden" }}>
+      <div style={{ background: "#161616", borderRadius: 12, border: "1px solid #222", overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
-              <tr style={{ background: "#f8fafc" }}>
+              <tr style={{ background: "#111" }}>
                 {["ID", "Username", "Email", "Balance", "XP / Tier", "Joined", "Last Seen", "Status", "Actions"].map(h => (
-                  <th key={h} style={{ padding: "11px 14px", textAlign: "left", fontWeight: 600, color: "#64748b", fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "11px 14px", textAlign: "left", fontWeight: 600, color: "#555", fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {isLoading && (
-                <tr><td colSpan={9} style={{ padding: 28, textAlign: "center", color: "#94a3b8" }}>Loading…</td></tr>
+                <tr><td colSpan={9} style={{ padding: 28, textAlign: "center", color: "#555" }}>Loading…</td></tr>
               )}
               {data?.rows.map((u, i) => {
                 const banned = !!u.bannedAt;
                 return (
-                  <tr key={u.id} style={{ borderTop: "1px solid #f1f5f9", background: banned ? "#fff5f5" : i % 2 === 0 ? "#fff" : "#fafafa" }}>
-                    <td style={{ padding: "9px 14px", color: "#94a3b8" }}>{u.id}</td>
-                    <td style={{ padding: "9px 14px", fontWeight: 700, color: "#1e293b" }}>{u.username}</td>
-                    <td style={{ padding: "9px 14px", color: "#475569" }}>{u.email}</td>
-                    <td style={{ padding: "9px 14px", fontWeight: 600 }}>${Number(u.balance ?? 0).toFixed(2)}</td>
-                    <td style={{ padding: "9px 14px", color: "#475569" }}>{(u.xp ?? 0).toLocaleString()} <span style={{ color: "#94a3b8" }}>/ {getXpTier(u.xp ?? 0)}</span></td>
-                    <td style={{ padding: "9px 14px", color: "#94a3b8" }}>{fmtDate(u.createdAt)}</td>
-                    <td style={{ padding: "9px 14px", color: "#94a3b8" }}>{fmtDate(u.lastSignedIn)}</td>
+                  <tr key={u.id} style={{ borderTop: "1px solid #1e1e1e", background: banned ? "#1a0000" : i % 2 === 0 ? "#161616" : "#1a1a1a" }}>
+                    <td style={{ padding: "9px 14px", color: "#555" }}>{u.id}</td>
+                    <td style={{ padding: "9px 14px", fontWeight: 700, color: "#f0f0f0" }}>{u.username}</td>
+                    <td style={{ padding: "9px 14px", color: "#888" }}>{u.email}</td>
+                    <td style={{ padding: "9px 14px", fontWeight: 600, color: "#f0f0f0" }}>${Number(u.balance ?? 0).toFixed(2)}</td>
+                    <td style={{ padding: "9px 14px", color: "#888" }}>{(u.xp ?? 0).toLocaleString()} <span style={{ color: "#555" }}>/ {getXpTier(u.xp ?? 0)}</span></td>
+                    <td style={{ padding: "9px 14px", color: "#555" }}>{fmtDate(u.createdAt)}</td>
+                    <td style={{ padding: "9px 14px", color: "#555" }}>{fmtDate(u.lastSignedIn)}</td>
                     <td style={{ padding: "9px 14px" }}>
                       <span style={{
                         padding: "2px 8px", borderRadius: 6, fontSize: 11, fontWeight: 700,
-                        background: banned ? "#fee2e2" : "#f0fdf4",
-                        color: banned ? "#dc2626" : "#16a34a",
+                        background: banned ? "#1a0000" : "#052e16",
+                        color: banned ? "#f87171" : "#4ade80",
                       }}>{banned ? "Banned" : "Active"}</span>
                     </td>
                     <td style={{ padding: "9px 14px" }}>
                       <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-                        <ActionBtn label="Ban" color="#dc2626" bg="#fee2e2"
+                        <ActionBtn label="Ban" color="#f87171" bg="#1a0000"
                           onClick={() => { setBanReason(""); setModal({ type: "ban", userId: u.id, username: u.username }); }} />
-                        <ActionBtn label="+XP" color="#7c3aed" bg="#f5f3ff"
+                        <ActionBtn label="XP" color="#c084fc" bg="#1a0a2e"
                           onClick={() => setModal({ type: "xp", userId: u.id, username: u.username })} />
-                        <ActionBtn label="Balance" color="#0369a1" bg="#f0f9ff"
+                        <ActionBtn label="Balance" color="#60a5fa" bg="#0a1929"
                           onClick={() => { setBalanceAmount(""); setModal({ type: "balance", userId: u.id, username: u.username }); }} />
-                        <ActionBtn label="Reset PW" color="#475569" bg="#f1f5f9"
+                        <ActionBtn label="Reset PW" color="#888" bg="#1a1a1a"
                           onClick={() => { setNewPassword(""); setModal({ type: "password", userId: u.id, username: u.username }); }} />
                       </div>
                     </td>
@@ -125,84 +128,80 @@ export default function Users() {
                 );
               })}
               {!isLoading && data?.rows.length === 0 && (
-                <tr><td colSpan={9} style={{ padding: 28, textAlign: "center", color: "#94a3b8" }}>No users found</td></tr>
+                <tr><td colSpan={9} style={{ padding: 28, textAlign: "center", color: "#555" }}>No users found</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
-          <div style={{ padding: "12px 16px", borderTop: "1px solid #f1f5f9", display: "flex", gap: 8, alignItems: "center" }}>
+          <div style={{ padding: "12px 16px", borderTop: "1px solid #222", display: "flex", gap: 8, alignItems: "center" }}>
             <button disabled={page === 1} onClick={() => setPage(p => p - 1)} style={paginationBtn(page === 1)}>← Prev</button>
-            <span style={{ fontSize: 13, color: "#64748b" }}>Page {page} of {totalPages}</span>
+            <span style={{ fontSize: 13, color: "#555" }}>Page {page} of {totalPages}</span>
             <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} style={paginationBtn(page === totalPages)}>Next →</button>
           </div>
         )}
       </div>
 
-      {/* Modals */}
       {modal && (
-        <div onClick={() => setModal(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: "#fff", borderRadius: 14, padding: "28px 28px", maxWidth: 380, width: "90%", boxShadow: "0 12px 40px rgba(0,0,0,0.15)" }}>
+        <div onClick={() => setModal(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#161616", borderRadius: 14, padding: "28px 28px", maxWidth: 380, width: "90%", border: "1px solid #252525", boxShadow: "0 12px 40px rgba(0,0,0,0.8)" }}>
             {modal.type === "ban" && (
               <>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1e293b", margin: "0 0 6px" }}>Ban {modal.username}</h3>
-                <p style={{ fontSize: 13, color: "#64748b", marginBottom: 14 }}>The user's balance will be frozen. They cannot log in.</p>
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#f0f0f0", margin: "0 0 6px" }}>Ban {modal.username}</h3>
+                <p style={{ fontSize: 13, color: "#555", marginBottom: 14 }}>The user's balance will be frozen. They cannot log in.</p>
                 <textarea value={banReason} onChange={e => setBanReason(e.target.value)}
                   placeholder="Reason for ban…"
-                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid #d1d5db", fontSize: 13, minHeight: 80, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
+                  style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} />
                 <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
                   <button onClick={() => banMutation.mutate({ userId: modal.userId, reason: banReason })}
                     style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#dc2626", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
                     Confirm Ban
                   </button>
-                  <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#f1f5f9", color: "#475569", fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Cancel</button>
+                  <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#222", color: "#888", fontWeight: 600, fontSize: 13, border: "1px solid #333", cursor: "pointer" }}>Cancel</button>
                 </div>
               </>
             )}
             {modal.type === "xp" && (
               <>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1e293b", margin: "0 0 14px" }}>Award XP to {modal.username}</h3>
-                <input type="number" value={xpAmount} onChange={e => setXpAmount(e.target.value)}
-                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid #d1d5db", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#f0f0f0", margin: "0 0 6px" }}>Adjust XP — {modal.username}</h3>
+                <p style={{ fontSize: 12, color: "#555", marginBottom: 14 }}>Positive to award, negative to remove. XP cannot go below 0.</p>
+                <input type="number" value={xpAmount} onChange={e => setXpAmount(e.target.value)} style={inputStyle} placeholder="e.g. 500 or -200" />
                 <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
                   <button onClick={() => xpMutation.mutate({ userId: modal.userId, amount: parseInt(xpAmount) })}
-                    style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#7c3aed", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
-                    Award XP
+                    style={{ flex: 1, padding: "10px", borderRadius: 8, background: parseInt(xpAmount) < 0 ? "#dc2626" : "#7c3aed", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
+                    {parseInt(xpAmount) < 0 ? `Remove ${Math.abs(parseInt(xpAmount) || 0)} XP` : `Award ${parseInt(xpAmount) || 0} XP`}
                   </button>
-                  <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#f1f5f9", color: "#475569", fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Cancel</button>
+                  <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#222", color: "#888", fontWeight: 600, fontSize: 13, border: "1px solid #333", cursor: "pointer" }}>Cancel</button>
                 </div>
               </>
             )}
             {modal.type === "balance" && (
               <>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1e293b", margin: "0 0 6px" }}>Adjust Balance for {modal.username}</h3>
-                <p style={{ fontSize: 12, color: "#94a3b8", marginBottom: 14 }}>Use negative number to deduct.</p>
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#f0f0f0", margin: "0 0 6px" }}>Adjust Balance for {modal.username}</h3>
+                <p style={{ fontSize: 12, color: "#555", marginBottom: 14 }}>Use negative number to deduct.</p>
                 <input type="number" value={balanceAmount} onChange={e => setBalanceAmount(e.target.value)} placeholder="e.g. 50 or -25"
-                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid #d1d5db", fontSize: 14, boxSizing: "border-box", outline: "none", marginBottom: 8 }} />
-                <input type="text" value={balanceNote} onChange={e => setBalanceNote(e.target.value)} placeholder="Note"
-                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid #d1d5db", fontSize: 13, boxSizing: "border-box", outline: "none" }} />
+                  style={{ ...inputStyle, marginBottom: 8 }} />
+                <input type="text" value={balanceNote} onChange={e => setBalanceNote(e.target.value)} placeholder="Note" style={inputStyle} />
                 <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
                   <button onClick={() => balanceMutation.mutate({ userId: modal.userId, amount: parseFloat(balanceAmount), note: balanceNote })}
-                    style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#0369a1", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
+                    style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#1d4ed8", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
                     Apply
                   </button>
-                  <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#f1f5f9", color: "#475569", fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Cancel</button>
+                  <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#222", color: "#888", fontWeight: 600, fontSize: 13, border: "1px solid #333", cursor: "pointer" }}>Cancel</button>
                 </div>
               </>
             )}
             {modal.type === "password" && (
               <>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1e293b", margin: "0 0 14px" }}>Reset Password for {modal.username}</h3>
-                <input type="text" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="New password (min 6 chars)"
-                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid #d1d5db", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#f0f0f0", margin: "0 0 14px" }}>Reset Password for {modal.username}</h3>
+                <input type="text" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="New password (min 6 chars)" style={inputStyle} />
                 <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
                   <button onClick={() => passwordMutation.mutate({ userId: modal.userId, newPassword })}
-                    style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#1e293b", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
+                    style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#fff", color: "#000", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
                     Set Password
                   </button>
-                  <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#f1f5f9", color: "#475569", fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Cancel</button>
+                  <button onClick={() => setModal(null)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#222", color: "#888", fontWeight: 600, fontSize: 13, border: "1px solid #333", cursor: "pointer" }}>Cancel</button>
                 </div>
               </>
             )}
@@ -224,8 +223,8 @@ function ActionBtn({ label, color, bg, onClick }: { label: string; color: string
 
 function paginationBtn(disabled: boolean): React.CSSProperties {
   return {
-    padding: "6px 14px", borderRadius: 7, border: "1px solid #e2e8f0",
-    background: disabled ? "#f8fafc" : "#fff", color: disabled ? "#cbd5e1" : "#475569",
+    padding: "6px 14px", borderRadius: 7, border: "1px solid #252525",
+    background: "#1a1a1a", color: disabled ? "#333" : "#888",
     fontSize: 13, fontWeight: 600, cursor: disabled ? "not-allowed" : "pointer",
   };
 }

@@ -3,16 +3,16 @@ import { trpc } from "@/lib/trpc";
 import AdminLayout from "./AdminLayout";
 
 const SEVERITY_COLORS: Record<string, { bg: string; color: string }> = {
-  high:   { bg: "#fee2e2", color: "#dc2626" },
-  medium: { bg: "#fef3c7", color: "#d97706" },
-  low:    { bg: "#f0fdf4", color: "#16a34a" },
+  high:   { bg: "#1a0000", color: "#f87171" },
+  medium: { bg: "#1c1100", color: "#fbbf24" },
+  low:    { bg: "#052e16", color: "#4ade80" },
 };
 
 const TYPE_LABELS: Record<string, string> = {
-  consecutive_wins:   "10 Wins in a Row",
-  fast_betting:       "Bot-Speed Betting",
-  multi_account:      "Multiple Accounts / Same IP",
-  large_balance_jump: "Sudden Balance Jump",
+  consecutive_wins:    "10 Wins in a Row",
+  fast_betting:        "Bot-Speed Betting",
+  multi_account:       "Multiple Accounts / Same IP",
+  large_balance_jump:  "Sudden Balance Jump",
   repeated_max_payout: "Repeated Max Payout",
 };
 
@@ -39,38 +39,38 @@ export default function SuspiciousActivity() {
     <AdminLayout>
       <div style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", margin: 0 }}>Suspicious Activity</h1>
-          <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>{data?.total ?? 0} records</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#f0f0f0", margin: 0 }}>Suspicious Activity</h1>
+          <p style={{ fontSize: 13, color: "#555", marginTop: 4 }}>{data?.total ?? 0} records</p>
         </div>
-        <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#475569", cursor: "pointer" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#888", cursor: "pointer" }}>
           <input type="checkbox" checked={onlyOpen} onChange={e => { setOnlyOpen(e.target.checked); setPage(1); }} />
           Show open flags only
         </label>
       </div>
 
-      <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e2e8f0", overflow: "hidden" }}>
+      <div style={{ background: "#161616", borderRadius: 12, border: "1px solid #222", overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
-              <tr style={{ background: "#f8fafc" }}>
+              <tr style={{ background: "#111" }}>
                 {["Date", "User", "Flag Type", "Severity", "Details", "Status", "Action"].map(h => (
-                  <th key={h} style={{ padding: "11px 14px", textAlign: "left", fontWeight: 600, color: "#64748b", fontSize: 12 }}>{h}</th>
+                  <th key={h} style={{ padding: "11px 14px", textAlign: "left", fontWeight: 600, color: "#555", fontSize: 12 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td colSpan={7} style={{ padding: 28, textAlign: "center", color: "#94a3b8" }}>Loading…</td></tr>}
+              {isLoading && <tr><td colSpan={7} style={{ padding: 28, textAlign: "center", color: "#555" }}>Loading…</td></tr>}
               {data?.rows.map((row, i) => {
                 const sev = SEVERITY_COLORS[row.severity] ?? SEVERITY_COLORS.medium;
                 let details: Record<string, unknown> = {};
                 try { details = JSON.parse(row.details); } catch { /* */ }
                 return (
-                  <tr key={row.id} style={{ borderTop: "1px solid #f1f5f9", background: row.dismissed ? "#fafafa" : i % 2 === 0 ? "#fff" : "#fffbeb" }}>
-                    <td style={{ padding: "9px 14px", color: "#94a3b8", whiteSpace: "nowrap" }}>
+                  <tr key={row.id} style={{ borderTop: "1px solid #1e1e1e", background: row.dismissed ? "#1a1a1a" : i % 2 === 0 ? "#161616" : "#1c1100" }}>
+                    <td style={{ padding: "9px 14px", color: "#555", whiteSpace: "nowrap" }}>
                       {new Date(row.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </td>
-                    <td style={{ padding: "9px 14px", fontWeight: 700, color: "#1e293b" }}>{row.username}</td>
-                    <td style={{ padding: "9px 14px", color: "#1e293b", fontWeight: 600 }}>
+                    <td style={{ padding: "9px 14px", fontWeight: 700, color: "#f0f0f0" }}>{row.username}</td>
+                    <td style={{ padding: "9px 14px", color: "#f0f0f0", fontWeight: 600 }}>
                       {TYPE_LABELS[row.type] ?? row.type}
                     </td>
                     <td style={{ padding: "9px 14px" }}>
@@ -78,24 +78,24 @@ export default function SuspiciousActivity() {
                         {row.severity.toUpperCase()}
                       </span>
                     </td>
-                    <td style={{ padding: "9px 14px", color: "#64748b", maxWidth: 240 }}>
+                    <td style={{ padding: "9px 14px", color: "#888", maxWidth: 240 }}>
                       {Object.entries(details).map(([k, v]) => (
                         <span key={k} style={{ marginRight: 8 }}>
-                          <span style={{ color: "#94a3b8" }}>{k}:</span> {String(v)}
+                          <span style={{ color: "#555" }}>{k}:</span> {String(v)}
                         </span>
                       ))}
                     </td>
                     <td style={{ padding: "9px 14px" }}>
                       <span style={{
                         padding: "2px 8px", borderRadius: 6, fontSize: 11, fontWeight: 700,
-                        background: row.dismissed ? "#f1f5f9" : "#fef3c7",
-                        color: row.dismissed ? "#94a3b8" : "#d97706",
+                        background: row.dismissed ? "#1a1a1a" : "#1c1100",
+                        color: row.dismissed ? "#555" : "#fbbf24",
                       }}>{row.dismissed ? "Dismissed" : "Open"}</span>
                     </td>
                     <td style={{ padding: "9px 14px" }}>
                       {!row.dismissed && (
                         <button onClick={() => dismissMutation.mutate({ id: row.id })}
-                          style={{ padding: "4px 10px", borderRadius: 6, border: "none", cursor: "pointer", background: "#f1f5f9", color: "#475569", fontSize: 11, fontWeight: 700 }}>
+                          style={{ padding: "4px 10px", borderRadius: 6, border: "none", cursor: "pointer", background: "#222", color: "#888", fontSize: 11, fontWeight: 700 }}>
                           Dismiss
                         </button>
                       )}
@@ -104,21 +104,21 @@ export default function SuspiciousActivity() {
                 );
               })}
               {!isLoading && data?.rows.length === 0 && (
-                <tr><td colSpan={7} style={{ padding: 28, textAlign: "center", color: "#94a3b8" }}>No flags found 🎉</td></tr>
+                <tr><td colSpan={7} style={{ padding: 28, textAlign: "center", color: "#555" }}>No flags found 🎉</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
         {totalPages > 1 && (
-          <div style={{ padding: "12px 16px", borderTop: "1px solid #f1f5f9", display: "flex", gap: 8 }}>
+          <div style={{ padding: "12px 16px", borderTop: "1px solid #222", display: "flex", gap: 8 }}>
             <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-              style={{ padding: "6px 14px", borderRadius: 7, border: "1px solid #e2e8f0", background: page === 1 ? "#f8fafc" : "#fff", color: page === 1 ? "#cbd5e1" : "#475569", fontSize: 13, fontWeight: 600, cursor: page === 1 ? "not-allowed" : "pointer" }}>
+              style={{ padding: "6px 14px", borderRadius: 7, border: "1px solid #252525", background: "#1a1a1a", color: page === 1 ? "#333" : "#888", fontSize: 13, fontWeight: 600, cursor: page === 1 ? "not-allowed" : "pointer" }}>
               ← Prev
             </button>
-            <span style={{ fontSize: 13, color: "#64748b", lineHeight: "32px" }}>Page {page} of {totalPages}</span>
+            <span style={{ fontSize: 13, color: "#555", lineHeight: "32px" }}>Page {page} of {totalPages}</span>
             <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}
-              style={{ padding: "6px 14px", borderRadius: 7, border: "1px solid #e2e8f0", background: page === totalPages ? "#f8fafc" : "#fff", color: page === totalPages ? "#cbd5e1" : "#475569", fontSize: 13, fontWeight: 600, cursor: page === totalPages ? "not-allowed" : "pointer" }}>
+              style={{ padding: "6px 14px", borderRadius: 7, border: "1px solid #252525", background: "#1a1a1a", color: page === totalPages ? "#333" : "#888", fontSize: 13, fontWeight: 600, cursor: page === totalPages ? "not-allowed" : "pointer" }}>
               Next →
             </button>
           </div>

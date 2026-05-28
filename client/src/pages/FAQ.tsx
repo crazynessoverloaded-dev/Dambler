@@ -9,7 +9,7 @@ const SECTIONS: { title: string; items: FAQItem[] }[] = [
   {
     title: 'Getting Started',
     items: [
-      { q: 'What is Dambler?', a: 'Dambler is a crypto-native gambling platform powered by DMB Coin. We offer 45+ casino games — from Plinko and Crash to Baccarat, Blackjack, and Video Poker — with provably fair outcomes and instant settlement.' },
+      { q: 'What is Dambler?', a: 'Dambler is a crypto-native gambling platform powered by DMB Coin. We offer 44+ casino games — from Plinko and Crash to Baccarat, Blackjack, and Video Poker — with provably fair outcomes and instant settlement.' },
       { q: 'How do I create an account?', a: 'Click "Register" in the top navigation, enter your email and a secure password, and verify your email address. That\'s it — no lengthy KYC required to start playing, though enhanced verification is needed for larger withdrawals.' },
       { q: 'Is Dambler legal in my country?', a: 'Online gambling laws vary by jurisdiction. You are solely responsible for ensuring that accessing Dambler is legal in your country of residence. We do not accept players from jurisdictions where online gambling is prohibited. A full list of restricted countries is in our Terms of Service.' },
       { q: 'What is the minimum age to play?', a: 'You must be at least 18 years old (or the legal gambling age in your jurisdiction if higher) to use Dambler. We take underage gambling seriously and perform age verification checks. Any account found to be operated by a minor will be immediately closed.' },
