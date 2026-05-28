@@ -36,6 +36,17 @@ import WalletPage from "./pages/Wallet";
 import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
 
+// Admin pages
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminGuard from "./pages/admin/AdminGuard";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminUsers from "./pages/admin/Users";
+import AdminBanned from "./pages/admin/BannedUsers";
+import AdminTransactions from "./pages/admin/Transactions";
+import AdminSuspicious from "./pages/admin/SuspiciousActivity";
+import AdminGameStats from "./pages/admin/GameStats";
+import AdminAccounts from "./pages/admin/AdminAccounts";
+
 // Game pages
 import Plinko from "./pages/Plinko";
 import Dice from "./pages/Dice";
@@ -160,6 +171,16 @@ function Router() {
       <Route path="/rapid-roulette" component={RapidRoulette} />
       <Route path="/jackpot-box" component={JackpotBox} />
       <Route path="/slot-joker" component={SlotJoker} />
+
+      {/* Admin */}
+      <Route path="/admin" component={AdminLogin} />
+      <Route path="/admin/dashboard" component={() => <AdminGuard><AdminDashboard /></AdminGuard>} />
+      <Route path="/admin/users" component={() => <AdminGuard><AdminUsers /></AdminGuard>} />
+      <Route path="/admin/banned" component={() => <AdminGuard><AdminBanned /></AdminGuard>} />
+      <Route path="/admin/transactions" component={() => <AdminGuard><AdminTransactions /></AdminGuard>} />
+      <Route path="/admin/suspicious" component={() => <AdminGuard><AdminSuspicious /></AdminGuard>} />
+      <Route path="/admin/game-stats" component={() => <AdminGuard><AdminGameStats /></AdminGuard>} />
+      <Route path="/admin/accounts" component={() => <AdminGuard><AdminAccounts /></AdminGuard>} />
 
       {/* 404 */}
       <Route component={NotFound} />

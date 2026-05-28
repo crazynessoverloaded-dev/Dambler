@@ -7,8 +7,11 @@ export const users = sqliteTable("users", {
   passwordHash: text("passwordHash").notNull(),
   role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
   referralCode: text("referralCode").unique(),
-  referredBy: integer("referredBy"),         // userId of whoever referred this user
-  referralBonusAwarded: integer("referralBonusAwarded").notNull().default(0), // 1 once signup bonus fires
+  referredBy: integer("referredBy"),
+  referralBonusAwarded: integer("referralBonusAwarded").notNull().default(0),
+  bannedAt: integer("bannedAt", { mode: "timestamp" }),
+  banReason: text("banReason"),
+  lastIp: text("lastIp"),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
   lastSignedIn: integer("lastSignedIn", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
@@ -46,3 +49,15 @@ export const transactions = sqliteTable("transactions", {
 });
 
 export type Transaction = typeof transactions.$inferSelect;
+
+export const suspiciousActivity = sqliteTable("suspicious_activity", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  type: text("type").notNull(), // 'consecutive_wins' | 'fast_betting' | 'multi_account' | 'large_balance_jump' | 'repeated_max_payout'
+  details: text("details").notNull(), // JSON string
+  severity: text("severity", { enum: ["low", "medium", "high"] }).notNull().default("medium"),
+  dismissed: integer("dismissed").notNull().default(0),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export type SuspiciousActivity = typeof suspiciousActivity.$inferSelect;

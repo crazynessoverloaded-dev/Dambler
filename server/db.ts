@@ -1,10 +1,10 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, ne, sql, gt, lt, or } from "drizzle-orm";
 import path from "path";
 import { fileURLToPath } from "url";
 import { randomBytes } from "crypto";
-import { transactions, users, wallets } from "../drizzle/schema";
+import { suspiciousActivity, transactions, users, wallets } from "../drizzle/schema";
 
 // Commission % per referrer XP tier (matches TIERS in client/src/lib/tiers.ts)
 const COMMISSION_RATES: Record<string, number> = {
@@ -86,9 +86,25 @@ export async function initDb() {
     `ALTER TABLE users ADD COLUMN referralCode TEXT`,
     `ALTER TABLE users ADD COLUMN referredBy INTEGER`,
     `ALTER TABLE users ADD COLUMN referralBonusAwarded INTEGER NOT NULL DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN bannedAt INTEGER`,
+    `ALTER TABLE users ADD COLUMN banReason TEXT`,
+    `ALTER TABLE users ADD COLUMN lastIp TEXT`,
   ]) {
     try { await client.execute(stmt); } catch { /* column already exists */ }
   }
+  await client.executeMultiple(`
+    CREATE TABLE IF NOT EXISTS suspicious_activity (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      type TEXT NOT NULL,
+      details TEXT NOT NULL,
+      severity TEXT NOT NULL DEFAULT 'medium',
+      dismissed INTEGER NOT NULL DEFAULT 0,
+      createdAt INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    CREATE INDEX IF NOT EXISTS idx_sus_userId ON suspicious_activity(userId);
+    CREATE INDEX IF NOT EXISTS idx_sus_dismissed ON suspicious_activity(dismissed);
+  `);
   // Unique index for referralCode (can't be done via ALTER TABLE in SQLite)
   try {
     await client.execute(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_referralCode ON users(referralCode)`);
@@ -594,4 +610,343 @@ export async function getLiveFeed(limit = 20) {
   }
 
   return result.sort((a, b) => b.id - a.id).slice(0, limit);
+}
+
+// ---------------------------------------------------------------------------
+// Admin queries
+// ---------------------------------------------------------------------------
+
+export async function adminGetAllUsers(opts: { search?: string; page?: number; limit?: number; onlyBanned?: boolean }) {
+  const { search, page = 1, limit = 50, onlyBanned = false } = opts;
+  const offset = (page - 1) * limit;
+
+  const rows = await db.select({
+    id: users.id,
+    username: users.username,
+    email: users.email,
+    role: users.role,
+    bannedAt: users.bannedAt,
+    banReason: users.banReason,
+    lastIp: users.lastIp,
+    createdAt: users.createdAt,
+    lastSignedIn: users.lastSignedIn,
+    balance: wallets.balance,
+    totalWagered: wallets.totalWagered,
+    totalWon: wallets.totalWon,
+    xp: wallets.xp,
+  })
+    .from(users)
+    .leftJoin(wallets, eq(wallets.userId, users.id))
+    .where(
+      and(
+        onlyBanned ? sql`${users.bannedAt} IS NOT NULL` : undefined,
+        search
+          ? or(
+              sql`${users.username} LIKE ${'%' + search + '%'}`,
+              sql`${users.email} LIKE ${'%' + search + '%'}`,
+            )
+          : undefined,
+      ),
+    )
+    .orderBy(desc(users.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  const countRows = await db.select({ count: sql<number>`COUNT(*)` })
+    .from(users)
+    .where(
+      and(
+        onlyBanned ? sql`${users.bannedAt} IS NOT NULL` : undefined,
+        search
+          ? or(
+              sql`${users.username} LIKE ${'%' + search + '%'}`,
+              sql`${users.email} LIKE ${'%' + search + '%'}`,
+            )
+          : undefined,
+      ),
+    );
+
+  return { rows, total: Number(countRows[0]?.count ?? 0) };
+}
+
+export async function adminBanUser(userId: number, reason: string) {
+  await db.update(users)
+    .set({ bannedAt: new Date(), banReason: reason })
+    .where(eq(users.id, userId));
+}
+
+export async function adminUnbanUser(userId: number) {
+  await db.update(users)
+    .set({ bannedAt: null, banReason: null })
+    .where(eq(users.id, userId));
+}
+
+export async function adminSetPassword(userId: number, newPasswordHash: string) {
+  await db.update(users)
+    .set({ passwordHash: newPasswordHash, updatedAt: new Date() })
+    .where(eq(users.id, userId));
+}
+
+export async function adminAwardXp(userId: number, amount: number) {
+  const wallet = await getWallet(userId);
+  if (!wallet) throw new Error("Wallet not found");
+  await db.update(wallets)
+    .set({ xp: (wallet.xp ?? 0) + amount })
+    .where(eq(wallets.userId, userId));
+}
+
+export async function adminAdjustBalance(userId: number, amount: number, note: string) {
+  const type = amount >= 0 ? "bonus" as const : "withdrawal" as const;
+  return adjustBalance(userId, amount, type, note ?? (amount >= 0 ? "Admin credit" : "Admin deduction"));
+}
+
+export async function adminGetAllTransactions(opts: {
+  search?: string;
+  game?: string;
+  type?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const { search, game, type, page = 1, limit = 50 } = opts;
+  const offset = (page - 1) * limit;
+
+  const conditions = [];
+  if (game) conditions.push(eq(transactions.game, game));
+  if (type) conditions.push(eq(transactions.type, type as "bet" | "win" | "bonus" | "deposit" | "withdrawal" | "refund"));
+  if (search) conditions.push(sql`${users.username} LIKE ${'%' + search + '%'}`);
+
+  const rows = await db.select({
+    id: transactions.id,
+    userId: transactions.userId,
+    username: users.username,
+    type: transactions.type,
+    amount: transactions.amount,
+    balanceBefore: transactions.balanceBefore,
+    balanceAfter: transactions.balanceAfter,
+    game: transactions.game,
+    description: transactions.description,
+    createdAt: transactions.createdAt,
+  })
+    .from(transactions)
+    .innerJoin(users, eq(transactions.userId, users.id))
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(desc(transactions.id))
+    .limit(limit)
+    .offset(offset);
+
+  const countRows = await db.select({ count: sql<number>`COUNT(*)` })
+    .from(transactions)
+    .innerJoin(users, eq(transactions.userId, users.id))
+    .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+  return { rows, total: Number(countRows[0]?.count ?? 0) };
+}
+
+export async function adminGetDashboardStats() {
+  const todayStart = new Date(); todayStart.setUTCHours(0, 0, 0, 0);
+  const todayTs = Math.floor(todayStart.getTime() / 1000);
+  const oneHourAgo = Math.floor(Date.now() / 1000) - 3600;
+
+  const [
+    totalUsersRows,
+    activeUsersRows,
+    wageredTodayRows,
+    wageredAllTimeRows,
+    wonAllTimeRows,
+    recentRows,
+    bannedRows,
+    flagsRows,
+  ] = await Promise.all([
+    db.select({ count: sql<number>`COUNT(*)` }).from(users).where(ne(users.role, 'admin')),
+    db.select({ count: sql<number>`COUNT(DISTINCT ${transactions.userId})` })
+      .from(transactions)
+      .where(and(eq(transactions.type, "bet"), sql`${transactions.createdAt} >= ${oneHourAgo}`)),
+    db.select({ total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)` })
+      .from(transactions)
+      .where(and(eq(transactions.type, "bet"), sql`${transactions.createdAt} >= ${todayTs}`)),
+    db.select({ total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)` })
+      .from(transactions).where(eq(transactions.type, "bet")),
+    db.select({ total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)` })
+      .from(transactions).where(eq(transactions.type, "win")),
+    db.select({
+      id: transactions.id,
+      username: users.username,
+      type: transactions.type,
+      amount: transactions.amount,
+      game: transactions.game,
+      createdAt: transactions.createdAt,
+    })
+      .from(transactions)
+      .innerJoin(users, eq(transactions.userId, users.id))
+      .where(sql`${transactions.type} IN ('bet','win')`)
+      .orderBy(desc(transactions.id))
+      .limit(20),
+    db.select({ count: sql<number>`COUNT(*)` }).from(users).where(sql`${users.bannedAt} IS NOT NULL`),
+    db.select({ count: sql<number>`COUNT(*)` }).from(suspiciousActivity).where(eq(suspiciousActivity.dismissed, 0)),
+  ]);
+
+  const totalWagered = Number(wageredAllTimeRows[0]?.total ?? 0);
+  const totalWon = Number(wonAllTimeRows[0]?.total ?? 0);
+
+  return {
+    totalUsers: Number(totalUsersRows[0]?.count ?? 0),
+    activeUsers: Number(activeUsersRows[0]?.count ?? 0),
+    wageredToday: Number(wageredTodayRows[0]?.total ?? 0),
+    totalWagered,
+    totalWon,
+    houseProfit: parseFloat((totalWagered - totalWon).toFixed(2)),
+    bannedUsers: Number(bannedRows[0]?.count ?? 0),
+    openFlags: Number(flagsRows[0]?.count ?? 0),
+    recentActivity: recentRows,
+  };
+}
+
+export async function adminGetGameStats() {
+  const rows = await db.select({
+    game: transactions.game,
+    totalBets: sql<number>`COUNT(CASE WHEN ${transactions.type} = 'bet' THEN 1 END)`,
+    totalWagered: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.type} = 'bet' THEN ${transactions.amount} ELSE 0 END), 0)`,
+    totalWon: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.type} = 'win' THEN ${transactions.amount} ELSE 0 END), 0)`,
+  })
+    .from(transactions)
+    .where(sql`${transactions.game} IS NOT NULL`)
+    .groupBy(transactions.game)
+    .orderBy(desc(sql<number>`SUM(CASE WHEN ${transactions.type} = 'bet' THEN ${transactions.amount} ELSE 0 END)`));
+
+  return rows.map(r => ({
+    game: r.game ?? "Unknown",
+    totalBets: Number(r.totalBets),
+    totalWagered: parseFloat(Number(r.totalWagered).toFixed(2)),
+    totalWon: parseFloat(Number(r.totalWon).toFixed(2)),
+    houseProfit: parseFloat((Number(r.totalWagered) - Number(r.totalWon)).toFixed(2)),
+    houseEdge: Number(r.totalWagered) > 0
+      ? parseFloat(((1 - Number(r.totalWon) / Number(r.totalWagered)) * 100).toFixed(1))
+      : 0,
+  }));
+}
+
+export async function adminGetSuspiciousActivity(opts: { page?: number; limit?: number; onlyOpen?: boolean }) {
+  const { page = 1, limit = 50, onlyOpen = false } = opts;
+  const offset = (page - 1) * limit;
+
+  const rows = await db.select({
+    id: suspiciousActivity.id,
+    userId: suspiciousActivity.userId,
+    username: users.username,
+    type: suspiciousActivity.type,
+    details: suspiciousActivity.details,
+    severity: suspiciousActivity.severity,
+    dismissed: suspiciousActivity.dismissed,
+    createdAt: suspiciousActivity.createdAt,
+  })
+    .from(suspiciousActivity)
+    .innerJoin(users, eq(suspiciousActivity.userId, users.id))
+    .where(onlyOpen ? eq(suspiciousActivity.dismissed, 0) : undefined)
+    .orderBy(desc(suspiciousActivity.id))
+    .limit(limit)
+    .offset(offset);
+
+  const countRows = await db.select({ count: sql<number>`COUNT(*)` })
+    .from(suspiciousActivity)
+    .where(onlyOpen ? eq(suspiciousActivity.dismissed, 0) : undefined);
+
+  return { rows, total: Number(countRows[0]?.count ?? 0) };
+}
+
+export async function adminDismissFlag(id: number) {
+  await db.update(suspiciousActivity).set({ dismissed: 1 }).where(eq(suspiciousActivity.id, id));
+}
+
+export async function logSuspiciousActivity(
+  userId: number,
+  type: string,
+  details: Record<string, unknown>,
+  severity: "low" | "medium" | "high" = "medium",
+) {
+  // Avoid duplicate flags of same type for same user in last hour
+  const oneHourAgo = new Date(Date.now() - 3600_000);
+  const existing = await db.select({ id: suspiciousActivity.id })
+    .from(suspiciousActivity)
+    .where(
+      and(
+        eq(suspiciousActivity.userId, userId),
+        eq(suspiciousActivity.type, type),
+        gt(suspiciousActivity.createdAt, oneHourAgo),
+        eq(suspiciousActivity.dismissed, 0),
+      ),
+    )
+    .limit(1);
+  if (existing.length > 0) return;
+
+  await db.insert(suspiciousActivity).values({
+    userId,
+    type,
+    details: JSON.stringify(details),
+    severity,
+  });
+}
+
+export async function checkSuspiciousWins(userId: number, gameName: string) {
+  // Check last 10 transactions for consecutive wins
+  const recent = await db.select({ type: transactions.type })
+    .from(transactions)
+    .where(and(eq(transactions.userId, userId), sql`${transactions.type} IN ('bet','win')`))
+    .orderBy(desc(transactions.id))
+    .limit(20);
+
+  let consecutiveWins = 0;
+  for (const tx of recent) {
+    if (tx.type === "win") consecutiveWins++;
+    else if (tx.type === "bet") break;
+  }
+
+  // Count pairs (bet+win) for consecutive wins
+  let pairs = 0; let lastWasWin = false;
+  for (const tx of recent) {
+    if (tx.type === "win") { lastWasWin = true; }
+    else if (tx.type === "bet" && lastWasWin) { pairs++; lastWasWin = false; }
+    else { lastWasWin = false; }
+  }
+
+  if (pairs >= 10) {
+    await logSuspiciousActivity(userId, "consecutive_wins", { game: gameName, consecutiveWins: pairs }, "high");
+  }
+}
+
+export async function checkFastBetting(userId: number) {
+  const thirtySecsAgo = new Date(Date.now() - 30_000);
+  const recentBets = await db.select({ count: sql<number>`COUNT(*)` })
+    .from(transactions)
+    .where(and(
+      eq(transactions.userId, userId),
+      eq(transactions.type, "bet"),
+      gt(transactions.createdAt, thirtySecsAgo),
+    ));
+
+  const count = Number(recentBets[0]?.count ?? 0);
+  if (count >= 15) {
+    await logSuspiciousActivity(userId, "fast_betting", { betsIn30Secs: count }, "high");
+  }
+}
+
+export async function checkLargeBalanceJump(userId: number, before: number, after: number) {
+  const jump = after - before;
+  if (jump > 500) {
+    await logSuspiciousActivity(userId, "large_balance_jump", { before, after, jump }, "medium");
+  }
+}
+
+export async function checkMultiAccount(ip: string, userId: number) {
+  if (!ip) return;
+  const rows = await db.select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.lastIp, ip), ne(users.id, userId)))
+    .limit(5);
+  if (rows.length >= 2) {
+    await logSuspiciousActivity(userId, "multi_account", { ip, otherAccountCount: rows.length }, "high");
+  }
+}
+
+export async function setUserLastIp(userId: number, ip: string) {
+  await db.update(users).set({ lastIp: ip }).where(eq(users.id, userId));
 }
