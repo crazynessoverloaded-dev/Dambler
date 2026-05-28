@@ -33,6 +33,13 @@ export default function FloatingBalance() {
     }
   }, [serverBalance]);
 
+  // Reset to 0 immediately when user logs out
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setBalance(0);
+    }
+  }, [isAuthenticated]);
+
   // Listen for demo (unauthenticated) balance updates from useGameWallet
   useEffect(() => {
     if (isAuthenticated) return;

@@ -140,7 +140,11 @@ export default function ColorSpin() {
 
     const landed = pickColor();
     const extraSpins = 5 * 360;
-    const targetAngle = extraSpins + (360 - LAND_ANGLE[landed]);
+    const currentMod = ((rotation % 360) + 360) % 360;
+    const wantedMod = (360 - LAND_ANGLE[landed]) % 360;
+    let delta = ((wantedMod - currentMod) + 360) % 360;
+    if (delta < 90) delta += 360;
+    const targetAngle = extraSpins + delta;
     setRotation(prev => prev + targetAngle);
 
     setTimeout(() => {

@@ -14,8 +14,10 @@ export default function Login() {
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   const [loginSuccess, setLoginSuccess] = useState(false);
 
+  const utils = trpc.useUtils();
   const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await utils.auth.me.invalidate();
       setLoginSuccess(true);
       setTimeout(() => setLocation('/'), 1500);
     },

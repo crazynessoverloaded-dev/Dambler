@@ -42,7 +42,7 @@ function CardFace({ card, hidden, delay = 0 }: { card: Card; hidden?: boolean; d
   const red = isRed(card.suit);
   const clr = red ? '#dc2626' : '#111827';
   return (
-    <motion.div initial={{ rotateY: 90, scale: 0.85 }} animate={{ rotateY: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 180, damping: 22, delay }}
+    <motion.div initial={{ rotateY: 90, scale: 0.85 }} animate={{ rotateY: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 28, delay }}
       className="rounded-xl bg-white select-none"
       style={{ width: 82, height: 116, border: `2px solid ${red ? '#fca5a5' : '#e5e7eb'}`, boxShadow: '0 6px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.9)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '7px 8px', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(145deg, rgba(255,255,255,0.6) 0%, transparent 60%)', pointerEvents: 'none' }} />

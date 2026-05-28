@@ -38,6 +38,14 @@ export function useGameWallet(gameName: string) {
     }
   }, [balanceQuery.data]);
 
+  // Reset to 0 immediately when user logs out
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setLocalBalance(0);
+      balanceRef.current = 0;
+    }
+  }, [isAuthenticated]);
+
   const placeBetMutation = trpc.wallet.placeBet.useMutation({
     onSuccess: () => utils.wallet.balance.invalidate(),
   });

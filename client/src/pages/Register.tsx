@@ -16,8 +16,10 @@ export default function Register() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [registerSuccess, setRegisterSuccess] = useState(false);
 
+  const utils = trpc.useUtils();
   const registerMutation = trpc.auth.register.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await utils.auth.me.invalidate();
       setRegisterSuccess(true);
       setTimeout(() => setLocation('/'), 1500);
     },
